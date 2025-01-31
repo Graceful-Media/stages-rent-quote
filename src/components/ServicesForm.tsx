@@ -50,7 +50,6 @@ const getStairServices = (height: number): Service[] => {
     ];
   }
 
-  // For 48" height
   return [
     {
       id: "stairs-with-rails",
@@ -106,7 +105,6 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
     setSelectedCarpetColor(colorId);
     console.log("Selected carpet color:", colorId);
     
-    // Update the carpet service price based on the selected color
     const color = carpetColors.find(c => c.id === colorId);
     if (color) {
       const carpetService = services.find(s => s.id === "carpet");
@@ -172,7 +170,7 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
                   <div key={color.id} className="flex items-center space-x-2">
                     <RadioGroupItem value={color.id} id={`color-${color.id}`} />
                     <Label htmlFor={`color-${color.id}`}>
-                      {color.name} (${color.price}/sq ft)
+                      {color.name}
                     </Label>
                   </div>
                 ))}
