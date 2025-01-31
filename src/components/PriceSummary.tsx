@@ -28,8 +28,8 @@ const PriceSummary = ({
 
   const calculateTotal = () => {
     const sections = calculateSections();
-    const section4x8Price = 75; // Price per 4x8 section
-    const section4x4Price = 50; // Price per 4x4 section
+    const section4x4Price = 75; // Price per 4x4 section
+    const section4x8Price = 150; // Price per 4x8 section
     
     const sectionsCost = (sections.sections4x8 * section4x8Price) + 
                         (sections.sections4x4 * section4x4Price);
