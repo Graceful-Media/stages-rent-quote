@@ -1,5 +1,6 @@
 import React from "react";
-import { baseServices, getStairServices, carpetColors, skirtSides } from "./ServicesForm";
+import { baseServices, getStairServices, carpetColors } from "./ServicesForm";
+import { skirtSides } from "./services/types";
 
 interface PriceSummaryProps {
   width: number;
