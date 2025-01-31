@@ -126,12 +126,12 @@ const QuoteCalculator = () => {
           )}
         </div>
         <div className="lg:col-span-1">
-          <div className="sticky top-6 space-y-6">
+          <div className="space-y-6">
             <PriceSummary
               {...stageDimensions}
               selectedServices={selectedServices}
             />
-            <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
                 Reset Form
               </Button>
