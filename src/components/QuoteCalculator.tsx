@@ -94,16 +94,16 @@ const QuoteCalculator = () => {
           </Collapsible>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <Button onClick={handleConfirmQuote} className="bg-quote-primary text-white hover:bg-quote-primary/90">
+            <Button onClick={handleConfirmQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
               Confirm Quote
             </Button>
-            <Button onClick={handleQuoteDelivery} className="bg-quote-primary text-white hover:bg-quote-primary/90">
+            <Button onClick={handleQuoteDelivery} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
               Quote Delivery
             </Button>
-            <Button onClick={handleResetForm} className="bg-quote-primary text-white hover:bg-quote-primary/90">
+            <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
               Reset Form
             </Button>
-            <Button onClick={handleEmailQuote} className="bg-quote-primary text-white hover:bg-quote-primary/90">
+            <Button onClick={handleEmailQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
               Email Me Quote
             </Button>
           </div>
