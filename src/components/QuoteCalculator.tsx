@@ -7,6 +7,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collap
 import { ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "./ui/use-toast";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Label } from "./ui/label";
 
 const QuoteCalculator = () => {
   const [stageDimensions, setStageDimensions] = useState({
@@ -18,6 +20,7 @@ const QuoteCalculator = () => {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
   const [deliveryOption, setDeliveryOption] = useState<"delivery" | "pickup" | null>(null);
+  const [continueToDelivery, setContinueToDelivery] = useState<"yes" | "no" | null>(null);
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
@@ -34,24 +37,26 @@ const QuoteCalculator = () => {
     );
   };
 
-  const handleConfirmQuote = () => {
+  const handlePlaceOrder = () => {
     toast({
-      title: "Quote Confirmed",
-      description: "Your quote has been confirmed. We'll be in touch shortly.",
+      title: "Order Placed",
+      description: "Your order has been placed successfully.",
     });
   };
 
-  const handleQuoteDelivery = () => {
+  const handlePrintQuote = () => {
     toast({
-      title: "Quote Delivery",
-      description: "Please check your email for the delivery quote.",
+      title: "Print Quote",
+      description: "Your quote is being prepared for printing.",
     });
+    window.print();
   };
 
   const handleResetForm = () => {
     setStageDimensions({ width: 0, depth: 0, height: 0 });
     setSelectedServices([]);
     setDeliveryOption(null);
+    setContinueToDelivery(null);
     toast({
       title: "Form Reset",
       description: "All fields have been reset to their default values.",
@@ -93,34 +98,53 @@ const QuoteCalculator = () => {
             </div>
           </Collapsible>
 
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button onClick={handleConfirmQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-              Confirm Quote
-            </Button>
-            <Button onClick={handleQuoteDelivery} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-              Quote Delivery
-            </Button>
-            <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-              Reset Form
-            </Button>
-            <Button onClick={handleEmailQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-              Email Me Quote
-            </Button>
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Continue to Quote Delivery?</h3>
+            <RadioGroup 
+              value={continueToDelivery || ""} 
+              onValueChange={(value) => setContinueToDelivery(value as "yes" | "no")}
+              className="space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="continue-yes" />
+                <Label htmlFor="continue-yes">Yes</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="continue-no" />
+                <Label htmlFor="continue-no">No</Label>
+              </div>
+            </RadioGroup>
           </div>
 
-          <DeliveryForm
-            isOpen={isDeliveryOpen}
-            onOpenChange={setIsDeliveryOpen}
-            deliveryOption={deliveryOption}
-            onDeliveryOptionChange={(value) => setDeliveryOption(value)}
-          />
+          {continueToDelivery === "yes" && (
+            <DeliveryForm
+              isOpen={isDeliveryOpen}
+              onOpenChange={setIsDeliveryOpen}
+              deliveryOption={deliveryOption}
+              onDeliveryOptionChange={(value) => setDeliveryOption(value)}
+            />
+          )}
         </div>
         <div className="lg:col-span-1">
-          <div className="sticky top-6">
+          <div className="sticky top-6 space-y-6">
             <PriceSummary
               {...stageDimensions}
               selectedServices={selectedServices}
             />
+            <div className="flex flex-col gap-4">
+              <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+                Reset Form
+              </Button>
+              <Button onClick={handleEmailQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+                Email Me Quote
+              </Button>
+              <Button onClick={handlePrintQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+                Print Quote
+              </Button>
+              <Button onClick={handlePlaceOrder} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+                Place Order
+              </Button>
+            </div>
           </div>
         </div>
       </div>
