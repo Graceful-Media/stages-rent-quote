@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import StairsService from "./services/StairsService";
 import CarpetService from "./services/CarpetService";
 import StandardService from "./services/StandardService";
+import SkirtService from "./services/SkirtService";
 import { Service, baseServices, carpetColors } from "./services/types";
 
 interface ServicesFormProps {
@@ -55,6 +56,7 @@ const getStairServices = (height: number): Service[] => {
 
 const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFormProps) => {
   const [selectedCarpetColor, setSelectedCarpetColor] = useState("black");
+  const [selectedSkirtSides, setSelectedSkirtSides] = useState<string[]>([]);
   const stairServices = getStairServices(height);
   const services = [...stairServices, ...baseServices];
 
@@ -73,6 +75,27 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
     onToggleService(`carpet-${colorId}`);
     
     console.log("Selected carpet color:", colorId);
+  };
+
+  const handleSkirtSideToggle = (sideId: string) => {
+    setSelectedSkirtSides(prev => {
+      const newSides = prev.includes(sideId)
+        ? prev.filter(id => id !== sideId)
+        : [...prev, sideId];
+      
+      console.log("Updated skirt sides:", newSides);
+      
+      // Remove all skirt side services first
+      const existingSideServices = selectedServices.filter(service => 
+        service.startsWith("skirt-side-")
+      );
+      existingSideServices.forEach(service => onToggleService(service));
+      
+      // Add new skirt side services
+      newSides.forEach(side => onToggleService(`skirt-side-${side}`));
+      
+      return newSides;
+    });
   };
 
   return (
@@ -95,7 +118,14 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
           selectedColor={selectedCarpetColor}
         />
 
-        {baseServices.slice(1).map((service) => (
+        <SkirtService
+          isSelected={selectedServices.includes("skirt")}
+          onToggle={onToggleService}
+          selectedSides={selectedSkirtSides}
+          onSideToggle={handleSkirtSideToggle}
+        />
+
+        {baseServices.slice(1).filter(service => service.id !== "skirt").map((service) => (
           <StandardService
             key={service.id}
             service={service}

@@ -11,6 +11,18 @@ export interface CarpetColor {
   price: number;
 }
 
+export interface SkirtSide {
+  id: string;
+  name: string;
+}
+
+export const skirtSides: SkirtSide[] = [
+  { id: "front", name: "Front" },
+  { id: "left", name: "Left Side" },
+  { id: "right", name: "Right Side" },
+  { id: "rear", name: "Rear" },
+];
+
 export const carpetColors: CarpetColor[] = [
   { id: "black", name: "Black", price: 5 },
   { id: "red", name: "Red", price: 6 },
@@ -36,7 +48,7 @@ export const baseServices: Service[] = [
     id: "skirt",
     name: "Stage Skirt",
     description: "Professional stage skirting",
-    basePrice: 100,
+    basePrice: 3, // Price per linear foot
   },
   {
     id: "delivery",

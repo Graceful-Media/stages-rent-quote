@@ -1,5 +1,5 @@
 import React from "react";
-import { baseServices, getStairServices, carpetColors } from "./ServicesForm";
+import { baseServices, getStairServices, carpetColors, skirtSides } from "./ServicesForm";
 
 interface PriceSummaryProps {
   width: number;
@@ -24,6 +24,30 @@ const PriceSummary = ({
       sections4x8: sections4x8Count,
       sections4x4: sections4x4Count
     };
+  };
+
+  const calculateSkirtPrice = () => {
+    const selectedSides = selectedServices
+      .filter(service => service.startsWith("skirt-side-"))
+      .map(service => service.replace("skirt-side-", ""));
+
+    let totalLength = 0;
+    selectedSides.forEach(side => {
+      if (side === "front" || side === "rear") {
+        totalLength += width;
+      } else if (side === "left" || side === "right") {
+        totalLength += depth;
+      }
+    });
+
+    console.log("Skirt calculation:", {
+      selectedSides,
+      totalLength,
+      pricePerFoot: 3,
+      totalPrice: totalLength * 3
+    });
+
+    return totalLength * 3; // $3 per linear foot
   };
 
   const calculateTotal = () => {
@@ -56,10 +80,17 @@ const PriceSummary = ({
       totalCost += carpetPrice * (width * depth);
     }
 
-    // Add other services
+    // Handle skirt separately
+    if (selectedServices.includes("skirt")) {
+      totalCost += calculateSkirtPrice();
+    }
+
+    // Add other services (excluding carpet and skirt which are handled separately)
     totalCost += allServices
       .filter(service => 
-        selectedServices.includes(service.id) && service.id !== "carpet"
+        selectedServices.includes(service.id) && 
+        service.id !== "carpet" &&
+        service.id !== "skirt"
       )
       .reduce((total, service) => total + service.basePrice, 0);
 
@@ -80,6 +111,14 @@ const PriceSummary = ({
     service.startsWith("carpet-")
   )?.replace("carpet-", "");
   const selectedCarpetColor = carpetColors.find(color => color.id === selectedColorId);
+
+  // Get selected skirt sides
+  const selectedSkirtSides = selectedServices
+    .filter(service => service.startsWith("skirt-side-"))
+    .map(service => {
+      const sideId = service.replace("skirt-side-", "");
+      return skirtSides.find(side => side.id === sideId)?.name || sideId;
+    });
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
@@ -108,7 +147,7 @@ const PriceSummary = ({
         <div className="border-t pt-3">
           <div className="space-y-2">
             {selectedServices.map((serviceId) => {
-              if (serviceId.startsWith("carpet-")) return null;
+              if (serviceId.startsWith("carpet-") || serviceId.startsWith("skirt-side-")) return null;
               
               const service = allServices.find((s) => s.id === serviceId);
               if (!service) return null;
@@ -125,6 +164,21 @@ const PriceSummary = ({
                   </div>
                 );
               }
+
+              if (service.id === "skirt" && selectedSkirtSides.length > 0) {
+                return (
+                  <div key={serviceId} className="flex justify-between text-sm">
+                    <span>
+                      Stage Skirt ({selectedSkirtSides.join(", ")})
+                    </span>
+                    <span>
+                      ${calculateSkirtPrice().toLocaleString()}
+                    </span>
+                  </div>
+                );
+              }
+
+              if (service.id === "skirt") return null;
 
               return (
                 <div key={serviceId} className="flex justify-between text-sm">
