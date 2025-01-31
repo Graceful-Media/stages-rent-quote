@@ -6,6 +6,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collap
 import { ChevronDown } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
 const QuoteCalculator = () => {
   const [stageDimensions, setStageDimensions] = useState({
@@ -17,6 +19,15 @@ const QuoteCalculator = () => {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
   const [deliveryOption, setDeliveryOption] = useState<"delivery" | "pickup" | null>(null);
+  const [contactInfo, setContactInfo] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    eventDate: "",
+    eventLocation: "",
+    additionalInfo: ""
+  });
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
@@ -31,6 +42,13 @@ const QuoteCalculator = () => {
         ? prev.filter((id) => id !== serviceId)
         : [...prev, serviceId]
     );
+  };
+
+  const handleContactInfoChange = (field: string, value: string) => {
+    setContactInfo(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   return (
@@ -115,6 +133,78 @@ const QuoteCalculator = () => {
               </CollapsibleContent>
             </div>
           </Collapsible>
+
+          <div className="border rounded-lg p-4 space-y-6">
+            <h2 className="text-2xl font-semibold text-quote-primary">Contact Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name *</Label>
+                <Input
+                  id="name"
+                  value={contactInfo.name}
+                  onChange={(e) => handleContactInfoChange("name", e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={contactInfo.email}
+                  onChange={(e) => handleContactInfoChange("email", e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone *</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={contactInfo.phone}
+                  onChange={(e) => handleContactInfoChange("phone", e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="company">Company</Label>
+                <Input
+                  id="company"
+                  value={contactInfo.company}
+                  onChange={(e) => handleContactInfoChange("company", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="eventDate">Event Date *</Label>
+                <Input
+                  id="eventDate"
+                  type="date"
+                  value={contactInfo.eventDate}
+                  onChange={(e) => handleContactInfoChange("eventDate", e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="eventLocation">Event Location *</Label>
+                <Input
+                  id="eventLocation"
+                  value={contactInfo.eventLocation}
+                  onChange={(e) => handleContactInfoChange("eventLocation", e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="additionalInfo">Additional Information</Label>
+              <Textarea
+                id="additionalInfo"
+                value={contactInfo.additionalInfo}
+                onChange={(e) => handleContactInfoChange("additionalInfo", e.target.value)}
+                placeholder="Please share any additional details about your event that will help us better serve you."
+                className="min-h-[100px]"
+              />
+            </div>
+          </div>
         </div>
         <div className="lg:col-span-1">
           <div className="sticky top-6">
