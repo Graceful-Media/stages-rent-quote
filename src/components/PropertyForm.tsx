@@ -48,6 +48,7 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
     { value: 24, label: "24\"" },
     { value: 32, label: "32\"" },
     { value: 36, label: "36\"" },
+    { value: 40, label: "40\"" },
     { value: 48, label: "48\"" }
   ];
 
