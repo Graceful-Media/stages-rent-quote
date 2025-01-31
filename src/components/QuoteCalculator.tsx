@@ -21,6 +21,8 @@ const QuoteCalculator = () => {
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
   const [deliveryOption, setDeliveryOption] = useState<"delivery" | "pickup" | null>(null);
   const [continueToDelivery, setContinueToDelivery] = useState<"yes" | "no" | null>(null);
+  const [continueToSetup, setContinueToSetup] = useState<"yes" | "no" | null>(null);
+  const [isSetupOpen, setIsSetupOpen] = useState(false);
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
@@ -57,6 +59,7 @@ const QuoteCalculator = () => {
     setSelectedServices([]);
     setDeliveryOption(null);
     setContinueToDelivery(null);
+    setContinueToSetup(null);
     toast({
       title: "Form Reset",
       description: "All fields have been reset to their default values.",
@@ -123,6 +126,40 @@ const QuoteCalculator = () => {
               deliveryOption={deliveryOption}
               onDeliveryOptionChange={(value) => setDeliveryOption(value)}
             />
+          )}
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Continue to Quote Set Up?</h3>
+            <RadioGroup 
+              value={continueToSetup || ""} 
+              onValueChange={(value) => setContinueToSetup(value as "yes" | "no")}
+              className="space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="setup-yes" />
+                <Label htmlFor="setup-yes">Yes</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="setup-no" />
+                <Label htmlFor="setup-no">No</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          {continueToSetup === "yes" && (
+            <Collapsible open={isSetupOpen} onOpenChange={setIsSetupOpen}>
+              <div className="border rounded-lg p-4">
+                <CollapsibleTrigger className="flex items-center justify-between w-full">
+                  <h2 className="text-2xl font-semibold text-quote-primary">Set Up Quote</h2>
+                  <ChevronDown className={`h-6 w-6 transform transition-transform ${isSetupOpen ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-4">
+                    <p>Set Up Quote options will be added here.</p>
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
           )}
         </div>
         <div className="lg:col-span-1">
