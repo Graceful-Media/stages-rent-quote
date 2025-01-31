@@ -21,6 +21,7 @@ const QuoteCalculator = () => {
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
   const [deliveryOption, setDeliveryOption] = useState<"delivery" | "pickup" | null>(null);
   const [continueToDelivery, setContinueToDelivery] = useState<"yes" | "no" | null>(null);
+  const [continueToSetup, setContinueToSetup] = useState<"yes" | "no" | null>(null);
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
@@ -57,6 +58,7 @@ const QuoteCalculator = () => {
     setSelectedServices([]);
     setDeliveryOption(null);
     setContinueToDelivery(null);
+    setContinueToSetup(null);
     toast({
       title: "Form Reset",
       description: "All fields have been reset to their default values.",
@@ -123,6 +125,32 @@ const QuoteCalculator = () => {
               deliveryOption={deliveryOption}
               onDeliveryOptionChange={(value) => setDeliveryOption(value)}
             />
+          )}
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Continue to Quote Set Up?</h3>
+            <RadioGroup 
+              value={continueToSetup || ""} 
+              onValueChange={(value) => setContinueToSetup(value as "yes" | "no")}
+              className="space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="setup-yes" />
+                <Label htmlFor="setup-yes">Yes</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="setup-no" />
+                <Label htmlFor="setup-no">No</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          {continueToSetup === "yes" && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="text-gray-700">
+                Setup options will be displayed here.
+              </p>
+            </div>
           )}
         </div>
         <div className="lg:col-span-1">
