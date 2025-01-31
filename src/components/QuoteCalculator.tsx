@@ -56,7 +56,7 @@ const QuoteCalculator = () => {
   };
 
   const handleResetForm = () => {
-    setStageDimensions({ width: 0, depth: 0, height: 0 });
+    setStageDimensions({ width: 0, depth: 0, height: 0, days: 1 });
     setSelectedServices([]);
     setDeliveryOption(null);
     setContinueToDelivery(null);

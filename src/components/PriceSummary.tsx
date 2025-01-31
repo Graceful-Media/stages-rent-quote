@@ -4,6 +4,7 @@ import SectionsDisplay from "./price-summary/SectionsDisplay";
 import DailyCharges from "./price-summary/DailyCharges";
 import OneTimeCharges from "./price-summary/OneTimeCharges";
 import TotalDisplay from "./price-summary/TotalDisplay";
+import { carpetColors } from "./services/types";
 
 interface PriceSummaryProps {
   width: number;
