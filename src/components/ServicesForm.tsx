@@ -58,14 +58,21 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
   const stairServices = getStairServices(height);
   const services = [...stairServices, ...baseServices];
 
-  const handleCarpetColorChange = (colorId: string, price: number) => {
+  const handleCarpetColorChange = (colorId: string) => {
     setSelectedCarpetColor(colorId);
-    console.log("Selected carpet color:", colorId, "Price:", price);
     
-    const carpetService = services.find(s => s.id === "carpet");
-    if (carpetService) {
-      carpetService.basePrice = price;
-    }
+    // First, remove any existing carpet color selections
+    const existingColorServices = carpetColors.map(color => `carpet-${color.id}`);
+    existingColorServices.forEach(colorService => {
+      if (selectedServices.includes(colorService)) {
+        onToggleService(colorService);
+      }
+    });
+    
+    // Add the new color selection
+    onToggleService(`carpet-${colorId}`);
+    
+    console.log("Selected carpet color:", colorId);
   };
 
   return (
