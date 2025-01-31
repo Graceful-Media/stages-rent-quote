@@ -13,12 +13,12 @@ interface PropertyFormProps {
   width: number;
   depth: number;
   height: number;
+  days: number;
   onUpdate: (field: string, value: number) => void;
 }
 
-const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => {
+const PropertyForm = ({ width, depth, height, days, onUpdate }: PropertyFormProps) => {
   const validateDimension = (value: number, dimension: string) => {
-    // Only validate if there's a non-zero value
     if (value && value % 4 !== 0) {
       toast.error(`${dimension} must be divisible by 4 feet`);
       return false;
@@ -27,6 +27,7 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
   };
 
   const dimensionOptions = Array.from({ length: 10 }, (_, i) => (i + 1) * 4);
+  const dayOptions = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7];
 
   const heightOptions = [
     { value: 6, label: "6\"" },
@@ -43,7 +44,7 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
   return (
     <div className="space-y-6 animate-fadeIn">
       <h2 className="text-2xl font-semibold text-quote-primary">Stage Dimensions</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="space-y-2">
           <Label htmlFor="width">Width (ft)</Label>
           <Select
@@ -93,6 +94,24 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
               {heightOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value.toString()}>
                   {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="days">Rental Duration (Days)</Label>
+          <Select
+            value={days ? days.toString() : ""}
+            onValueChange={(value) => onUpdate("days", parseFloat(value))}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select days" />
+            </SelectTrigger>
+            <SelectContent>
+              {dayOptions.map((value) => (
+                <SelectItem key={value} value={value.toString()}>
+                  {value} {value === 1 ? "day" : "days"}
                 </SelectItem>
               ))}
             </SelectContent>

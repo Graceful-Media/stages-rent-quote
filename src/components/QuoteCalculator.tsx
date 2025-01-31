@@ -15,6 +15,7 @@ const QuoteCalculator = () => {
     width: 0,
     depth: 0,
     height: 0,
+    days: 1,
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [isServicesOpen, setIsServicesOpen] = useState(false);

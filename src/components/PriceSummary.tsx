@@ -6,6 +6,7 @@ interface PriceSummaryProps {
   width: number;
   depth: number;
   height: number;
+  days: number;
   selectedServices: string[];
 }
 
@@ -13,6 +14,7 @@ const PriceSummary = ({
   width,
   depth,
   height,
+  days,
   selectedServices,
 }: PriceSummaryProps) => {
   const calculateSections = () => {
@@ -93,9 +95,11 @@ const PriceSummary = ({
                         (sections.sections4x4 * section4x4Price);
     
     const allServices = [...getStairServices(height), ...baseServices];
-    let totalCost = sectionsCost;
+    let totalCost = 0;
+    let dailyCosts = 0;
+    let oneTimetCosts = 0;
 
-    // Handle carpet separately
+    // Handle carpet separately (one-time cost)
     if (selectedServices.includes("carpet")) {
       const selectedColorId = selectedServices.find(service => 
         service.startsWith("carpet-")
@@ -104,28 +108,38 @@ const PriceSummary = ({
       const selectedColor = carpetColors.find(color => color.id === selectedColorId);
       const carpetPrice = selectedColor ? selectedColor.price : carpetColors[0].price;
       
-      totalCost += carpetPrice * (width * depth);
+      oneTimetCosts += carpetPrice * (width * depth);
     }
 
-    // Handle skirt separately
+    // Add daily costs
+    dailyCosts += sectionsCost;
+
+    // Handle skirt separately (daily cost)
     if (selectedServices.includes("skirt")) {
-      totalCost += calculateSkirtPrice();
+      dailyCosts += calculateSkirtPrice();
     }
 
-    // Handle rails separately
+    // Handle rails separately (daily cost)
     if (selectedServices.includes("rails")) {
-      totalCost += calculateRailsPrice();
+      dailyCosts += calculateRailsPrice();
     }
 
     // Add other services (excluding special cases)
-    totalCost += allServices
+    dailyCosts += allServices
       .filter(service => 
         selectedServices.includes(service.id) && 
         !["carpet", "skirt", "rails"].includes(service.id)
       )
       .reduce((total, service) => total + service.basePrice, 0);
 
-    return totalCost;
+    // Calculate final total
+    totalCost = (dailyCosts * days) + oneTimetCosts;
+
+    return {
+      dailyCosts,
+      oneTimetCosts,
+      totalCost
+    };
   };
 
   const calculateTotalLegs = () => {
@@ -136,8 +150,8 @@ const PriceSummary = ({
   const sections = calculateSections();
   const totalLegs = calculateTotalLegs();
   const allServices = [...getStairServices(height), ...baseServices];
+  const totals = calculateTotal();
 
-  // Find selected carpet color
   const selectedColorId = selectedServices.find(service => 
     service.startsWith("carpet-")
   )?.replace("carpet-", "");
@@ -168,8 +182,8 @@ const PriceSummary = ({
           <span>{width}' × {depth}' × {height}"</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span>Square Footage:</span>
-          <span>{width * depth} sq ft</span>
+          <span>Rental Duration:</span>
+          <span>{days} {days === 1 ? "day" : "days"}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span>4'x8' Sections:</span>
@@ -183,70 +197,80 @@ const PriceSummary = ({
           <span>Total Legs Required:</span>
           <span>{totalLegs}</span>
         </div>
+
         <div className="border-t pt-3">
           <div className="space-y-2">
+            <div className="font-medium text-sm text-gray-600">Daily Charges:</div>
             {selectedServices.map((serviceId) => {
-              if (serviceId.startsWith("carpet-") || 
-                  serviceId.startsWith("skirt-side-") || 
-                  serviceId.startsWith("rail-side-")) return null;
+              if (serviceId.startsWith("carpet-")) return null;
               
               const service = allServices.find((s) => s.id === serviceId);
               if (!service) return null;
 
-              if (service.id === "carpet") {
-                return (
-                  <div key={serviceId} className="flex justify-between text-sm">
-                    <span>
-                      Carpet - {selectedCarpetColor?.name || "Black"} ({width * depth} sq ft)
-                    </span>
-                    <span>
-                      ${((selectedCarpetColor?.price || carpetColors[0].price) * (width * depth)).toLocaleString()}
-                    </span>
-                  </div>
-                );
-              }
-
               if (service.id === "skirt" && selectedSkirtSides.length > 0) {
+                const price = calculateSkirtPrice();
                 return (
                   <div key={serviceId} className="flex justify-between text-sm">
                     <span>
                       Stage Skirt ({selectedSkirtSides.join(", ")})
                     </span>
                     <span>
-                      ${calculateSkirtPrice().toLocaleString()}
+                      ${price.toLocaleString()}/day
                     </span>
                   </div>
                 );
               }
 
               if (service.id === "rails" && selectedRailSides.length > 0) {
+                const price = calculateRailsPrice();
                 return (
                   <div key={serviceId} className="flex justify-between text-sm">
                     <span>
                       Safety Rails ({selectedRailSides.join(", ")})
                     </span>
                     <span>
-                      ${calculateRailsPrice().toLocaleString()}
+                      ${price.toLocaleString()}/day
                     </span>
                   </div>
                 );
               }
 
-              if (service.id === "skirt" || service.id === "rails") return null;
+              if (service.id === "skirt" || service.id === "rails" || service.id === "carpet") return null;
 
               return (
                 <div key={serviceId} className="flex justify-between text-sm">
                   <span>{service.name}</span>
-                  <span>${service.basePrice.toLocaleString()}</span>
+                  <span>${service.basePrice.toLocaleString()}/day</span>
                 </div>
               );
             })}
+
+            <div className="font-medium text-sm text-gray-600 mt-4">One-time Charges:</div>
+            {selectedServices.includes("carpet") && (
+              <div className="flex justify-between text-sm">
+                <span>
+                  Carpet - {selectedCarpetColor?.name || "Black"} ({width * depth} sq ft)
+                </span>
+                <span>
+                  ${((selectedCarpetColor?.price || carpetColors[0].price) * (width * depth)).toLocaleString()}
+                </span>
+              </div>
+            )}
           </div>
         </div>
+
         <div className="border-t pt-3">
-          <div className="flex justify-between font-semibold text-lg">
+          <div className="flex justify-between text-sm font-medium">
+            <span>Daily Total:</span>
+            <span>${totals.dailyCosts.toLocaleString()}/day</span>
+          </div>
+          <div className="flex justify-between text-sm font-medium mt-2">
+            <span>One-time Charges:</span>
+            <span>${totals.oneTimetCosts.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between font-semibold text-lg mt-4">
             <span>Total Estimate:</span>
-            <span>${calculateTotal().toLocaleString()}</span>
+            <span>${totals.totalCost.toLocaleString()}</span>
           </div>
           <p className="text-xs text-gray-500 mt-2">
             *Final price may vary based on event details and location
