@@ -1,5 +1,4 @@
 import React from "react";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
@@ -27,20 +26,7 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
     return true;
   };
 
-  const handleDimensionChange = (field: string, value: string) => {
-    const numValue = parseInt(value) || 0;
-    
-    // If the field is empty or the value is 0, update without validation
-    if (value === '' || !numValue) {
-      onUpdate(field, 0);
-      return;
-    }
-
-    // Only validate if there's an actual value to check
-    if (validateDimension(numValue, field.charAt(0).toUpperCase() + field.slice(1))) {
-      onUpdate(field, numValue);
-    }
-  };
+  const dimensionOptions = Array.from({ length: 10 }, (_, i) => (i + 1) * 4);
 
   const heightOptions = [
     { value: 6, label: "6\"" },
@@ -60,29 +46,39 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="space-y-2">
           <Label htmlFor="width">Width (ft)</Label>
-          <Input
-            id="width"
-            type="number"
-            min="4"
-            step="4"
-            value={width || ''}
-            onChange={(e) => handleDimensionChange("width", e.target.value)}
-            className="w-full"
-          />
-          <p className="text-xs text-gray-500">Must be divisible by 4</p>
+          <Select
+            value={width ? width.toString() : ""}
+            onValueChange={(value) => onUpdate("width", parseInt(value))}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select width" />
+            </SelectTrigger>
+            <SelectContent>
+              {dimensionOptions.map((value) => (
+                <SelectItem key={value} value={value.toString()}>
+                  {value} ft
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="space-y-2">
           <Label htmlFor="depth">Depth (ft)</Label>
-          <Input
-            id="depth"
-            type="number"
-            min="4"
-            step="4"
-            value={depth || ''}
-            onChange={(e) => handleDimensionChange("depth", e.target.value)}
-            className="w-full"
-          />
-          <p className="text-xs text-gray-500">Must be divisible by 4</p>
+          <Select
+            value={depth ? depth.toString() : ""}
+            onValueChange={(value) => onUpdate("depth", parseInt(value))}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select depth" />
+            </SelectTrigger>
+            <SelectContent>
+              {dimensionOptions.map((value) => (
+                <SelectItem key={value} value={value.toString()}>
+                  {value} ft
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="space-y-2">
           <Label htmlFor="height">Height</Label>
