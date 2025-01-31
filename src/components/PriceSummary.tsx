@@ -14,15 +14,34 @@ const PriceSummary = ({
   height,
   selectedServices,
 }: PriceSummaryProps) => {
+  const calculateSections = () => {
+    const area = width * depth;
+    const sections4x8Count = Math.floor(area / 32); // Number of 4x8 sections
+    const remaining = area % 32;
+    const sections4x4Count = Math.ceil(remaining / 16); // Number of 4x4 sections needed for remaining area
+    
+    return {
+      sections4x8: sections4x8Count,
+      sections4x4: sections4x4Count
+    };
+  };
+
   const calculateTotal = () => {
-    const squareFootage = width * depth;
-    const basePrice = squareFootage * 2; // Base price per square foot
+    const sections = calculateSections();
+    const section4x8Price = 75; // Price per 4x8 section
+    const section4x4Price = 50; // Price per 4x4 section
+    
+    const sectionsCost = (sections.sections4x8 * section4x8Price) + 
+                        (sections.sections4x4 * section4x4Price);
+    
     const selectedServicesPrices = services
       .filter((service) => selectedServices.includes(service.id))
       .reduce((total, service) => total + service.basePrice, 0);
     
-    return basePrice + selectedServicesPrices;
+    return sectionsCost + selectedServicesPrices;
   };
+
+  const sections = calculateSections();
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
@@ -35,6 +54,14 @@ const PriceSummary = ({
         <div className="flex justify-between text-sm">
           <span>Square Footage:</span>
           <span>{width * depth} sq ft</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span>4'x8' Sections:</span>
+          <span>{sections.sections4x8}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span>4'x4' Sections:</span>
+          <span>{sections.sections4x4}</span>
         </div>
         <div className="border-t pt-3">
           <div className="space-y-2">
