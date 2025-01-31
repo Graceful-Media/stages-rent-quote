@@ -12,8 +12,8 @@ const QuoteCalculator = () => {
     height: 0,
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [isServicesOpen, setIsServicesOpen] = useState(true);
-  const [isDeliveryOpen, setIsDeliveryOpen] = useState(true);
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
