@@ -277,68 +277,71 @@ const DeliveryForm = ({
                   </Select>
                 </div>
 
-                {/* Pick Up Date */}
-                <div className="space-y-2">
-                  <Label>Pick Up Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !pickupDetails.pickupDate && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {pickupDetails.pickupDate ? (
-                          format(pickupDetails.pickupDate, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={pickupDetails.pickupDate || undefined}
-                        onSelect={(date) => setPickupDetails(prev => ({ ...prev, pickupDate: date }))}
-                        disabled={(date) => !isWeekday(date)}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
+                {/* Pick Up and Return Dates in 2 columns */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Pick Up Date */}
+                  <div className="space-y-2">
+                    <Label>Pick Up Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !pickupDetails.pickupDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {pickupDetails.pickupDate ? (
+                            format(pickupDetails.pickupDate, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={pickupDetails.pickupDate || undefined}
+                          onSelect={(date) => setPickupDetails(prev => ({ ...prev, pickupDate: date }))}
+                          disabled={(date) => !isWeekday(date)}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
 
-                {/* Return Date */}
-                <div className="space-y-2">
-                  <Label>Return Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !pickupDetails.returnDate && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {pickupDetails.returnDate ? (
-                          format(pickupDetails.returnDate, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={pickupDetails.returnDate || undefined}
-                        onSelect={(date) => setPickupDetails(prev => ({ ...prev, returnDate: date }))}
-                        disabled={(date) => !isWeekday(date)}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  {/* Return Date */}
+                  <div className="space-y-2">
+                    <Label>Return Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !pickupDetails.returnDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {pickupDetails.returnDate ? (
+                            format(pickupDetails.returnDate, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={pickupDetails.returnDate || undefined}
+                          onSelect={(date) => setPickupDetails(prev => ({ ...prev, returnDate: date }))}
+                          disabled={(date) => !isWeekday(date)}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </div>
 
                 {/* Comments */}
