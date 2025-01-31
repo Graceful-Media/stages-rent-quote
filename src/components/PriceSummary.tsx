@@ -41,7 +41,14 @@ const PriceSummary = ({
     return sectionsCost + selectedServicesPrices;
   };
 
+  const calculateTotalLegs = () => {
+    const sections = calculateSections();
+    // Each section (4x4 or 4x8) needs 4 legs
+    return (sections.sections4x8 + sections.sections4x4) * 4;
+  };
+
   const sections = calculateSections();
+  const totalLegs = calculateTotalLegs();
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
@@ -49,7 +56,7 @@ const PriceSummary = ({
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
           <span>Stage Size:</span>
-          <span>{width}' × {depth}' × {height}'</span>
+          <span>{width}' × {depth}' × {height}"</span>
         </div>
         <div className="flex justify-between text-sm">
           <span>Square Footage:</span>
@@ -62,6 +69,10 @@ const PriceSummary = ({
         <div className="flex justify-between text-sm">
           <span>4'x4' Sections:</span>
           <span>{sections.sections4x4}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span>Total Legs Required:</span>
+          <span>{totalLegs}</span>
         </div>
         <div className="border-t pt-3">
           <div className="space-y-2">
