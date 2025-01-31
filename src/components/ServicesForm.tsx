@@ -16,29 +16,35 @@ interface ServicesFormProps {
 
 const services: Service[] = [
   {
-    id: "staging",
-    name: "Home Staging",
-    description: "Professional staging with furniture and decor",
-    basePrice: 1500,
+    id: "stairs",
+    name: "Stairs",
+    description: "Add stairs to your stage setup",
+    basePrice: 150,
   },
   {
-    id: "declutter",
-    name: "Decluttering",
-    description: "Remove and organize excess items",
-    basePrice: 500,
+    id: "rails",
+    name: "Safety Rails",
+    description: "Add safety rails to your stage",
+    basePrice: 200,
   },
   {
-    id: "cleaning",
-    name: "Deep Cleaning",
-    description: "Thorough cleaning of entire property",
+    id: "skirt",
+    name: "Stage Skirt",
+    description: "Professional stage skirting",
+    basePrice: 100,
+  },
+  {
+    id: "delivery",
+    name: "Delivery & Setup",
+    description: "Professional delivery and setup service",
     basePrice: 300,
-  },
+  }
 ];
 
 const ServicesForm = ({ selectedServices, onToggleService }: ServicesFormProps) => {
   return (
     <div className="space-y-6 animate-fadeIn">
-      <h2 className="text-2xl font-semibold text-quote-primary">Select Services</h2>
+      <h2 className="text-2xl font-semibold text-quote-primary">Additional Services</h2>
       <div className="space-y-4">
         {services.map((service) => (
           <div

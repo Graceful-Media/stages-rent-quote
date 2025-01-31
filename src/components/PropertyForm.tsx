@@ -3,48 +3,47 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 interface PropertyFormProps {
-  bedrooms: number;
-  bathrooms: number;
-  sqft: number;
+  width: number;
+  depth: number;
+  height: number;
   onUpdate: (field: string, value: number) => void;
 }
 
-const PropertyForm = ({ bedrooms, bathrooms, sqft, onUpdate }: PropertyFormProps) => {
+const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => {
   return (
     <div className="space-y-6 animate-fadeIn">
-      <h2 className="text-2xl font-semibold text-quote-primary">Property Details</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <h2 className="text-2xl font-semibold text-quote-primary">Stage Dimensions</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="bedrooms">Bedrooms</Label>
+          <Label htmlFor="width">Width (ft)</Label>
           <Input
-            id="bedrooms"
+            id="width"
             type="number"
             min="0"
-            value={bedrooms}
-            onChange={(e) => onUpdate("bedrooms", parseInt(e.target.value) || 0)}
+            value={width}
+            onChange={(e) => onUpdate("width", parseInt(e.target.value) || 0)}
             className="w-full"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="bathrooms">Bathrooms</Label>
+          <Label htmlFor="depth">Depth (ft)</Label>
           <Input
-            id="bathrooms"
+            id="depth"
             type="number"
             min="0"
-            step="0.5"
-            value={bathrooms}
-            onChange={(e) => onUpdate("bathrooms", parseFloat(e.target.value) || 0)}
+            value={depth}
+            onChange={(e) => onUpdate("depth", parseInt(e.target.value) || 0)}
             className="w-full"
           />
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="sqft">Square Footage</Label>
+        <div className="space-y-2">
+          <Label htmlFor="height">Height (ft)</Label>
           <Input
-            id="sqft"
+            id="height"
             type="number"
             min="0"
-            value={sqft}
-            onChange={(e) => onUpdate("sqft", parseInt(e.target.value) || 0)}
+            value={height}
+            onChange={(e) => onUpdate("height", parseInt(e.target.value) || 0)}
             className="w-full"
           />
         </div>

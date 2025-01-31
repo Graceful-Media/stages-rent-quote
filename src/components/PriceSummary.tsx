@@ -2,20 +2,21 @@ import React from "react";
 import { services } from "./ServicesForm";
 
 interface PriceSummaryProps {
-  bedrooms: number;
-  bathrooms: number;
-  sqft: number;
+  width: number;
+  depth: number;
+  height: number;
   selectedServices: string[];
 }
 
 const PriceSummary = ({
-  bedrooms,
-  bathrooms,
-  sqft,
+  width,
+  depth,
+  height,
   selectedServices,
 }: PriceSummaryProps) => {
   const calculateTotal = () => {
-    const basePrice = sqft * 2; // Base price per sqft
+    const squareFootage = width * depth;
+    const basePrice = squareFootage * 2; // Base price per square foot
     const selectedServicesPrices = services
       .filter((service) => selectedServices.includes(service.id))
       .reduce((total, service) => total + service.basePrice, 0);
@@ -28,16 +29,12 @@ const PriceSummary = ({
       <h3 className="text-xl font-semibold text-quote-primary mb-4">Price Summary</h3>
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
-          <span>Property Size:</span>
-          <span>{sqft} sqft</span>
+          <span>Stage Size:</span>
+          <span>{width}' × {depth}' × {height}'</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span>Bedrooms:</span>
-          <span>{bedrooms}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span>Bathrooms:</span>
-          <span>{bathrooms}</span>
+          <span>Square Footage:</span>
+          <span>{width * depth} sq ft</span>
         </div>
         <div className="border-t pt-3">
           <div className="space-y-2">
@@ -57,6 +54,9 @@ const PriceSummary = ({
             <span>Total Estimate:</span>
             <span>${calculateTotal().toLocaleString()}</span>
           </div>
+          <p className="text-xs text-gray-500 mt-2">
+            *Final price may vary based on event details and location
+          </p>
         </div>
       </div>
     </div>
