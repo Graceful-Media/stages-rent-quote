@@ -3,7 +3,6 @@ import PropertyForm from "./PropertyForm";
 import ServicesForm from "./ServicesForm";
 import PriceSummary from "./PriceSummary";
 import DeliveryForm from "./DeliveryForm";
-import ContactForm from "./ContactForm";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { ChevronDown } from "lucide-react";
 
@@ -17,15 +16,6 @@ const QuoteCalculator = () => {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
   const [deliveryOption, setDeliveryOption] = useState<"delivery" | "pickup" | null>(null);
-  const [contactInfo, setContactInfo] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    eventDate: "",
-    eventLocation: "",
-    additionalInfo: ""
-  });
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
@@ -40,13 +30,6 @@ const QuoteCalculator = () => {
         ? prev.filter((id) => id !== serviceId)
         : [...prev, serviceId]
     );
-  };
-
-  const handleContactInfoChange = (field: string, value: string) => {
-    setContactInfo(prev => ({
-      ...prev,
-      [field]: value
-    }));
   };
 
   return (
@@ -82,11 +65,6 @@ const QuoteCalculator = () => {
             onOpenChange={setIsDeliveryOpen}
             deliveryOption={deliveryOption}
             onDeliveryOptionChange={(value) => setDeliveryOption(value)}
-          />
-
-          <ContactForm
-            contactInfo={contactInfo}
-            onContactInfoChange={handleContactInfoChange}
           />
         </div>
         <div className="lg:col-span-1">
