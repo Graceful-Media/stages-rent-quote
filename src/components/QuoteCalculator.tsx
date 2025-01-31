@@ -13,6 +13,7 @@ const QuoteCalculator = () => {
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [isServicesOpen, setIsServicesOpen] = useState(true);
+  const [isDeliveryOpen, setIsDeliveryOpen] = useState(true);
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
@@ -44,7 +45,7 @@ const QuoteCalculator = () => {
           <Collapsible open={isServicesOpen} onOpenChange={setIsServicesOpen}>
             <div className="border rounded-lg p-4">
               <CollapsibleTrigger className="flex items-center justify-between w-full">
-                <h2 className="text-2xl font-semibold text-quote-primary">Additional Services</h2>
+                <h2 className="text-2xl font-semibold text-quote-primary">ADDITIONAL SERVICES</h2>
                 <ChevronDown className={`h-6 w-6 transform transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} />
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -57,19 +58,36 @@ const QuoteCalculator = () => {
             </div>
           </Collapsible>
 
-          <div className="border rounded-lg p-6 space-y-4">
-            <h2 className="text-2xl font-semibold text-quote-primary">DELIVERY / PICK UP</h2>
-            <p className="text-gray-700">
-              Get your order delivered! Stage delivery prices start at $500 (round-trip) based on location and size order. 
-              Don't need delivery? Select "No" below to pick up from our location.
-            </p>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-quote-primary mb-2">WAREHOUSE WILL CALL</h3>
-              <p className="text-gray-700">
-                Certificate Of Insurance (COI) Required from customer warehouse pick up - COI POLICY
-              </p>
+          <Collapsible open={isDeliveryOpen} onOpenChange={setIsDeliveryOpen}>
+            <div className="border rounded-lg p-4">
+              <CollapsibleTrigger className="flex items-center justify-between w-full">
+                <h2 className="text-2xl font-semibold text-quote-primary">DELIVERY / PICK UP</h2>
+                <ChevronDown className={`h-6 w-6 transform transition-transform ${isDeliveryOpen ? 'rotate-180' : ''}`} />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="space-y-4 pt-4">
+                  <p className="text-gray-700">
+                    Get your order delivered! Stage delivery prices start at $500 (round-trip) based on location and size order. 
+                    Don't need delivery? Select "No" below to pick up from our location.
+                  </p>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-semibold text-quote-primary mb-2">WAREHOUSE WILL CALL</h3>
+                    <p className="text-gray-700">
+                      Certificate Of Insurance (COI) Required from customer warehouse pick up - {" "}
+                      <a 
+                        href="https://www.etcrental.com/insurance-security/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-quote-accent hover:underline"
+                      >
+                        COI POLICY
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
         </div>
         <div className="lg:col-span-1">
           <div className="sticky top-6">
