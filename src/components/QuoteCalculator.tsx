@@ -104,6 +104,10 @@ const QuoteCalculator = () => {
 
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Continue to Quote Delivery?</h3>
+            <div className="text-sm text-gray-600 space-y-1">
+              <p>We service NYC, NJ, PA, CT areas</p>
+              <p>Our warehousing is out of NJ & Brooklyn</p>
+            </div>
             <RadioGroup 
               value={continueToDelivery || ""} 
               onValueChange={(value) => setContinueToDelivery(value as "yes" | "no")}
