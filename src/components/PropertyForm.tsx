@@ -27,7 +27,7 @@ const PropertyForm = ({ width, depth, height, days, onUpdate }: PropertyFormProp
   };
 
   const dimensionOptions = Array.from({ length: 10 }, (_, i) => (i + 1) * 4);
-  const dayOptions = Array.from({ length: 30 }, (_, i) => i + 1);
+  const dayOptions = Array.from({ length: 59 }, (_, i) => (i + 2) * 0.5).filter(day => day <= 30);
 
   const heightOptions = [
     { value: 6, label: "6\"" },
@@ -103,7 +103,7 @@ const PropertyForm = ({ width, depth, height, days, onUpdate }: PropertyFormProp
           <Label htmlFor="days">Rental Duration (Days)</Label>
           <Select
             value={days ? days.toString() : "1"}
-            onValueChange={(value) => onUpdate("days", parseInt(value))}
+            onValueChange={(value) => onUpdate("days", parseFloat(value))}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select days" />
