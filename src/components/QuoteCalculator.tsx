@@ -5,6 +5,8 @@ import PriceSummary from "./PriceSummary";
 import DeliveryForm from "./DeliveryForm";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { ChevronDown } from "lucide-react";
+import { Button } from "./ui/button";
+import { toast } from "./ui/use-toast";
 
 const QuoteCalculator = () => {
   const [stageDimensions, setStageDimensions] = useState({
@@ -30,6 +32,37 @@ const QuoteCalculator = () => {
         ? prev.filter((id) => id !== serviceId)
         : [...prev, serviceId]
     );
+  };
+
+  const handleConfirmQuote = () => {
+    toast({
+      title: "Quote Confirmed",
+      description: "Your quote has been confirmed. We'll be in touch shortly.",
+    });
+  };
+
+  const handleQuoteDelivery = () => {
+    toast({
+      title: "Quote Delivery",
+      description: "Please check your email for the delivery quote.",
+    });
+  };
+
+  const handleResetForm = () => {
+    setStageDimensions({ width: 0, depth: 0, height: 0 });
+    setSelectedServices([]);
+    setDeliveryOption(null);
+    toast({
+      title: "Form Reset",
+      description: "All fields have been reset to their default values.",
+    });
+  };
+
+  const handleEmailQuote = () => {
+    toast({
+      title: "Quote Emailed",
+      description: "A copy of your quote has been sent to your email.",
+    });
   };
 
   return (
@@ -66,6 +99,21 @@ const QuoteCalculator = () => {
             deliveryOption={deliveryOption}
             onDeliveryOptionChange={(value) => setDeliveryOption(value)}
           />
+
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+            <Button onClick={handleConfirmQuote} className="bg-quote-primary text-white hover:bg-quote-primary/90">
+              Confirm Quote
+            </Button>
+            <Button onClick={handleQuoteDelivery} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+              Quote Delivery
+            </Button>
+            <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+              Reset Form
+            </Button>
+            <Button onClick={handleEmailQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+              Email Me Quote
+            </Button>
+          </div>
         </div>
         <div className="lg:col-span-1">
           <div className="sticky top-6">
