@@ -11,6 +11,7 @@ interface DeliveryFormProps {
   onOpenChange: (open: boolean) => void;
   deliveryOption: "delivery" | "pickup" | null;
   onDeliveryOptionChange: (value: "delivery" | "pickup") => void;
+  onWarehouseLocationChange: (location: "nj" | "ny" | null) => void;
 }
 
 const DeliveryForm = ({
@@ -18,6 +19,7 @@ const DeliveryForm = ({
   onOpenChange,
   deliveryOption,
   onDeliveryOptionChange,
+  onWarehouseLocationChange,
 }: DeliveryFormProps) => {
   const [deliveryDetails, setDeliveryDetails] = React.useState({
     deliveryDate: null,
@@ -34,9 +36,9 @@ const DeliveryForm = ({
   });
 
   const [pickupDetails, setPickupDetails] = React.useState({
-    warehouseLocation: null,
-    pickupDate: null,
-    returnDate: null,
+    warehouseLocation: null as "nj" | "ny" | null,
+    pickupDate: null as Date | null,
+    returnDate: null as Date | null,
     comments: "",
   });
 
@@ -44,6 +46,11 @@ const DeliveryForm = ({
     const day = date.getDay();
     return day !== 0 && day !== 6;
   };
+
+  // Update warehouse location when it changes
+  React.useEffect(() => {
+    onWarehouseLocationChange(pickupDetails.warehouseLocation);
+  }, [pickupDetails.warehouseLocation, onWarehouseLocationChange]);
 
   return (
     <Collapsible open={isOpen} onOpenChange={onOpenChange}>

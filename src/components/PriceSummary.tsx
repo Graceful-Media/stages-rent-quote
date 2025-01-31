@@ -12,6 +12,7 @@ interface PriceSummaryProps {
   height: number;
   days: number;
   selectedServices: string[];
+  warehouseLocation?: "nj" | "ny" | null;
 }
 
 const PriceSummary = ({
@@ -20,6 +21,7 @@ const PriceSummary = ({
   height,
   days,
   selectedServices,
+  warehouseLocation,
 }: PriceSummaryProps) => {
   const calculateSections = () => {
     const area = width * depth;
@@ -108,6 +110,11 @@ const PriceSummary = ({
       dailyCosts += calculateRailsPrice();
     }
 
+    // Add Brooklyn warehouse prep fee if applicable
+    if (warehouseLocation === "ny") {
+      oneTimetCosts += 50; // $50 BK Warehouse Prep Fee
+    }
+
     // Calculate final total
     const totalCost = (dailyCosts * days) + oneTimetCosts;
 
@@ -158,6 +165,7 @@ const PriceSummary = ({
             selectedServices={selectedServices}
             width={width}
             depth={depth}
+            warehouseLocation={warehouseLocation}
           />
         </div>
 

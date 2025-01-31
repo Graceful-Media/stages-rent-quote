@@ -1,13 +1,14 @@
 import React from "react";
-import { carpetColors } from "../ServicesForm";
+import { carpetColors } from "../services/types";
 
 interface OneTimeChargesProps {
   selectedServices: string[];
   width: number;
   depth: number;
+  warehouseLocation?: "nj" | "ny" | null;
 }
 
-const OneTimeCharges = ({ selectedServices, width, depth }: OneTimeChargesProps) => {
+const OneTimeCharges = ({ selectedServices, width, depth, warehouseLocation }: OneTimeChargesProps) => {
   const selectedColorId = selectedServices.find(service => 
     service.startsWith("carpet-")
   )?.replace("carpet-", "");
@@ -25,6 +26,12 @@ const OneTimeCharges = ({ selectedServices, width, depth }: OneTimeChargesProps)
           <span>
             ${((selectedCarpetColor?.price || carpetColors[0].price) * (width * depth)).toLocaleString()}
           </span>
+        </div>
+      )}
+      {warehouseLocation === "ny" && (
+        <div className="flex justify-between text-sm">
+          <span>BK Warehouse Prep Fee</span>
+          <span>$50</span>
         </div>
       )}
     </div>
