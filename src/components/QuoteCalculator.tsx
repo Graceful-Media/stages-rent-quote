@@ -45,7 +45,7 @@ const QuoteCalculator = () => {
           <Collapsible open={isServicesOpen} onOpenChange={setIsServicesOpen}>
             <div className="border rounded-lg p-4">
               <CollapsibleTrigger className="flex items-center justify-between w-full">
-                <h2 className="text-2xl font-semibold text-quote-primary">ADDITIONAL SERVICES</h2>
+                <h2 className="text-2xl font-semibold text-quote-primary">Additional Services</h2>
                 <ChevronDown className={`h-6 w-6 transform transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} />
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -61,7 +61,7 @@ const QuoteCalculator = () => {
           <Collapsible open={isDeliveryOpen} onOpenChange={setIsDeliveryOpen}>
             <div className="border rounded-lg p-4">
               <CollapsibleTrigger className="flex items-center justify-between w-full">
-                <h2 className="text-2xl font-semibold text-quote-primary">DELIVERY / PICK UP</h2>
+                <h2 className="text-2xl font-semibold text-quote-primary">Delivery / Pick Up</h2>
                 <ChevronDown className={`h-6 w-6 transform transition-transform ${isDeliveryOpen ? 'rotate-180' : ''}`} />
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -71,7 +71,7 @@ const QuoteCalculator = () => {
                     Don't need delivery? Select "No" below to pick up from our location.
                   </p>
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-quote-primary mb-2">WAREHOUSE WILL CALL</h3>
+                    <h3 className="font-semibold text-quote-primary mb-2">Warehouse Will Call</h3>
                     <p className="text-gray-700">
                       Certificate Of Insurance (COI) Required from customer warehouse pick up - {" "}
                       <a 
