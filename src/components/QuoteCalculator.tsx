@@ -40,6 +40,7 @@ const QuoteCalculator = () => {
           <ServicesForm
             selectedServices={selectedServices}
             onToggleService={handleToggleService}
+            height={stageDimensions.height}
           />
         </div>
         <div className="lg:col-span-1">

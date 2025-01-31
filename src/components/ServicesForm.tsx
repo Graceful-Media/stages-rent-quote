@@ -12,15 +12,54 @@ interface Service {
 interface ServicesFormProps {
   selectedServices: string[];
   onToggleService: (serviceId: string) => void;
+  height: number;
 }
 
-const services: Service[] = [
-  {
-    id: "stairs",
-    name: "Stairs",
-    description: "Add stairs to your stage setup",
-    basePrice: 150,
-  },
+const getStairServices = (height: number): Service[] => {
+  if (height <= 8) {
+    return [];
+  }
+
+  if (height <= 24) {
+    return [
+      {
+        id: "stairs-no-rails",
+        name: "Stairs (No Railings)",
+        description: "Add stairs without safety railings to your stage setup",
+        basePrice: 75,
+      },
+      {
+        id: "stairs-with-rails",
+        name: "Stairs (w/Railings)",
+        description: "Add stairs with safety railings to your stage setup",
+        basePrice: 150,
+      },
+    ];
+  }
+
+  if (height <= 40) {
+    return [
+      {
+        id: "stairs-with-rails",
+        name: "Stairs (w/Railings)",
+        description: "Add stairs with safety railings to your stage setup",
+        basePrice: 175,
+      },
+    ];
+  }
+
+  // For 48" height
+  return [
+    {
+      id: "stairs-with-rails",
+      name: "Stairs (w/Railings)",
+      description: "Add stairs with safety railings to your stage setup",
+      basePrice: 200,
+    },
+  ];
+};
+
+const baseServices: Service[] = [
   {
     id: "rails",
     name: "Safety Rails",
@@ -41,7 +80,10 @@ const services: Service[] = [
   }
 ];
 
-const ServicesForm = ({ selectedServices, onToggleService }: ServicesFormProps) => {
+const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFormProps) => {
+  const stairServices = getStairServices(height);
+  const services = [...stairServices, ...baseServices];
+
   return (
     <div className="space-y-6 animate-fadeIn">
       <h2 className="text-2xl font-semibold text-quote-primary">Additional Services</h2>
@@ -73,4 +115,4 @@ const ServicesForm = ({ selectedServices, onToggleService }: ServicesFormProps) 
 };
 
 export default ServicesForm;
-export { services };
+export { baseServices, getStairServices };

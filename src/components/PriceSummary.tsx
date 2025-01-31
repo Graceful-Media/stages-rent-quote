@@ -1,5 +1,5 @@
 import React from "react";
-import { services } from "./ServicesForm";
+import { baseServices, getStairServices } from "./ServicesForm";
 
 interface PriceSummaryProps {
   width: number;
@@ -34,7 +34,8 @@ const PriceSummary = ({
     const sectionsCost = (sections.sections4x8 * section4x8Price) + 
                         (sections.sections4x4 * section4x4Price);
     
-    const selectedServicesPrices = services
+    const allServices = [...getStairServices(height), ...baseServices];
+    const selectedServicesPrices = allServices
       .filter((service) => selectedServices.includes(service.id))
       .reduce((total, service) => total + service.basePrice, 0);
     
@@ -49,6 +50,7 @@ const PriceSummary = ({
 
   const sections = calculateSections();
   const totalLegs = calculateTotalLegs();
+  const allServices = [...getStairServices(height), ...baseServices];
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
@@ -77,13 +79,13 @@ const PriceSummary = ({
         <div className="border-t pt-3">
           <div className="space-y-2">
             {selectedServices.map((serviceId) => {
-              const service = services.find((s) => s.id === serviceId);
-              return (
+              const service = allServices.find((s) => s.id === serviceId);
+              return service ? (
                 <div key={serviceId} className="flex justify-between text-sm">
-                  <span>{service?.name}:</span>
-                  <span>${service?.basePrice.toLocaleString()}</span>
+                  <span>{service.name}:</span>
+                  <span>${service.basePrice.toLocaleString()}</span>
                 </div>
-              );
+              ) : null;
             })}
           </div>
         </div>
