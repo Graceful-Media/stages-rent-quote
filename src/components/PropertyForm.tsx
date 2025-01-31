@@ -19,6 +19,7 @@ interface PropertyFormProps {
 
 const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => {
   const validateDimension = (value: number, dimension: string) => {
+    // Only validate if there's a non-zero value
     if (value && value % 4 !== 0) {
       toast.error(`${dimension} must be divisible by 4 feet`);
       return false;
@@ -29,12 +30,13 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
   const handleDimensionChange = (field: string, value: string) => {
     const numValue = parseInt(value) || 0;
     
-    // Only validate if there's actually a value entered
+    // If the field is empty or the value is 0, update without validation
     if (value === '' || !numValue) {
       onUpdate(field, 0);
       return;
     }
 
+    // Only validate if there's an actual value to check
     if (validateDimension(numValue, field.charAt(0).toUpperCase() + field.slice(1))) {
       onUpdate(field, numValue);
     }
