@@ -2,6 +2,13 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface PropertyFormProps {
   width: number;
@@ -24,6 +31,14 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
       onUpdate(field, value);
     }
   };
+
+  const heightOptions = [
+    { value: 16, label: "16\"" },
+    { value: 24, label: "24\"" },
+    { value: 32, label: "32\"" },
+    { value: 40, label: "40\"" },
+    { value: 48, label: "48\"" }
+  ];
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -56,15 +71,22 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
           <p className="text-xs text-gray-500">Must be divisible by 4</p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="height">Height (ft)</Label>
-          <Input
-            id="height"
-            type="number"
-            min="1"
-            value={height}
-            onChange={(e) => onUpdate("height", parseInt(e.target.value) || 0)}
-            className="w-full"
-          />
+          <Label htmlFor="height">Height</Label>
+          <Select
+            value={height.toString()}
+            onValueChange={(value) => onUpdate("height", parseInt(value))}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select height" />
+            </SelectTrigger>
+            <SelectContent>
+              {heightOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value.toString()}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>
