@@ -1,6 +1,6 @@
 import React from "react";
 import { baseServices, getStairServices, carpetColors } from "./ServicesForm";
-import { skirtSides } from "./services/types";
+import { skirtSides, railSides } from "./services/types";
 
 interface PriceSummaryProps {
   width: number;
@@ -25,6 +25,39 @@ const PriceSummary = ({
       sections4x8: sections4x8Count,
       sections4x4: sections4x4Count
     };
+  };
+
+  const calculateRailsPrice = () => {
+    const selectedSides = selectedServices
+      .filter(service => service.startsWith("rail-side-"))
+      .map(service => service.replace("rail-side-", ""));
+
+    let totalLength = 0;
+    selectedSides.forEach(side => {
+      if (side === "front" || side === "rear") {
+        totalLength += width;
+      } else if (side === "left" || side === "right") {
+        totalLength += depth;
+      }
+    });
+
+    // Calculate number of 8' and 4' sections needed
+    const numOf8ftSections = Math.floor(totalLength / 8);
+    const remaining = totalLength % 8;
+    const numOf4ftSections = Math.ceil(remaining / 4);
+
+    // Calculate total price (8' = $60, 4' = $50)
+    const totalPrice = (numOf8ftSections * 60) + (numOf4ftSections * 50);
+
+    console.log("Rails calculation:", {
+      selectedSides,
+      totalLength,
+      numOf8ftSections,
+      numOf4ftSections,
+      totalPrice
+    });
+
+    return totalPrice;
   };
 
   const calculateSkirtPrice = () => {
@@ -71,13 +104,6 @@ const PriceSummary = ({
       const selectedColor = carpetColors.find(color => color.id === selectedColorId);
       const carpetPrice = selectedColor ? selectedColor.price : carpetColors[0].price;
       
-      console.log("Carpet calculation:", {
-        selectedColorId,
-        carpetPrice,
-        area: width * depth,
-        totalCarpetCost: carpetPrice * (width * depth)
-      });
-      
       totalCost += carpetPrice * (width * depth);
     }
 
@@ -86,12 +112,16 @@ const PriceSummary = ({
       totalCost += calculateSkirtPrice();
     }
 
-    // Add other services (excluding carpet and skirt which are handled separately)
+    // Handle rails separately
+    if (selectedServices.includes("rails")) {
+      totalCost += calculateRailsPrice();
+    }
+
+    // Add other services (excluding special cases)
     totalCost += allServices
       .filter(service => 
         selectedServices.includes(service.id) && 
-        service.id !== "carpet" &&
-        service.id !== "skirt"
+        !["carpet", "skirt", "rails"].includes(service.id)
       )
       .reduce((total, service) => total + service.basePrice, 0);
 
@@ -121,6 +151,14 @@ const PriceSummary = ({
       return skirtSides.find(side => side.id === sideId)?.name || sideId;
     });
 
+  // Get selected rail sides
+  const selectedRailSides = selectedServices
+    .filter(service => service.startsWith("rail-side-"))
+    .map(service => {
+      const sideId = service.replace("rail-side-", "");
+      return railSides.find(side => side.id === sideId)?.name || sideId;
+    });
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
       <h3 className="text-xl font-semibold text-quote-primary mb-4">Price Summary</h3>
@@ -148,7 +186,9 @@ const PriceSummary = ({
         <div className="border-t pt-3">
           <div className="space-y-2">
             {selectedServices.map((serviceId) => {
-              if (serviceId.startsWith("carpet-") || serviceId.startsWith("skirt-side-")) return null;
+              if (serviceId.startsWith("carpet-") || 
+                  serviceId.startsWith("skirt-side-") || 
+                  serviceId.startsWith("rail-side-")) return null;
               
               const service = allServices.find((s) => s.id === serviceId);
               if (!service) return null;
@@ -179,7 +219,20 @@ const PriceSummary = ({
                 );
               }
 
-              if (service.id === "skirt") return null;
+              if (service.id === "rails" && selectedRailSides.length > 0) {
+                return (
+                  <div key={serviceId} className="flex justify-between text-sm">
+                    <span>
+                      Safety Rails ({selectedRailSides.join(", ")})
+                    </span>
+                    <span>
+                      ${calculateRailsPrice().toLocaleString()}
+                    </span>
+                  </div>
+                );
+              }
+
+              if (service.id === "skirt" || service.id === "rails") return null;
 
               return (
                 <div key={serviceId} className="flex justify-between text-sm">

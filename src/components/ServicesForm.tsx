@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import StairsService from "./services/StairsService";
 import CarpetService from "./services/CarpetService";
+import RailsService from "./services/RailsService";
 import StandardService from "./services/StandardService";
 import SkirtService from "./services/SkirtService";
 import { Service, baseServices, carpetColors } from "./services/types";
@@ -57,6 +58,7 @@ const getStairServices = (height: number): Service[] => {
 const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFormProps) => {
   const [selectedCarpetColor, setSelectedCarpetColor] = useState("black");
   const [selectedSkirtSides, setSelectedSkirtSides] = useState<string[]>([]);
+  const [selectedRailSides, setSelectedRailSides] = useState<string[]>([]);
   const stairServices = getStairServices(height);
   const services = [...stairServices, ...baseServices];
 
@@ -73,8 +75,6 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
     
     // Add the new color selection
     onToggleService(`carpet-${colorId}`);
-    
-    console.log("Selected carpet color:", colorId);
   };
 
   const handleSkirtSideToggle = (sideId: string) => {
@@ -82,8 +82,6 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
       const newSides = prev.includes(sideId)
         ? prev.filter(id => id !== sideId)
         : [...prev, sideId];
-      
-      console.log("Updated skirt sides:", newSides);
       
       // Remove all skirt side services first
       const existingSideServices = selectedServices.filter(service => 
@@ -93,6 +91,25 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
       
       // Add new skirt side services
       newSides.forEach(side => onToggleService(`skirt-side-${side}`));
+      
+      return newSides;
+    });
+  };
+
+  const handleRailSideToggle = (sideId: string) => {
+    setSelectedRailSides(prev => {
+      const newSides = prev.includes(sideId)
+        ? prev.filter(id => id !== sideId)
+        : [...prev, sideId];
+      
+      // Remove all rail side services first
+      const existingSideServices = selectedServices.filter(service => 
+        service.startsWith("rail-side-")
+      );
+      existingSideServices.forEach(service => onToggleService(service));
+      
+      // Add new rail side services
+      newSides.forEach(side => onToggleService(`rail-side-${side}`));
       
       return newSides;
     });
@@ -118,6 +135,13 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
           selectedColor={selectedCarpetColor}
         />
 
+        <RailsService
+          isSelected={selectedServices.includes("rails")}
+          onToggle={onToggleService}
+          selectedSides={selectedRailSides}
+          onSideToggle={handleRailSideToggle}
+        />
+
         <SkirtService
           isSelected={selectedServices.includes("skirt")}
           onToggle={onToggleService}
@@ -125,14 +149,16 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
           onSideToggle={handleSkirtSideToggle}
         />
 
-        {baseServices.slice(1).filter(service => service.id !== "skirt").map((service) => (
-          <StandardService
-            key={service.id}
-            service={service}
-            isSelected={selectedServices.includes(service.id)}
-            onToggle={onToggleService}
-          />
-        ))}
+        {baseServices
+          .filter(service => !["rails", "skirt", "carpet"].includes(service.id))
+          .map((service) => (
+            <StandardService
+              key={service.id}
+              service={service}
+              isSelected={selectedServices.includes(service.id)}
+              onToggle={onToggleService}
+            />
+          ))}
       </div>
     </div>
   );

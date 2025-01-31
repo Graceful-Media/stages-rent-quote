@@ -16,6 +16,19 @@ export interface SkirtSide {
   name: string;
 }
 
+export interface RailSide {
+  id: string;
+  name: string;
+  isUncommon?: boolean;
+}
+
+export const railSides: RailSide[] = [
+  { id: "front", name: "Front", isUncommon: true },
+  { id: "left", name: "Left Side" },
+  { id: "right", name: "Right Side" },
+  { id: "rear", name: "Rear" },
+];
+
 export const skirtSides: SkirtSide[] = [
   { id: "front", name: "Front" },
   { id: "left", name: "Left Side" },
@@ -42,7 +55,7 @@ export const baseServices: Service[] = [
     id: "rails",
     name: "Safety Rails",
     description: "Add safety rails to your stage",
-    basePrice: 200,
+    basePrice: 0, // Base price is calculated dynamically
   },
   {
     id: "skirt",
