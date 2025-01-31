@@ -97,13 +97,13 @@ const QuoteCalculator = () => {
             <Button onClick={handleConfirmQuote} className="bg-quote-primary text-white hover:bg-quote-primary/90">
               Confirm Quote
             </Button>
-            <Button onClick={handleQuoteDelivery} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+            <Button onClick={handleQuoteDelivery} className="bg-quote-primary text-white hover:bg-quote-primary/90">
               Quote Delivery
             </Button>
-            <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+            <Button onClick={handleResetForm} className="bg-quote-primary text-white hover:bg-quote-primary/90">
               Reset Form
             </Button>
-            <Button onClick={handleEmailQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+            <Button onClick={handleEmailQuote} className="bg-quote-primary text-white hover:bg-quote-primary/90">
               Email Me Quote
             </Button>
           </div>
