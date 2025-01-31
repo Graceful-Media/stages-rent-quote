@@ -117,7 +117,6 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      <h2 className="text-2xl font-semibold text-quote-primary">Additional Services</h2>
       <div className="space-y-4">
         <SkirtService
           isSelected={selectedServices.includes("skirt")}
