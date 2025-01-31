@@ -57,7 +57,7 @@ const RailsService = ({
           </div>
           
           {selectedSides.includes("front") && (
-            <Alert variant="warning" className="bg-yellow-50">
+            <Alert variant="destructive" className="bg-yellow-50 border-yellow-200">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 Front rails are not typically recommended as they may obstruct stage access.
