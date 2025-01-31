@@ -119,6 +119,20 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
     <div className="space-y-6 animate-fadeIn">
       <h2 className="text-2xl font-semibold text-quote-primary">Additional Services</h2>
       <div className="space-y-4">
+        <SkirtService
+          isSelected={selectedServices.includes("skirt")}
+          onToggle={onToggleService}
+          selectedSides={selectedSkirtSides}
+          onSideToggle={handleSkirtSideToggle}
+        />
+
+        <CarpetService
+          isSelected={selectedServices.includes("carpet")}
+          onToggle={onToggleService}
+          onColorChange={handleCarpetColorChange}
+          selectedColor={selectedCarpetColor}
+        />
+
         {stairServices.map((service) => (
           <StairsService
             key={service.id}
@@ -128,13 +142,6 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
           />
         ))}
 
-        <CarpetService
-          isSelected={selectedServices.includes("carpet")}
-          onToggle={onToggleService}
-          onColorChange={handleCarpetColorChange}
-          selectedColor={selectedCarpetColor}
-        />
-
         <RailsService
           isSelected={selectedServices.includes("rails")}
           onToggle={onToggleService}
@@ -142,15 +149,8 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
           onSideToggle={handleRailSideToggle}
         />
 
-        <SkirtService
-          isSelected={selectedServices.includes("skirt")}
-          onToggle={onToggleService}
-          selectedSides={selectedSkirtSides}
-          onSideToggle={handleSkirtSideToggle}
-        />
-
         {baseServices
-          .filter(service => !["rails", "skirt", "carpet"].includes(service.id))
+          .filter(service => service.id === "delivery")
           .map((service) => (
             <StandardService
               key={service.id}
