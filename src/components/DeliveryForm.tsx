@@ -21,7 +21,9 @@ const DeliveryForm = ({
 }: DeliveryFormProps) => {
   const [deliveryDetails, setDeliveryDetails] = React.useState({
     deliveryDate: null,
+    deliveryTime: null,
     pickupDate: null,
+    pickupTime: null,
     venueName: "",
     addressLine1: "",
     addressLine2: "",

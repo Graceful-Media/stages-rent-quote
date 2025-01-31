@@ -6,13 +6,16 @@ import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, Clock } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface DeliveryDetailsFormProps {
   deliveryDetails: {
     deliveryDate: Date | null;
+    deliveryTime: string | null;
     pickupDate: Date | null;
+    pickupTime: string | null;
     venueName: string;
     addressLine1: string;
     addressLine2: string;
@@ -23,7 +26,9 @@ interface DeliveryDetailsFormProps {
   };
   setDeliveryDetails: React.Dispatch<React.SetStateAction<{
     deliveryDate: Date | null;
+    deliveryTime: string | null;
     pickupDate: Date | null;
+    pickupTime: string | null;
     venueName: string;
     addressLine1: string;
     addressLine2: string;
@@ -34,10 +39,23 @@ interface DeliveryDetailsFormProps {
   }>>;
 }
 
+const generateTimeOptions = () => {
+  const times = [];
+  for (let hour = 9; hour <= 17; hour++) {
+    for (let minute of ['00', '30']) {
+      const hourStr = hour.toString().padStart(2, '0');
+      times.push(`${hourStr}:${minute}`);
+    }
+  }
+  return times;
+};
+
 const DeliveryDetailsForm = ({
   deliveryDetails,
   setDeliveryDetails,
 }: DeliveryDetailsFormProps) => {
+  const timeOptions = generateTimeOptions();
+
   return (
     <div className="space-y-6">
       <div className="bg-gray-50 p-4 rounded-lg mb-4">
@@ -47,66 +65,110 @@ const DeliveryDetailsForm = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Delivery Date */}
+        {/* Delivery Date and Time */}
         <div className="space-y-2">
-          <Label>Delivery Date</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !deliveryDetails.deliveryDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {deliveryDetails.deliveryDate ? (
-                  format(deliveryDetails.deliveryDate, "PPP")
-                ) : (
-                  <span>Pick a date</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={deliveryDetails.deliveryDate || undefined}
-                onSelect={(date) => setDeliveryDetails(prev => ({ ...prev, deliveryDate: date }))}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <Label>Delivery Date & Time</Label>
+          <div className="flex gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-[180px] justify-start text-left font-normal",
+                    !deliveryDetails.deliveryDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {deliveryDetails.deliveryDate ? (
+                    format(deliveryDetails.deliveryDate, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={deliveryDetails.deliveryDate || undefined}
+                  onSelect={(date) => setDeliveryDetails(prev => ({ ...prev, deliveryDate: date }))}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <Select
+              value={deliveryDetails.deliveryTime || ""}
+              onValueChange={(time) => setDeliveryDetails(prev => ({ ...prev, deliveryTime: time }))}
+            >
+              <SelectTrigger className="w-[130px]">
+                <SelectValue placeholder="Time">
+                  <div className="flex items-center">
+                    <Clock className="mr-2 h-4 w-4" />
+                    {deliveryDetails.deliveryTime || "Select time"}
+                  </div>
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {timeOptions.map((time) => (
+                  <SelectItem key={time} value={time}>
+                    {time}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* Pickup Date */}
+        {/* Pickup Date and Time */}
         <div className="space-y-2">
-          <Label>Pick Up Date</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !deliveryDetails.pickupDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {deliveryDetails.pickupDate ? (
-                  format(deliveryDetails.pickupDate, "PPP")
-                ) : (
-                  <span>Pick a date</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={deliveryDetails.pickupDate || undefined}
-                onSelect={(date) => setDeliveryDetails(prev => ({ ...prev, pickupDate: date }))}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <Label>Pick Up Date & Time</Label>
+          <div className="flex gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-[180px] justify-start text-left font-normal",
+                    !deliveryDetails.pickupDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {deliveryDetails.pickupDate ? (
+                    format(deliveryDetails.pickupDate, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={deliveryDetails.pickupDate || undefined}
+                  onSelect={(date) => setDeliveryDetails(prev => ({ ...prev, pickupDate: date }))}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <Select
+              value={deliveryDetails.pickupTime || ""}
+              onValueChange={(time) => setDeliveryDetails(prev => ({ ...prev, pickupTime: time }))}
+            >
+              <SelectTrigger className="w-[130px]">
+                <SelectValue placeholder="Time">
+                  <div className="flex items-center">
+                    <Clock className="mr-2 h-4 w-4" />
+                    {deliveryDetails.pickupTime || "Select time"}
+                  </div>
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {timeOptions.map((time) => (
+                  <SelectItem key={time} value={time}>
+                    {time}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
