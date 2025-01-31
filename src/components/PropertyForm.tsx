@@ -54,7 +54,7 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
             type="number"
             min="4"
             step="4"
-            value={width}
+            value={width || ''}
             onChange={(e) => handleDimensionChange("width", parseInt(e.target.value) || 0)}
             className="w-full"
           />
@@ -67,7 +67,7 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
             type="number"
             min="4"
             step="4"
-            value={depth}
+            value={depth || ''}
             onChange={(e) => handleDimensionChange("depth", parseInt(e.target.value) || 0)}
             className="w-full"
           />
