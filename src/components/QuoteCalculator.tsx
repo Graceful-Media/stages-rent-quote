@@ -93,14 +93,7 @@ const QuoteCalculator = () => {
             </div>
           </Collapsible>
 
-          <DeliveryForm
-            isOpen={isDeliveryOpen}
-            onOpenChange={setIsDeliveryOpen}
-            deliveryOption={deliveryOption}
-            onDeliveryOptionChange={(value) => setDeliveryOption(value)}
-          />
-
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
+          <div className="flex flex-wrap justify-center gap-4">
             <Button onClick={handleConfirmQuote} className="bg-quote-primary text-white hover:bg-quote-primary/90">
               Confirm Quote
             </Button>
@@ -114,6 +107,13 @@ const QuoteCalculator = () => {
               Email Me Quote
             </Button>
           </div>
+
+          <DeliveryForm
+            isOpen={isDeliveryOpen}
+            onOpenChange={setIsDeliveryOpen}
+            deliveryOption={deliveryOption}
+            onDeliveryOptionChange={(value) => setDeliveryOption(value)}
+          />
         </div>
         <div className="lg:col-span-1">
           <div className="sticky top-6">
