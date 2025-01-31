@@ -59,8 +59,27 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
   const [selectedCarpetColor, setSelectedCarpetColor] = useState("black");
   const [selectedSkirtSides, setSelectedSkirtSides] = useState<string[]>([]);
   const [selectedRailSides, setSelectedRailSides] = useState<string[]>([]);
+  const [stairsQuantities, setStairsQuantities] = useState<Record<string, number>>({});
+  
   const stairServices = getStairServices(height);
   const services = [...stairServices, ...baseServices];
+
+  const handleStairsQuantityChange = (serviceId: string, quantity: number) => {
+    setStairsQuantities(prev => ({
+      ...prev,
+      [serviceId]: quantity
+    }));
+    
+    // Remove existing quantity from service ID
+    const baseServiceId = serviceId.split('-qty-')[0];
+    const existingService = selectedServices.find(s => s.startsWith(baseServiceId));
+    if (existingService) {
+      onToggleService(existingService);
+    }
+    
+    // Add new service ID with quantity
+    onToggleService(`${baseServiceId}-qty-${quantity}`);
+  };
 
   const handleCarpetColorChange = (colorId: string) => {
     setSelectedCarpetColor(colorId);
@@ -132,14 +151,23 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
           selectedColor={selectedCarpetColor}
         />
 
-        {stairServices.map((service) => (
-          <StairsService
-            key={service.id}
-            service={service}
-            isSelected={selectedServices.includes(service.id)}
-            onToggle={onToggleService}
-          />
-        ))}
+        {stairServices.map((service) => {
+          const serviceQuantity = selectedServices
+            .find(s => s.startsWith(service.id))
+            ?.split('-qty-')[1];
+          const quantity = serviceQuantity ? parseInt(serviceQuantity) : 1;
+          
+          return (
+            <StairsService
+              key={service.id}
+              service={service}
+              isSelected={selectedServices.some(s => s.startsWith(service.id))}
+              onToggle={onToggleService}
+              quantity={quantity}
+              onQuantityChange={(qty) => handleStairsQuantityChange(service.id, qty)}
+            />
+          );
+        })}
 
         <RailsService
           isSelected={selectedServices.includes("rails")}
