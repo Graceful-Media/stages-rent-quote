@@ -19,16 +19,24 @@ interface PropertyFormProps {
 
 const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => {
   const validateDimension = (value: number, dimension: string) => {
-    if (value % 4 !== 0) {
+    if (value && value % 4 !== 0) {
       toast.error(`${dimension} must be divisible by 4 feet`);
       return false;
     }
     return true;
   };
 
-  const handleDimensionChange = (field: string, value: number) => {
-    if (validateDimension(value, field.charAt(0).toUpperCase() + field.slice(1))) {
-      onUpdate(field, value);
+  const handleDimensionChange = (field: string, value: string) => {
+    const numValue = parseInt(value) || 0;
+    
+    // Only validate if there's actually a value entered
+    if (value === '' || !numValue) {
+      onUpdate(field, 0);
+      return;
+    }
+
+    if (validateDimension(numValue, field.charAt(0).toUpperCase() + field.slice(1))) {
+      onUpdate(field, numValue);
     }
   };
 
@@ -55,7 +63,7 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
             min="4"
             step="4"
             value={width || ''}
-            onChange={(e) => handleDimensionChange("width", parseInt(e.target.value) || 0)}
+            onChange={(e) => handleDimensionChange("width", e.target.value)}
             className="w-full"
           />
           <p className="text-xs text-gray-500">Must be divisible by 4</p>
@@ -68,7 +76,7 @@ const PropertyForm = ({ width, depth, height, onUpdate }: PropertyFormProps) => 
             min="4"
             step="4"
             value={depth || ''}
-            onChange={(e) => handleDimensionChange("depth", parseInt(e.target.value) || 0)}
+            onChange={(e) => handleDimensionChange("depth", e.target.value)}
             className="w-full"
           />
           <p className="text-xs text-gray-500">Must be divisible by 4</p>
