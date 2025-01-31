@@ -110,7 +110,7 @@ const PriceSummary = ({
       dailyCosts += calculateRailsPrice();
     }
 
-    // Add Brooklyn warehouse prep fee if applicable
+    // Add Brooklyn warehouse prep fee if applicable (only once)
     if (warehouseLocation === "ny") {
       oneTimetCosts += 50; // $50 BK Warehouse Prep Fee
     }
