@@ -1,5 +1,5 @@
 import React from "react";
-import { baseServices, getStairServices } from "./ServicesForm";
+import { baseServices, getStairServices, carpetColors } from "./ServicesForm";
 
 interface PriceSummaryProps {
   width: number;
@@ -37,7 +37,13 @@ const PriceSummary = ({
     const allServices = [...getStairServices(height), ...baseServices];
     const selectedServicesPrices = allServices
       .filter((service) => selectedServices.includes(service.id))
-      .reduce((total, service) => total + service.basePrice, 0);
+      .reduce((total, service) => {
+        if (service.id === "carpet") {
+          // Calculate carpet cost based on square footage
+          return total + (service.basePrice * (width * depth));
+        }
+        return total + service.basePrice;
+      }, 0);
     
     return sectionsCost + selectedServicesPrices;
   };
@@ -80,12 +86,18 @@ const PriceSummary = ({
           <div className="space-y-2">
             {selectedServices.map((serviceId) => {
               const service = allServices.find((s) => s.id === serviceId);
-              return service ? (
+              if (!service) return null;
+
+              return (
                 <div key={serviceId} className="flex justify-between text-sm">
-                  <span>{service.name}:</span>
-                  <span>${service.basePrice.toLocaleString()}</span>
+                  <span>{service.name}{service.id === "carpet" ? ` (${width * depth} sq ft)` : ""}:</span>
+                  <span>
+                    ${service.id === "carpet" 
+                      ? (service.basePrice * (width * depth)).toLocaleString()
+                      : service.basePrice.toLocaleString()}
+                  </span>
                 </div>
-              ) : null;
+              );
             })}
           </div>
         </div>
