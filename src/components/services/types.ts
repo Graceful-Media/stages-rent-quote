@@ -62,11 +62,5 @@ export const baseServices: Service[] = [
     name: "Stage Skirt",
     description: "Professional stage skirting",
     basePrice: 3, // Price per linear foot
-  },
-  {
-    id: "delivery",
-    name: "Delivery & Setup",
-    description: "Professional delivery and setup service",
-    basePrice: 300,
   }
 ];
