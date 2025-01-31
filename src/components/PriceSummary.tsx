@@ -39,8 +39,13 @@ const PriceSummary = ({
       .filter((service) => selectedServices.includes(service.id))
       .reduce((total, service) => {
         if (service.id === "carpet") {
-          // Calculate carpet cost based on square footage
-          return total + (service.basePrice * (width * depth));
+          // Find the selected carpet color and its price
+          const selectedColor = carpetColors.find(color => 
+            selectedServices.includes(`carpet-${color.id}`)
+          );
+          const carpetPrice = selectedColor ? selectedColor.price : carpetColors[0].price;
+          // Calculate carpet cost based on square footage and selected color price
+          return total + (carpetPrice * (width * depth));
         }
         return total + service.basePrice;
       }, 0);
@@ -57,6 +62,11 @@ const PriceSummary = ({
   const sections = calculateSections();
   const totalLegs = calculateTotalLegs();
   const allServices = [...getStairServices(height), ...baseServices];
+
+  // Find selected carpet color
+  const selectedCarpetColor = carpetColors.find(color => 
+    selectedServices.includes(`carpet-${color.id}`)
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
@@ -88,14 +98,24 @@ const PriceSummary = ({
               const service = allServices.find((s) => s.id === serviceId);
               if (!service) return null;
 
+              // Special handling for carpet display
+              if (service.id === "carpet") {
+                return (
+                  <div key={serviceId} className="flex justify-between text-sm">
+                    <span>
+                      Carpet - {selectedCarpetColor?.name || "Black"} ({width * depth} sq ft)
+                    </span>
+                    <span>
+                      ${(selectedCarpetColor?.price || carpetColors[0].price * (width * depth)).toLocaleString()}
+                    </span>
+                  </div>
+                );
+              }
+
               return (
                 <div key={serviceId} className="flex justify-between text-sm">
-                  <span>{service.name}{service.id === "carpet" ? ` (${width * depth} sq ft)` : ""}:</span>
-                  <span>
-                    ${service.id === "carpet" 
-                      ? (service.basePrice * (width * depth)).toLocaleString()
-                      : service.basePrice.toLocaleString()}
-                  </span>
+                  <span>{service.name}</span>
+                  <span>${service.basePrice.toLocaleString()}</span>
                 </div>
               );
             })}
