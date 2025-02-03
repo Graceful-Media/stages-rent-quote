@@ -35,6 +35,33 @@ const PriceSummary = ({
     };
   };
 
+  const calculateDeliveryFee = () => {
+    const sections = calculateSections();
+    const totalSections4x4 = sections.sections4x4;
+    const totalSections4x8 = sections.sections4x8;
+
+    // Determine if it's a small or large stage
+    const isSmallStage = (totalSections4x4 <= 6 && totalSections4x8 === 0) || 
+                        (totalSections4x8 <= 3 && totalSections4x4 === 0);
+
+    // For now, assuming 20 miles radius for testing
+    // This will need to be updated with actual distance calculation
+    const distance = 20; // Mock distance - will need geocoding service to calculate actual distance
+
+    if (isSmallStage) {
+      if (distance <= 20) return 200;
+      if (distance <= 60) return 650;
+      if (distance <= 150) return 900;
+    } else {
+      if (distance <= 20) return 650;
+      if (distance <= 60) return 850;
+      if (distance <= 120) return 1200;
+      if (distance <= 150) return 1500;
+    }
+
+    return 0;
+  };
+
   const calculateRailsPrice = () => {
     const selectedSides = selectedServices
       .filter(service => service.startsWith("rail-side-"))
@@ -115,13 +142,18 @@ const PriceSummary = ({
       oneTimetCosts += 50; // $50 BK Warehouse Prep Fee
     }
 
+    // Add delivery fee if applicable
+    const deliveryFee = calculateDeliveryFee();
+    oneTimetCosts += deliveryFee;
+
     // Calculate final total
     const totalCost = (dailyCosts * days) + oneTimetCosts;
 
     return {
       dailyCosts,
       oneTimetCosts,
-      totalCost
+      totalCost,
+      deliveryFee
     };
   };
 
@@ -166,6 +198,7 @@ const PriceSummary = ({
             width={width}
             depth={depth}
             warehouseLocation={warehouseLocation}
+            deliveryFee={totals.deliveryFee}
           />
         </div>
 

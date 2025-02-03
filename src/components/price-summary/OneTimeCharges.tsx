@@ -6,32 +6,51 @@ interface OneTimeChargesProps {
   width: number;
   depth: number;
   warehouseLocation?: "nj" | "ny" | null;
+  deliveryFee: number;
 }
 
-const OneTimeCharges = ({ selectedServices, width, depth, warehouseLocation }: OneTimeChargesProps) => {
-  const selectedColorId = selectedServices.find(service => 
-    service.startsWith("carpet-")
-  )?.replace("carpet-", "");
-  
-  const selectedCarpetColor = carpetColors.find(color => color.id === selectedColorId);
+const OneTimeCharges = ({
+  selectedServices,
+  width,
+  depth,
+  warehouseLocation,
+  deliveryFee
+}: OneTimeChargesProps) => {
+  const calculateCarpetPrice = () => {
+    if (!selectedServices.includes("carpet")) return 0;
+    
+    const selectedColorId = selectedServices.find(service => 
+      service.startsWith("carpet-")
+    )?.replace("carpet-", "");
+    
+    const selectedColor = carpetColors.find(color => color.id === selectedColorId);
+    const carpetPrice = selectedColor ? selectedColor.price : carpetColors[0].price;
+    
+    return carpetPrice * (width * depth);
+  };
+
+  const carpetPrice = calculateCarpetPrice();
+  const warehouseFee = warehouseLocation === "ny" ? 50 : 0;
 
   return (
-    <div>
-      <div className="font-medium text-sm text-gray-600">One-time Charges:</div>
-      {selectedServices.includes("carpet") && (
+    <div className="space-y-2 mt-4">
+      <h4 className="font-medium">One-time Charges:</h4>
+      {carpetPrice > 0 && (
         <div className="flex justify-between text-sm">
-          <span>
-            Carpet - {selectedCarpetColor?.name || "Black"} ({width * depth} sq ft)
-          </span>
-          <span>
-            ${((selectedCarpetColor?.price || carpetColors[0].price) * (width * depth)).toLocaleString()}
-          </span>
+          <span>Carpet:</span>
+          <span>${carpetPrice.toLocaleString()}</span>
         </div>
       )}
-      {warehouseLocation === "ny" && (
+      {warehouseFee > 0 && (
         <div className="flex justify-between text-sm">
-          <span>BK Warehouse Prep Fee</span>
-          <span>$50</span>
+          <span>BK Warehouse Prep Fee:</span>
+          <span>${warehouseFee.toLocaleString()}</span>
+        </div>
+      )}
+      {deliveryFee > 0 && (
+        <div className="flex justify-between text-sm">
+          <span>Delivery (Round Trip):</span>
+          <span>${deliveryFee.toLocaleString()}</span>
         </div>
       )}
     </div>
