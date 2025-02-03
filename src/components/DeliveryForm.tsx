@@ -12,6 +12,7 @@ interface DeliveryFormProps {
   deliveryOption: "delivery" | "pickup" | null;
   onDeliveryOptionChange: (value: "delivery" | "pickup") => void;
   onWarehouseLocationChange: (location: "nj" | "ny" | null) => void;
+  onDeliveryZipCodeChange?: (zipCode: string) => void;
 }
 
 const DeliveryForm = ({
@@ -20,6 +21,7 @@ const DeliveryForm = ({
   deliveryOption,
   onDeliveryOptionChange,
   onWarehouseLocationChange,
+  onDeliveryZipCodeChange,
 }: DeliveryFormProps) => {
   const [deliveryDetails, setDeliveryDetails] = React.useState({
     deliveryDate: null,
@@ -83,6 +85,7 @@ const DeliveryForm = ({
               <DeliveryDetailsForm
                 deliveryDetails={deliveryDetails}
                 setDeliveryDetails={setDeliveryDetails}
+                onZipCodeChange={onDeliveryZipCodeChange}
               />
             )}
 

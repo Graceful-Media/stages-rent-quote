@@ -25,6 +25,7 @@ const QuoteCalculator = () => {
   const [continueToSetup, setContinueToSetup] = useState<"yes" | "no" | null>(null);
   const [isSetupOpen, setIsSetupOpen] = useState(false);
   const [warehouseLocation, setWarehouseLocation] = useState<"nj" | "ny" | null>(null);
+  const [deliveryZipCode, setDeliveryZipCode] = useState<string | null>(null);
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
@@ -63,6 +64,7 @@ const QuoteCalculator = () => {
     setContinueToDelivery(null);
     setContinueToSetup(null);
     setWarehouseLocation(null);
+    setDeliveryZipCode(null);
     toast({
       title: "Form Reset",
       description: "All fields have been reset to their default values.",
@@ -133,12 +135,12 @@ const QuoteCalculator = () => {
               deliveryOption={deliveryOption}
               onDeliveryOptionChange={(value) => {
                 setDeliveryOption(value);
-                // Reset warehouse location when delivery option changes
                 if (value !== "pickup") {
                   setWarehouseLocation(null);
                 }
               }}
               onWarehouseLocationChange={(location) => setWarehouseLocation(location)}
+              onDeliveryZipCodeChange={(zipCode) => setDeliveryZipCode(zipCode)}
             />
           )}
 
@@ -182,6 +184,7 @@ const QuoteCalculator = () => {
               {...stageDimensions}
               selectedServices={selectedServices}
               warehouseLocation={warehouseLocation}
+              deliveryZipCode={deliveryZipCode}
             />
             <div className="grid grid-cols-2 gap-4">
               <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">

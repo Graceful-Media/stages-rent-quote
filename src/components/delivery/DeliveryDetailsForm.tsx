@@ -37,6 +37,7 @@ interface DeliveryDetailsFormProps {
     zipCode: string;
     comments: string;
   }>>;
+  onZipCodeChange?: (zipCode: string) => void;
 }
 
 const generateTimeOptions = () => {
@@ -53,8 +54,15 @@ const generateTimeOptions = () => {
 const DeliveryDetailsForm = ({
   deliveryDetails,
   setDeliveryDetails,
+  onZipCodeChange,
 }: DeliveryDetailsFormProps) => {
   const timeOptions = generateTimeOptions();
+
+  const handleZipCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newZipCode = e.target.value;
+    setDeliveryDetails(prev => ({ ...prev, zipCode: newZipCode }));
+    onZipCodeChange?.(newZipCode);
+  };
 
   return (
     <div className="space-y-6">
@@ -221,7 +229,7 @@ const DeliveryDetailsForm = ({
             <Label>ZIP Code</Label>
             <Input
               value={deliveryDetails.zipCode}
-              onChange={(e) => setDeliveryDetails(prev => ({ ...prev, zipCode: e.target.value }))}
+              onChange={handleZipCodeChange}
               placeholder="ZIP Code"
             />
           </div>

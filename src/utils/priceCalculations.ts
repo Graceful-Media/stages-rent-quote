@@ -12,7 +12,11 @@ export const calculateSections = (width: number, depth: number) => {
   };
 };
 
-export const calculateDeliveryFee = (width: number, depth: number) => {
+export const calculateDeliveryFee = (width: number, depth: number, deliveryZipCode: string | null) => {
+  if (!deliveryZipCode) {
+    return 0;
+  }
+
   const sections = calculateSections(width, depth);
   const totalSections4x4 = sections.sections4x4;
   const totalSections4x8 = sections.sections4x8;
@@ -82,7 +86,8 @@ export const calculateTotal = (
   depth: number,
   days: number,
   selectedServices: string[],
-  warehouseLocation?: "nj" | "ny" | null
+  warehouseLocation?: "nj" | "ny" | null,
+  deliveryZipCode?: string | null
 ) => {
   const sections = calculateSections(width, depth);
   const section4x4Price = 75;
@@ -124,8 +129,8 @@ export const calculateTotal = (
     oneTimetCosts += 50; // $50 BK Warehouse Prep Fee
   }
 
-  // Add delivery fee if applicable
-  const deliveryFee = calculateDeliveryFee(width, depth);
+  // Add delivery fee if applicable and zip code is provided
+  const deliveryFee = calculateDeliveryFee(width, depth, deliveryZipCode || null);
   oneTimetCosts += deliveryFee;
 
   // Calculate final total
