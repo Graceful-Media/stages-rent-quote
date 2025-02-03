@@ -109,7 +109,15 @@ const QuoteCalculator = () => {
 
           <ContinueToDeliverySection
             continueToDelivery={continueToDelivery}
-            onContinueToDeliveryChange={(value) => setContinueToDelivery(value)}
+            onContinueToDeliveryChange={(value) => {
+              setContinueToDelivery(value);
+              if (value === "no") {
+                // Reset delivery-related states when user selects "no"
+                setDeliveryOption(null);
+                setWarehouseLocation(null);
+                setDeliveryZipCode(null);
+              }
+            }}
           />
 
           {continueToDelivery === "yes" && (
@@ -119,11 +127,11 @@ const QuoteCalculator = () => {
               deliveryOption={deliveryOption}
               onDeliveryOptionChange={(value) => {
                 setDeliveryOption(value);
-                if (value !== "pickup") {
+                if (value === "delivery") {
+                  // Reset warehouse location when switching to delivery
                   setWarehouseLocation(null);
-                }
-                // Clear delivery zip code when switching to pickup
-                if (value === "pickup") {
+                } else {
+                  // Clear delivery zip code when switching to pickup
                   setDeliveryZipCode(null);
                 }
               }}
