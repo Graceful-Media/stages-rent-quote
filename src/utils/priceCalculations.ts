@@ -1,4 +1,28 @@
 import { carpetColors } from "@/components/services/types";
+import { differenceInDays, format } from "date-fns";
+
+export const calculateDailyRateMultiplier = (days: number) => {
+  console.log("Calculating daily rate multiplier for days:", days);
+  
+  if (days <= 3) {
+    console.log("Using 1x multiplier (1-3 days)");
+    return 1;
+  } else if (days <= 7) {
+    console.log("Using 3x multiplier (4-7 days)");
+    return 3;
+  } else if (days <= 30) {
+    console.log("Using 8x multiplier (8-30 days)");
+    return 8;
+  } else {
+    // For 31+ days, use 8x for first 30 days plus 2x for each additional week
+    const baseRate = 8; // First 30 days
+    const remainingDays = days - 30;
+    const additionalWeeks = Math.ceil(remainingDays / 7);
+    const additionalRate = additionalWeeks * 2;
+    console.log(`Using ${baseRate + additionalRate}x multiplier (31+ days)`);
+    return baseRate + additionalRate;
+  }
+};
 
 export const calculateSections = (width: number, depth: number) => {
   const area = width * depth;
@@ -106,14 +130,24 @@ export const calculateTotal = (
   deliveryZipCode?: string | null,
   deliveryOption?: "delivery" | "pickup" | null
 ) => {
+  console.log("Calculating total with params:", {
+    width, depth, days, selectedServices, warehouseLocation,
+    deliveryZipCode, deliveryOption
+  });
+
   const sections = calculateSections(width, depth);
   const section4x4Price = 75;
   const section4x8Price = 150;
   
-  const sectionsCost = (sections.sections4x8 * section4x8Price) + 
-                      (sections.sections4x4 * section4x4Price);
+  const baseSectionsCost = (sections.sections4x8 * section4x8Price) + 
+                          (sections.sections4x4 * section4x4Price);
   
-  let dailyCosts = 0;
+  console.log("Base sections cost:", baseSectionsCost);
+  
+  const rateMultiplier = calculateDailyRateMultiplier(days);
+  console.log("Rate multiplier:", rateMultiplier);
+  
+  let dailyCosts = baseSectionsCost * rateMultiplier;
   let oneTimetCosts = 0;
 
   // Handle carpet separately (one-time cost)
@@ -129,7 +163,7 @@ export const calculateTotal = (
   }
 
   // Add daily costs
-  dailyCosts += sectionsCost;
+  dailyCosts += baseSectionsCost;
 
   // Handle skirt separately (daily cost)
   if (selectedServices.includes("skirt")) {
@@ -154,16 +188,14 @@ export const calculateTotal = (
     dailyCosts,
     oneTimetCosts,
     deliveryFee,
-    totalCost: (dailyCosts * days) + oneTimetCosts
+    rateMultiplier,
+    totalCost: dailyCosts + oneTimetCosts
   });
-
-  // Calculate final total
-  const totalCost = (dailyCosts * days) + oneTimetCosts;
 
   return {
     dailyCosts,
     oneTimetCosts,
-    totalCost,
+    totalCost: dailyCosts + oneTimetCosts,
     deliveryFee
   };
 };

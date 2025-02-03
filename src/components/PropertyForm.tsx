@@ -1,6 +1,11 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { CalendarIcon } from "lucide-react";
+import { format, differenceInDays, addDays } from "date-fns";
 import {
   Select,
   SelectContent,
@@ -14,10 +19,22 @@ interface PropertyFormProps {
   depth: number;
   height: number;
   days: number;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
   onUpdate: (field: string, value: number) => void;
+  onDateChange: (field: "startDate" | "endDate", date: Date | undefined) => void;
 }
 
-const PropertyForm = ({ width, depth, height, days, onUpdate }: PropertyFormProps) => {
+const PropertyForm = ({ 
+  width, 
+  depth, 
+  height, 
+  days,
+  startDate,
+  endDate,
+  onUpdate,
+  onDateChange 
+}: PropertyFormProps) => {
   const validateDimension = (value: number, dimension: string) => {
     if (value && value % 4 !== 0) {
       toast.error(`${dimension} must be divisible by 4 feet`);
@@ -27,8 +44,6 @@ const PropertyForm = ({ width, depth, height, days, onUpdate }: PropertyFormProp
   };
 
   const dimensionOptions = Array.from({ length: 10 }, (_, i) => (i + 1) * 4);
-  const dayOptions = Array.from({ length: 59 }, (_, i) => (i + 2) * 0.5).filter(day => day <= 30);
-
   const heightOptions = [
     { value: 6, label: "6\"" },
     { value: 8, label: "8\"" },
@@ -100,22 +115,65 @@ const PropertyForm = ({ width, depth, height, days, onUpdate }: PropertyFormProp
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="days">Rental Duration (Days)</Label>
-          <Select
-            value={days ? days.toString() : "1"}
-            onValueChange={(value) => onUpdate("days", parseFloat(value))}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select days" />
-            </SelectTrigger>
-            <SelectContent>
-              {dayOptions.map((value) => (
-                <SelectItem key={value} value={value.toString()}>
-                  {value} {value === 1 ? "day" : "days"}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label>Rental Duration (Days)</Label>
+          <div className="h-10 px-3 py-2 border rounded-md bg-gray-100">
+            {days} {days === 1 ? "day" : "days"}
+          </div>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <Label>Rental Start Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={`w-full justify-start text-left font-normal ${!startDate && "text-muted-foreground"}`}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {startDate ? format(startDate, "PPP") : "Pick a date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={startDate}
+                onSelect={(date) => {
+                  onDateChange("startDate", date);
+                  if (date && endDate && date > endDate) {
+                    onDateChange("endDate", addDays(date, 1));
+                  }
+                }}
+                disabled={(date) => date < new Date()}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+        
+        <div className="space-y-2">
+          <Label>Rental End Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={`w-full justify-start text-left font-normal ${!endDate && "text-muted-foreground"}`}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {endDate ? format(endDate, "PPP") : "Pick a date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={endDate}
+                onSelect={(date) => onDateChange("endDate", date)}
+                disabled={(date) => !startDate || date <= startDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </div>

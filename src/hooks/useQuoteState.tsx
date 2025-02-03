@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { differenceInDays } from "date-fns";
 
 export const useQuoteState = () => {
   const [stageDimensions, setStageDimensions] = useState({
@@ -8,6 +9,8 @@ export const useQuoteState = () => {
     days: 1,
   });
 
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
@@ -23,6 +26,24 @@ export const useQuoteState = () => {
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleDateChange = (field: "startDate" | "endDate", date: Date | undefined) => {
+    if (field === "startDate") {
+      setStartDate(date);
+    } else {
+      setEndDate(date);
+    }
+
+    if (date && (field === "startDate" ? endDate : startDate)) {
+      const start = field === "startDate" ? date : startDate!;
+      const end = field === "endDate" ? date : endDate!;
+      const daysDiff = differenceInDays(end, start) + 1;
+      setStageDimensions(prev => ({
+        ...prev,
+        days: daysDiff
+      }));
+    }
   };
 
   const handleToggleService = (serviceId: string) => {
@@ -41,6 +62,8 @@ export const useQuoteState = () => {
     setContinueToSetup(null);
     setWarehouseLocation(null);
     setDeliveryZipCode(null);
+    setStartDate(undefined);
+    setEndDate(undefined);
   };
 
   return {
@@ -54,7 +77,10 @@ export const useQuoteState = () => {
     isSetupOpen,
     warehouseLocation,
     deliveryZipCode,
+    startDate,
+    endDate,
     handleDimensionUpdate,
+    handleDateChange,
     handleToggleService,
     handleResetForm,
     setIsServicesOpen,
