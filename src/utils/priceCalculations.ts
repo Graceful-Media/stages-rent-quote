@@ -95,14 +95,39 @@ export const calculateSkirtPrice = (selectedServices: string[], width: number, d
 };
 
 export const calculateDailyRateMultiplier = (days: number) => {
-  if (days <= 3) return 1;
-  if (days <= 7) return 3;
-  if (days <= 30) return 8;
-  // For 31+ days, calculate base rate plus additional weeks
+  console.log('Calculating daily rate multiplier for days:', days);
+  
+  if (days <= 3) {
+    console.log('Using 1x multiplier (1-3 days)');
+    return 1;
+  }
+  
+  if (days <= 7) {
+    console.log('Using 3x multiplier (4-7 days)');
+    return 3;
+  }
+  
+  if (days <= 30) {
+    console.log('Using 8x multiplier (8-30 days)');
+    return 8;
+  }
+  
+  // For 31+ days:
+  // First 30 days use 8x rate
+  // Then add 2x for each additional week or part thereof
   const baseRate = 8; // First 30 days
   const remainingDays = days - 30;
   const additionalWeeks = Math.ceil(remainingDays / 7);
-  return baseRate + (additionalWeeks * 2);
+  const totalMultiplier = baseRate + (additionalWeeks * 2);
+  
+  console.log('31+ days calculation:', {
+    baseRate,
+    remainingDays,
+    additionalWeeks,
+    totalMultiplier
+  });
+  
+  return totalMultiplier;
 };
 
 export const calculateTotal = (
@@ -114,6 +139,16 @@ export const calculateTotal = (
   deliveryZipCode?: string | null,
   deliveryOption?: "delivery" | "pickup" | null
 ) => {
+  console.log('Calculating total with params:', {
+    width,
+    depth,
+    days,
+    selectedServices,
+    warehouseLocation,
+    deliveryZipCode,
+    deliveryOption
+  });
+
   const sections = calculateSections(width, depth);
   const section4x4Price = 75;
   const section4x8Price = 150;
@@ -126,6 +161,7 @@ export const calculateTotal = (
 
   // Calculate daily rate with multiplier
   const rateMultiplier = calculateDailyRateMultiplier(days);
+  console.log('Base sections cost:', baseSectionsCost, 'Rate multiplier:', rateMultiplier);
   dailyCosts = baseSectionsCost;
 
   // Handle carpet separately (one-time cost)
