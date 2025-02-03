@@ -18,6 +18,7 @@ export const calculateDeliveryFee = (
   deliveryZipCode: string | null,
   deliveryOption: "delivery" | "pickup" | null
 ) => {
+  // Only calculate delivery fee if both conditions are met
   if (!deliveryZipCode || deliveryOption !== "delivery") {
     console.log("Delivery fee calculation skipped - conditions not met:", {
       hasZipCode: !!deliveryZipCode,
@@ -30,10 +31,12 @@ export const calculateDeliveryFee = (
   const totalSections4x4 = sections.sections4x4;
   const totalSections4x8 = sections.sections4x8;
 
+  // Determine if it's a small or large stage
   const isSmallStage = (totalSections4x4 <= 6 && totalSections4x8 === 0) || 
                       (totalSections4x8 <= 3 && totalSections4x4 === 0);
 
-  const distance = 20;
+  // For now, assuming 20 miles radius for testing
+  const distance = 20; // Mock distance - will need geocoding service to calculate actual distance
 
   console.log("Calculating delivery fee for:", {
     isSmallStage,
@@ -91,43 +94,7 @@ export const calculateSkirtPrice = (selectedServices: string[], width: number, d
     }
   });
 
-  return totalLength * 3;
-};
-
-export const calculateDailyRateMultiplier = (days: number) => {
-  console.log('Calculating daily rate multiplier for days:', days);
-  
-  if (days <= 3) {
-    console.log('Using 1x multiplier (1-3 days)');
-    return 1;
-  }
-  
-  if (days <= 7) {
-    console.log('Using 3x multiplier (4-7 days)');
-    return 3;
-  }
-  
-  if (days <= 30) {
-    console.log('Using 8x multiplier (8-30 days)');
-    return 8;
-  }
-  
-  // For 31+ days:
-  // First 30 days use 8x rate
-  // Then add 2x for each additional week or part thereof
-  const baseRate = 8; // First 30 days
-  const remainingDays = days - 30;
-  const additionalWeeks = Math.ceil(remainingDays / 7);
-  const totalMultiplier = baseRate + (additionalWeeks * 2);
-  
-  console.log('31+ days calculation:', {
-    baseRate,
-    remainingDays,
-    additionalWeeks,
-    totalMultiplier
-  });
-  
-  return totalMultiplier;
+  return totalLength * 3; // $3 per linear foot
 };
 
 export const calculateTotal = (
@@ -139,30 +106,15 @@ export const calculateTotal = (
   deliveryZipCode?: string | null,
   deliveryOption?: "delivery" | "pickup" | null
 ) => {
-  console.log('Calculating total with params:', {
-    width,
-    depth,
-    days,
-    selectedServices,
-    warehouseLocation,
-    deliveryZipCode,
-    deliveryOption
-  });
-
   const sections = calculateSections(width, depth);
   const section4x4Price = 75;
   const section4x8Price = 150;
   
-  const baseSectionsCost = (sections.sections4x8 * section4x8Price) + 
-                          (sections.sections4x4 * section4x4Price);
+  const sectionsCost = (sections.sections4x8 * section4x8Price) + 
+                      (sections.sections4x4 * section4x4Price);
   
   let dailyCosts = 0;
   let oneTimetCosts = 0;
-
-  // Calculate daily rate with multiplier
-  const rateMultiplier = calculateDailyRateMultiplier(days);
-  console.log('Base sections cost:', baseSectionsCost, 'Rate multiplier:', rateMultiplier);
-  dailyCosts = baseSectionsCost;
 
   // Handle carpet separately (one-time cost)
   if (selectedServices.includes("carpet")) {
@@ -176,6 +128,9 @@ export const calculateTotal = (
     oneTimetCosts += carpetPrice * (width * depth);
   }
 
+  // Add daily costs
+  dailyCosts += sectionsCost;
+
   // Handle skirt separately (daily cost)
   if (selectedServices.includes("skirt")) {
     dailyCosts += calculateSkirtPrice(selectedServices, width, depth);
@@ -188,28 +143,27 @@ export const calculateTotal = (
 
   // Add Brooklyn warehouse prep fee if applicable (only once)
   if (warehouseLocation === "ny") {
-    oneTimetCosts += 50;
+    oneTimetCosts += 50; // $50 BK Warehouse Prep Fee
   }
 
-  // Add delivery fee
+  // Add delivery fee only if both conditions are met
   const deliveryFee = calculateDeliveryFee(width, depth, deliveryZipCode || null, deliveryOption || null);
   oneTimetCosts += deliveryFee;
-
-  // Apply rate multiplier to daily costs
-  dailyCosts = dailyCosts * rateMultiplier;
 
   console.log("Calculated totals:", {
     dailyCosts,
     oneTimetCosts,
     deliveryFee,
-    rateMultiplier,
-    totalCost: (dailyCosts) + oneTimetCosts
+    totalCost: (dailyCosts * days) + oneTimetCosts
   });
+
+  // Calculate final total
+  const totalCost = (dailyCosts * days) + oneTimetCosts;
 
   return {
     dailyCosts,
     oneTimetCosts,
-    totalCost: (dailyCosts) + oneTimetCosts,
+    totalCost,
     deliveryFee
   };
 };

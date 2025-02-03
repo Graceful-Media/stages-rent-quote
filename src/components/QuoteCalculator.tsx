@@ -23,12 +23,9 @@ const QuoteCalculator = () => {
     isSetupOpen,
     warehouseLocation,
     deliveryZipCode,
-    startDate,
-    endDate,
     handleDimensionUpdate,
     handleToggleService,
     handleResetForm,
-    handleDateChange,
     setIsServicesOpen,
     setIsDeliveryOpen,
     setDeliveryOption,
@@ -48,10 +45,7 @@ const QuoteCalculator = () => {
         <div className="lg:col-span-2 space-y-8">
           <PropertyForm
             {...stageDimensions}
-            startDate={startDate}
-            endDate={endDate}
             onUpdate={handleDimensionUpdate}
-            onDateChange={handleDateChange}
           />
           
           <Collapsible open={isServicesOpen} onOpenChange={setIsServicesOpen}>
@@ -121,8 +115,6 @@ const QuoteCalculator = () => {
               warehouseLocation={warehouseLocation}
               deliveryZipCode={deliveryZipCode}
               deliveryOption={deliveryOption}
-              startDate={startDate}
-              endDate={endDate}
             />
             <FormActions onResetForm={handleResetForm} />
           </div>
