@@ -49,6 +49,20 @@ const DeliveryForm = ({
     return day !== 0 && day !== 6;
   };
 
+  // Reset pickup details when switching to delivery mode
+  React.useEffect(() => {
+    if (deliveryOption === "delivery") {
+      setPickupDetails(prev => ({
+        ...prev,
+        warehouseLocation: null,
+        pickupDate: null,
+        returnDate: null,
+        comments: "",
+      }));
+      onWarehouseLocationChange(null);
+    }
+  }, [deliveryOption, onWarehouseLocationChange]);
+
   // Update warehouse location when it changes
   React.useEffect(() => {
     onWarehouseLocationChange(pickupDetails.warehouseLocation);
