@@ -130,6 +130,7 @@ const QuoteCalculator = () => {
                 // Reset warehouse location and zip code based on delivery option
                 if (value === "delivery") {
                   setWarehouseLocation(null); // Reset warehouse location when switching to delivery
+                  setDeliveryZipCode(null); // Also reset zip code when switching to delivery
                 } else if (value === "pickup") {
                   setDeliveryZipCode(null); // Clear delivery zip code when switching to pickup
                 }
