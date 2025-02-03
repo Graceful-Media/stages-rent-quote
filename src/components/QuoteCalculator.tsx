@@ -5,10 +5,11 @@ import PriceSummary from "./PriceSummary";
 import DeliveryForm from "./DeliveryForm";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { Button } from "./ui/button";
 import { toast } from "./ui/use-toast";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Label } from "./ui/label";
+import ContinueToDeliverySection from "./quote/ContinueToDeliverySection";
+import ContinueToSetupSection from "./quote/ContinueToSetupSection";
+import SetupSection from "./quote/SetupSection";
+import ActionButtons from "./quote/ActionButtons";
 
 const QuoteCalculator = () => {
   const [stageDimensions, setStageDimensions] = useState({
@@ -106,27 +107,10 @@ const QuoteCalculator = () => {
             </div>
           </Collapsible>
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Continue to Quote Delivery?</h3>
-            <div className="text-sm text-gray-600 space-y-1">
-              <p>We service NYC, NJ, PA, CT areas</p>
-              <p>Our warehousing is out of NJ & Brooklyn</p>
-            </div>
-            <RadioGroup 
-              value={continueToDelivery || ""} 
-              onValueChange={(value) => setContinueToDelivery(value as "yes" | "no")}
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="continue-yes" />
-                <Label htmlFor="continue-yes">Yes</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="continue-no" />
-                <Label htmlFor="continue-no">No</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          <ContinueToDeliverySection
+            continueToDelivery={continueToDelivery}
+            onContinueToDeliveryChange={(value) => setContinueToDelivery(value)}
+          />
 
           {continueToDelivery === "yes" && (
             <DeliveryForm
@@ -144,38 +128,16 @@ const QuoteCalculator = () => {
             />
           )}
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Continue to Quote Set Up?</h3>
-            <RadioGroup 
-              value={continueToSetup || ""} 
-              onValueChange={(value) => setContinueToSetup(value as "yes" | "no")}
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="setup-yes" />
-                <Label htmlFor="setup-yes">Yes</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="setup-no" />
-                <Label htmlFor="setup-no">No</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          <ContinueToSetupSection
+            continueToSetup={continueToSetup}
+            onContinueToSetupChange={(value) => setContinueToSetup(value)}
+          />
 
           {continueToSetup === "yes" && (
-            <Collapsible open={isSetupOpen} onOpenChange={setIsSetupOpen}>
-              <div className="border rounded-lg p-4">
-                <CollapsibleTrigger className="flex items-center justify-between w-full">
-                  <h2 className="text-2xl font-semibold text-quote-primary">Set Up Quote</h2>
-                  <ChevronDown className={`h-6 w-6 transform transition-transform ${isSetupOpen ? 'rotate-180' : ''}`} />
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="p-4">
-                    <p>Set Up Quote options will be added here.</p>
-                  </div>
-                </CollapsibleContent>
-              </div>
-            </Collapsible>
+            <SetupSection
+              isOpen={isSetupOpen}
+              onOpenChange={setIsSetupOpen}
+            />
           )}
         </div>
         <div className="lg:col-span-1">
@@ -186,20 +148,12 @@ const QuoteCalculator = () => {
               warehouseLocation={warehouseLocation}
               deliveryZipCode={deliveryZipCode}
             />
-            <div className="grid grid-cols-2 gap-4">
-              <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-                Reset Form
-              </Button>
-              <Button onClick={handleEmailQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-                Email Me Quote
-              </Button>
-              <Button onClick={handlePrintQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-                Print Quote
-              </Button>
-              <Button onClick={handlePlaceOrder} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-                Place Order
-              </Button>
-            </div>
+            <ActionButtons
+              onResetForm={handleResetForm}
+              onEmailQuote={handleEmailQuote}
+              onPrintQuote={handlePrintQuote}
+              onPlaceOrder={handlePlaceOrder}
+            />
           </div>
         </div>
       </div>
