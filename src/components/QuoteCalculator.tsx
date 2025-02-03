@@ -122,6 +122,10 @@ const QuoteCalculator = () => {
                 if (value !== "pickup") {
                   setWarehouseLocation(null);
                 }
+                // Clear delivery zip code when switching to pickup
+                if (value === "pickup") {
+                  setDeliveryZipCode(null);
+                }
               }}
               onWarehouseLocationChange={(location) => setWarehouseLocation(location)}
               onDeliveryZipCodeChange={(zipCode) => setDeliveryZipCode(zipCode)}
@@ -147,6 +151,7 @@ const QuoteCalculator = () => {
               selectedServices={selectedServices}
               warehouseLocation={warehouseLocation}
               deliveryZipCode={deliveryZipCode}
+              deliveryOption={deliveryOption}
             />
             <ActionButtons
               onResetForm={handleResetForm}

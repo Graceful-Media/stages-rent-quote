@@ -12,8 +12,18 @@ export const calculateSections = (width: number, depth: number) => {
   };
 };
 
-export const calculateDeliveryFee = (width: number, depth: number, deliveryZipCode: string | null) => {
-  if (!deliveryZipCode) {
+export const calculateDeliveryFee = (
+  width: number, 
+  depth: number, 
+  deliveryZipCode: string | null,
+  deliveryOption: "delivery" | "pickup" | null
+) => {
+  // Only calculate delivery fee if both conditions are met
+  if (!deliveryZipCode || deliveryOption !== "delivery") {
+    console.log("Delivery fee calculation skipped - conditions not met:", {
+      hasZipCode: !!deliveryZipCode,
+      deliveryOption
+    });
     return 0;
   }
 
@@ -27,6 +37,12 @@ export const calculateDeliveryFee = (width: number, depth: number, deliveryZipCo
 
   // For now, assuming 20 miles radius for testing
   const distance = 20; // Mock distance - will need geocoding service to calculate actual distance
+
+  console.log("Calculating delivery fee for:", {
+    isSmallStage,
+    distance,
+    zipCode: deliveryZipCode
+  });
 
   if (isSmallStage) {
     if (distance <= 20) return 200;
@@ -87,7 +103,8 @@ export const calculateTotal = (
   days: number,
   selectedServices: string[],
   warehouseLocation?: "nj" | "ny" | null,
-  deliveryZipCode?: string | null
+  deliveryZipCode?: string | null,
+  deliveryOption?: "delivery" | "pickup" | null
 ) => {
   const sections = calculateSections(width, depth);
   const section4x4Price = 75;
@@ -129,9 +146,16 @@ export const calculateTotal = (
     oneTimetCosts += 50; // $50 BK Warehouse Prep Fee
   }
 
-  // Add delivery fee if applicable and zip code is provided
-  const deliveryFee = calculateDeliveryFee(width, depth, deliveryZipCode || null);
+  // Add delivery fee only if both conditions are met
+  const deliveryFee = calculateDeliveryFee(width, depth, deliveryZipCode || null, deliveryOption || null);
   oneTimetCosts += deliveryFee;
+
+  console.log("Calculated totals:", {
+    dailyCosts,
+    oneTimetCosts,
+    deliveryFee,
+    totalCost: (dailyCosts * days) + oneTimetCosts
+  });
 
   // Calculate final total
   const totalCost = (dailyCosts * days) + oneTimetCosts;
