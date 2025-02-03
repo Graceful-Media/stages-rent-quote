@@ -17,12 +17,34 @@ export const useQuoteState = () => {
   const [isSetupOpen, setIsSetupOpen] = useState(false);
   const [warehouseLocation, setWarehouseLocation] = useState<"nj" | "ny" | null>(null);
   const [deliveryZipCode, setDeliveryZipCode] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleDateChange = (type: 'start' | 'end', date: Date | null) => {
+    if (type === 'start') {
+      setStartDate(date);
+      // If end date exists, calculate duration
+      if (endDate && date) {
+        const diffTime = Math.abs(endDate.getTime() - date.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        handleDimensionUpdate('days', diffDays);
+      }
+    } else {
+      setEndDate(date);
+      // If start date exists, calculate duration
+      if (startDate && date) {
+        const diffTime = Math.abs(date.getTime() - startDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        handleDimensionUpdate('days', diffDays);
+      }
+    }
   };
 
   const handleToggleService = (serviceId: string) => {
@@ -41,6 +63,8 @@ export const useQuoteState = () => {
     setContinueToSetup(null);
     setWarehouseLocation(null);
     setDeliveryZipCode(null);
+    setStartDate(null);
+    setEndDate(null);
   };
 
   return {
@@ -54,9 +78,12 @@ export const useQuoteState = () => {
     isSetupOpen,
     warehouseLocation,
     deliveryZipCode,
+    startDate,
+    endDate,
     handleDimensionUpdate,
     handleToggleService,
     handleResetForm,
+    handleDateChange,
     setIsServicesOpen,
     setIsDeliveryOpen,
     setDeliveryOption,
