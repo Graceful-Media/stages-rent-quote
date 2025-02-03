@@ -18,7 +18,6 @@ export const calculateDeliveryFee = (
   deliveryZipCode: string | null,
   deliveryOption: "delivery" | "pickup" | null
 ) => {
-  // Only calculate delivery fee if both conditions are met
   if (!deliveryZipCode || deliveryOption !== "delivery") {
     console.log("Delivery fee calculation skipped - conditions not met:", {
       hasZipCode: !!deliveryZipCode,
@@ -31,12 +30,10 @@ export const calculateDeliveryFee = (
   const totalSections4x4 = sections.sections4x4;
   const totalSections4x8 = sections.sections4x8;
 
-  // Determine if it's a small or large stage
   const isSmallStage = (totalSections4x4 <= 6 && totalSections4x8 === 0) || 
                       (totalSections4x8 <= 3 && totalSections4x4 === 0);
 
-  // For now, assuming 20 miles radius for testing
-  const distance = 20; // Mock distance - will need geocoding service to calculate actual distance
+  const distance = 20;
 
   console.log("Calculating delivery fee for:", {
     isSmallStage,
@@ -94,7 +91,18 @@ export const calculateSkirtPrice = (selectedServices: string[], width: number, d
     }
   });
 
-  return totalLength * 3; // $3 per linear foot
+  return totalLength * 3;
+};
+
+export const calculateDailyRateMultiplier = (days: number) => {
+  if (days <= 3) return 1;
+  if (days <= 7) return 3;
+  if (days <= 30) return 8;
+  // For 31+ days, calculate base rate plus additional weeks
+  const baseRate = 8; // First 30 days
+  const remainingDays = days - 30;
+  const additionalWeeks = Math.ceil(remainingDays / 7);
+  return baseRate + (additionalWeeks * 2);
 };
 
 export const calculateTotal = (
@@ -110,11 +118,15 @@ export const calculateTotal = (
   const section4x4Price = 75;
   const section4x8Price = 150;
   
-  const sectionsCost = (sections.sections4x8 * section4x8Price) + 
-                      (sections.sections4x4 * section4x4Price);
+  const baseSectionsCost = (sections.sections4x8 * section4x8Price) + 
+                          (sections.sections4x4 * section4x4Price);
   
   let dailyCosts = 0;
   let oneTimetCosts = 0;
+
+  // Calculate daily rate with multiplier
+  const rateMultiplier = calculateDailyRateMultiplier(days);
+  dailyCosts = baseSectionsCost;
 
   // Handle carpet separately (one-time cost)
   if (selectedServices.includes("carpet")) {
@@ -128,9 +140,6 @@ export const calculateTotal = (
     oneTimetCosts += carpetPrice * (width * depth);
   }
 
-  // Add daily costs
-  dailyCosts += sectionsCost;
-
   // Handle skirt separately (daily cost)
   if (selectedServices.includes("skirt")) {
     dailyCosts += calculateSkirtPrice(selectedServices, width, depth);
@@ -143,27 +152,28 @@ export const calculateTotal = (
 
   // Add Brooklyn warehouse prep fee if applicable (only once)
   if (warehouseLocation === "ny") {
-    oneTimetCosts += 50; // $50 BK Warehouse Prep Fee
+    oneTimetCosts += 50;
   }
 
-  // Add delivery fee only if both conditions are met
+  // Add delivery fee
   const deliveryFee = calculateDeliveryFee(width, depth, deliveryZipCode || null, deliveryOption || null);
   oneTimetCosts += deliveryFee;
+
+  // Apply rate multiplier to daily costs
+  dailyCosts = dailyCosts * rateMultiplier;
 
   console.log("Calculated totals:", {
     dailyCosts,
     oneTimetCosts,
     deliveryFee,
-    totalCost: (dailyCosts * days) + oneTimetCosts
+    rateMultiplier,
+    totalCost: (dailyCosts) + oneTimetCosts
   });
-
-  // Calculate final total
-  const totalCost = (dailyCosts * days) + oneTimetCosts;
 
   return {
     dailyCosts,
     oneTimetCosts,
-    totalCost,
+    totalCost: (dailyCosts) + oneTimetCosts,
     deliveryFee
   };
 };
