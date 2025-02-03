@@ -127,12 +127,11 @@ const QuoteCalculator = () => {
               deliveryOption={deliveryOption}
               onDeliveryOptionChange={(value) => {
                 setDeliveryOption(value);
+                // Reset warehouse location and zip code based on delivery option
                 if (value === "delivery") {
-                  // Reset warehouse location when switching to delivery
-                  setWarehouseLocation(null);
-                } else {
-                  // Clear delivery zip code when switching to pickup
-                  setDeliveryZipCode(null);
+                  setWarehouseLocation(null); // Reset warehouse location when switching to delivery
+                } else if (value === "pickup") {
+                  setDeliveryZipCode(null); // Clear delivery zip code when switching to pickup
                 }
               }}
               onWarehouseLocationChange={(location) => setWarehouseLocation(location)}
