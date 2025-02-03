@@ -1,10 +1,10 @@
 import React from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Label } from "./ui/label";
 import DeliveryDetailsForm from "./delivery/DeliveryDetailsForm";
 import PickupDetailsForm from "./delivery/PickupDetailsForm";
+import DeliveryOptionSelector from "./delivery/DeliveryOptionSelector";
+import { useDeliveryFormState } from "@/hooks/useDeliveryFormState";
 
 interface DeliveryFormProps {
   isOpen: boolean;
@@ -23,50 +23,17 @@ const DeliveryForm = ({
   onWarehouseLocationChange,
   onDeliveryZipCodeChange,
 }: DeliveryFormProps) => {
-  const [deliveryDetails, setDeliveryDetails] = React.useState({
-    deliveryDate: null,
-    deliveryTime: null,
-    pickupDate: null,
-    pickupTime: null,
-    venueName: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    comments: "",
-  });
-
-  const [pickupDetails, setPickupDetails] = React.useState({
-    warehouseLocation: null as "nj" | "ny" | null,
-    pickupDate: null as Date | null,
-    returnDate: null as Date | null,
-    comments: "",
-  });
+  const {
+    deliveryDetails,
+    setDeliveryDetails,
+    pickupDetails,
+    setPickupDetails,
+  } = useDeliveryFormState(deliveryOption, onWarehouseLocationChange);
 
   const isWeekday = (date: Date) => {
     const day = date.getDay();
     return day !== 0 && day !== 6;
   };
-
-  // Reset pickup details when switching to delivery mode
-  React.useEffect(() => {
-    if (deliveryOption === "delivery") {
-      setPickupDetails(prev => ({
-        ...prev,
-        warehouseLocation: null,
-        pickupDate: null,
-        returnDate: null,
-        comments: "",
-      }));
-      onWarehouseLocationChange(null);
-    }
-  }, [deliveryOption, onWarehouseLocationChange]);
-
-  // Update warehouse location when it changes
-  React.useEffect(() => {
-    onWarehouseLocationChange(pickupDetails.warehouseLocation);
-  }, [pickupDetails.warehouseLocation, onWarehouseLocationChange]);
 
   return (
     <Collapsible open={isOpen} onOpenChange={onOpenChange}>
@@ -77,23 +44,10 @@ const DeliveryForm = ({
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="space-y-6 pt-4">
-            <div className="space-y-4">
-              <h3 className="font-medium text-lg">Do you need delivery?</h3>
-              <RadioGroup 
-                value={deliveryOption || ""} 
-                onValueChange={(value) => onDeliveryOptionChange(value as "delivery" | "pickup")}
-                className="space-y-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="delivery" id="delivery" />
-                  <Label htmlFor="delivery">YES, provide quote for delivery</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="pickup" id="pickup" />
-                  <Label htmlFor="pickup">NO, I will pick up from your warehouse (COI Required)</Label>
-                </div>
-              </RadioGroup>
-            </div>
+            <DeliveryOptionSelector
+              deliveryOption={deliveryOption}
+              onDeliveryOptionChange={onDeliveryOptionChange}
+            />
 
             {deliveryOption === "delivery" && (
               <DeliveryDetailsForm
