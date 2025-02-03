@@ -1,83 +1,40 @@
-import React, { useState } from "react";
+import React from "react";
 import PropertyForm from "./PropertyForm";
 import ServicesForm from "./ServicesForm";
 import PriceSummary from "./PriceSummary";
 import DeliveryForm from "./DeliveryForm";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { toast } from "./ui/use-toast";
 import ContinueToDeliverySection from "./quote/ContinueToDeliverySection";
 import ContinueToSetupSection from "./quote/ContinueToSetupSection";
 import SetupSection from "./quote/SetupSection";
-import ActionButtons from "./quote/ActionButtons";
+import FormActions from "./quote/FormActions";
+import { useQuoteState } from "@/hooks/useQuoteState";
 
 const QuoteCalculator = () => {
-  const [stageDimensions, setStageDimensions] = useState({
-    width: 0,
-    depth: 0,
-    height: 0,
-    days: 1,
-  });
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [isServicesOpen, setIsServicesOpen] = useState(false);
-  const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
-  const [deliveryOption, setDeliveryOption] = useState<"delivery" | "pickup" | null>(null);
-  const [continueToDelivery, setContinueToDelivery] = useState<"yes" | "no" | null>(null);
-  const [continueToSetup, setContinueToSetup] = useState<"yes" | "no" | null>(null);
-  const [isSetupOpen, setIsSetupOpen] = useState(false);
-  const [warehouseLocation, setWarehouseLocation] = useState<"nj" | "ny" | null>(null);
-  const [deliveryZipCode, setDeliveryZipCode] = useState<string | null>(null);
-
-  const handleDimensionUpdate = (field: string, value: number) => {
-    setStageDimensions((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleToggleService = (serviceId: string) => {
-    setSelectedServices((prev) =>
-      prev.includes(serviceId)
-        ? prev.filter((id) => id !== serviceId)
-        : [...prev, serviceId]
-    );
-  };
-
-  const handlePlaceOrder = () => {
-    toast({
-      title: "Order Placed",
-      description: "Your order has been placed successfully.",
-    });
-  };
-
-  const handlePrintQuote = () => {
-    toast({
-      title: "Print Quote",
-      description: "Your quote is being prepared for printing.",
-    });
-    window.print();
-  };
-
-  const handleResetForm = () => {
-    setStageDimensions({ width: 0, depth: 0, height: 0, days: 1 });
-    setSelectedServices([]);
-    setDeliveryOption(null);
-    setContinueToDelivery(null);
-    setContinueToSetup(null);
-    setWarehouseLocation(null);
-    setDeliveryZipCode(null);
-    toast({
-      title: "Form Reset",
-      description: "All fields have been reset to their default values.",
-    });
-  };
-
-  const handleEmailQuote = () => {
-    toast({
-      title: "Quote Emailed",
-      description: "A copy of your quote has been sent to your email.",
-    });
-  };
+  const {
+    stageDimensions,
+    selectedServices,
+    isServicesOpen,
+    isDeliveryOpen,
+    deliveryOption,
+    continueToDelivery,
+    continueToSetup,
+    isSetupOpen,
+    warehouseLocation,
+    deliveryZipCode,
+    handleDimensionUpdate,
+    handleToggleService,
+    handleResetForm,
+    setIsServicesOpen,
+    setIsDeliveryOpen,
+    setDeliveryOption,
+    setContinueToDelivery,
+    setContinueToSetup,
+    setIsSetupOpen,
+    setWarehouseLocation,
+    setDeliveryZipCode,
+  } = useQuoteState();
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -112,7 +69,6 @@ const QuoteCalculator = () => {
             onContinueToDeliveryChange={(value) => {
               setContinueToDelivery(value);
               if (value === "no") {
-                // Reset delivery-related states when user selects "no"
                 setDeliveryOption(null);
                 setWarehouseLocation(null);
                 setDeliveryZipCode(null);
@@ -127,12 +83,11 @@ const QuoteCalculator = () => {
               deliveryOption={deliveryOption}
               onDeliveryOptionChange={(value) => {
                 setDeliveryOption(value);
-                // Reset warehouse location and zip code based on delivery option
                 if (value === "delivery") {
-                  setWarehouseLocation(null); // Reset warehouse location when switching to delivery
-                  setDeliveryZipCode(null); // Also reset zip code when switching to delivery
+                  setWarehouseLocation(null);
+                  setDeliveryZipCode(null);
                 } else if (value === "pickup") {
-                  setDeliveryZipCode(null); // Clear delivery zip code when switching to pickup
+                  setDeliveryZipCode(null);
                 }
               }}
               onWarehouseLocationChange={(location) => setWarehouseLocation(location)}
@@ -161,12 +116,7 @@ const QuoteCalculator = () => {
               deliveryZipCode={deliveryZipCode}
               deliveryOption={deliveryOption}
             />
-            <ActionButtons
-              onResetForm={handleResetForm}
-              onEmailQuote={handleEmailQuote}
-              onPrintQuote={handlePrintQuote}
-              onPlaceOrder={handlePlaceOrder}
-            />
+            <FormActions onResetForm={handleResetForm} />
           </div>
         </div>
       </div>
