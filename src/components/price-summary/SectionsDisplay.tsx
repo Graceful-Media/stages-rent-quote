@@ -10,11 +10,11 @@ const SectionsDisplay = ({ sections4x8, sections4x4, totalLegs }: SectionsDispla
   return (
     <div className="space-y-3">
       <div className="flex justify-between text-sm">
-        <span>4'x8' Sections:</span>
+        <span>4'x8' Staging Decks:</span>
         <span>{sections4x8}</span>
       </div>
       <div className="flex justify-between text-sm">
-        <span>4'x4' Sections:</span>
+        <span>4'x4' Staging Decks:</span>
         <span>{sections4x4}</span>
       </div>
       <div className="flex justify-between text-sm">
