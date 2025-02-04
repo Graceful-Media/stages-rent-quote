@@ -17,7 +17,7 @@ const SetupSection = ({ isOpen, onOpenChange }: SetupSectionProps) => {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="p-4">
-            <p>Set Up Quote options will be added here.</p>
+            <p>Set up quote is NOT a final estimate pending final</p>
           </div>
         </CollapsibleContent>
       </div>
