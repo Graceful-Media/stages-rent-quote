@@ -124,16 +124,17 @@ const QuoteCalculator = () => {
             />
           )}
         </div>
-      <div className="lg:col-span-1">
-        <div className="space-y-6">
-          <PriceSummary
-            {...stageDimensions}
-            selectedServices={selectedServices}
-            warehouseLocation={warehouseLocation}
-            deliveryZipCode={deliveryZipCode}
-            deliveryOption={deliveryOption}
-          />
-          <FormActions onResetForm={handleResetForm} quoteData={quoteData} />
+        <div className="lg:col-span-1">
+          <div className="space-y-6">
+            <PriceSummary
+              {...stageDimensions}
+              selectedServices={selectedServices}
+              warehouseLocation={warehouseLocation}
+              deliveryZipCode={deliveryZipCode}
+              deliveryOption={deliveryOption}
+            />
+            <FormActions onResetForm={handleResetForm} quoteData={quoteData} />
+          </div>
         </div>
       </div>
     </div>
