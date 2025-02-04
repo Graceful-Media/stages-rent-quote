@@ -21,8 +21,6 @@ interface PriceSummaryProps {
   warehouseLocation?: "nj" | "ny" | null;
   deliveryZipCode?: string | null;
   deliveryOption?: "delivery" | "pickup" | null;
-  startDate: Date | null;
-  endDate: Date | null;
 }
 
 const PriceSummary = ({
@@ -34,8 +32,6 @@ const PriceSummary = ({
   warehouseLocation,
   deliveryZipCode,
   deliveryOption,
-  startDate,
-  endDate,
 }: PriceSummaryProps) => {
   const sections = calculateSections(width, depth);
   const totalLegs = calculateTotalLegs(width, depth);
@@ -50,8 +46,6 @@ const PriceSummary = ({
           depth={depth} 
           height={height} 
           days={days}
-          startDate={startDate}
-          endDate={endDate}
         />
         
         <SectionsDisplay 

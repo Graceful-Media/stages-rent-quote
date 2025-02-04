@@ -97,22 +97,6 @@ export const calculateSkirtPrice = (selectedServices: string[], width: number, d
   return totalLength * 3; // $3 per linear foot
 };
 
-export const calculateRateMultiplier = (days: number): number => {
-  console.log('Calculating rate multiplier for days:', days);
-  
-  if (days <= 3) {
-    return 1;
-  } else if (days <= 7) {
-    return 3;
-  } else if (days <= 30) {
-    return 8;
-  } else {
-    // For 31+ days, calculate extra weeks
-    const extraWeeks = Math.floor((days - 30) / 7);
-    return 8 + (2 * extraWeeks);
-  }
-};
-
 export const calculateTotal = (
   width: number,
   depth: number,
@@ -166,24 +150,18 @@ export const calculateTotal = (
   const deliveryFee = calculateDeliveryFee(width, depth, deliveryZipCode || null, deliveryOption || null);
   oneTimetCosts += deliveryFee;
 
-  // Apply rate multiplier based on rental duration
-  const rateMultiplier = calculateRateMultiplier(days);
-  console.log('Rate multiplier:', rateMultiplier);
-  
-  // Calculate final total with rate multiplier
-  const totalDailyCosts = dailyCosts * rateMultiplier;
-  const totalCost = totalDailyCosts + oneTimetCosts;
-
-  console.log('Calculated totals:', {
-    dailyCosts: totalDailyCosts,
+  console.log("Calculated totals:", {
+    dailyCosts,
     oneTimetCosts,
     deliveryFee,
-    rateMultiplier,
-    totalCost
+    totalCost: (dailyCosts * days) + oneTimetCosts
   });
 
+  // Calculate final total
+  const totalCost = (dailyCosts * days) + oneTimetCosts;
+
   return {
-    dailyCosts: totalDailyCosts,
+    dailyCosts,
     oneTimetCosts,
     totalCost,
     deliveryFee
