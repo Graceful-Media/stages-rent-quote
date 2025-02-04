@@ -17,7 +17,7 @@ const SetupSection = ({ isOpen, onOpenChange }: SetupSectionProps) => {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="p-4">
-            <p>Set up quote is NOT a final estimate pending final</p>
+            <p>Set up quote is pending final layout, production schedule, and labor requirements. It is subject to change. We will notify you prior to confirmation.</p>
           </div>
         </CollapsibleContent>
       </div>
