@@ -1,11 +1,22 @@
 import { toast } from "@/components/ui/use-toast";
 import ActionButtons from "./ActionButtons";
+import EmailQuoteDialog from "./EmailQuoteDialog";
 
 interface FormActionsProps {
   onResetForm: () => void;
+  quoteData: {
+    dimensions: {
+      width: number;
+      depth: number;
+      height: number;
+      days: number;
+    };
+    selectedServices: string[];
+    totalCost: number;
+  };
 }
 
-const FormActions = ({ onResetForm }: FormActionsProps) => {
+const FormActions = ({ onResetForm, quoteData }: FormActionsProps) => {
   const handlePlaceOrder = () => {
     toast({
       title: "Order Placed",
@@ -21,13 +32,6 @@ const FormActions = ({ onResetForm }: FormActionsProps) => {
     window.print();
   };
 
-  const handleEmailQuote = () => {
-    toast({
-      title: "Quote Emailed",
-      description: "A copy of your quote has been sent to your email.",
-    });
-  };
-
   const handleResetForm = () => {
     onResetForm();
     toast({
@@ -37,12 +41,18 @@ const FormActions = ({ onResetForm }: FormActionsProps) => {
   };
 
   return (
-    <ActionButtons
-      onResetForm={handleResetForm}
-      onEmailQuote={handleEmailQuote}
-      onPrintQuote={handlePrintQuote}
-      onPlaceOrder={handlePlaceOrder}
-    />
+    <div className="grid grid-cols-2 gap-4">
+      <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+        Reset Form
+      </Button>
+      <EmailQuoteDialog quoteData={quoteData} />
+      <Button onClick={handlePrintQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+        Print Quote
+      </Button>
+      <Button onClick={handlePlaceOrder} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+        Place Order
+      </Button>
+    </div>
   );
 };
 

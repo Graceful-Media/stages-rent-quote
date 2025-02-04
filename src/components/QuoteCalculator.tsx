@@ -10,6 +10,7 @@ import ContinueToSetupSection from "./quote/ContinueToSetupSection";
 import SetupSection from "./quote/SetupSection";
 import FormActions from "./quote/FormActions";
 import { useQuoteState } from "@/hooks/useQuoteState";
+import { calculateTotal } from "@/utils/priceCalculations";
 
 const QuoteCalculator = () => {
   const {
@@ -35,6 +36,22 @@ const QuoteCalculator = () => {
     setWarehouseLocation,
     setDeliveryZipCode,
   } = useQuoteState();
+
+  const totals = calculateTotal(
+    stageDimensions.width,
+    stageDimensions.depth,
+    stageDimensions.days,
+    selectedServices,
+    warehouseLocation,
+    deliveryZipCode,
+    deliveryOption
+  );
+
+  const quoteData = {
+    dimensions: stageDimensions,
+    selectedServices,
+    totalCost: totals.totalCost,
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -107,17 +124,16 @@ const QuoteCalculator = () => {
             />
           )}
         </div>
-        <div className="lg:col-span-1">
-          <div className="space-y-6">
-            <PriceSummary
-              {...stageDimensions}
-              selectedServices={selectedServices}
-              warehouseLocation={warehouseLocation}
-              deliveryZipCode={deliveryZipCode}
-              deliveryOption={deliveryOption}
-            />
-            <FormActions onResetForm={handleResetForm} />
-          </div>
+      <div className="lg:col-span-1">
+        <div className="space-y-6">
+          <PriceSummary
+            {...stageDimensions}
+            selectedServices={selectedServices}
+            warehouseLocation={warehouseLocation}
+            deliveryZipCode={deliveryZipCode}
+            deliveryOption={deliveryOption}
+          />
+          <FormActions onResetForm={handleResetForm} quoteData={quoteData} />
         </div>
       </div>
     </div>
