@@ -9,7 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      quotes: {
+        Row: {
+          created_at: string
+          delivery_option: string | null
+          delivery_zip_code: string | null
+          dimensions: Json
+          id: string
+          recipient_email: string | null
+          selected_services: string[]
+          status: Database["public"]["Enums"]["quote_status"] | null
+          total_cost: number
+          updated_at: string
+          user_id: string
+          warehouse_location: string | null
+        }
+        Insert: {
+          created_at?: string
+          delivery_option?: string | null
+          delivery_zip_code?: string | null
+          dimensions: Json
+          id?: string
+          recipient_email?: string | null
+          selected_services: string[]
+          status?: Database["public"]["Enums"]["quote_status"] | null
+          total_cost: number
+          updated_at?: string
+          user_id: string
+          warehouse_location?: string | null
+        }
+        Update: {
+          created_at?: string
+          delivery_option?: string | null
+          delivery_zip_code?: string | null
+          dimensions?: Json
+          id?: string
+          recipient_email?: string | null
+          selected_services?: string[]
+          status?: Database["public"]["Enums"]["quote_status"] | null
+          total_cost?: number
+          updated_at?: string
+          user_id?: string
+          warehouse_location?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +62,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      quote_status: "pending" | "sent" | "accepted" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
