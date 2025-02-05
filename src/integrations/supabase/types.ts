@@ -21,7 +21,7 @@ export type Database = {
           status: Database["public"]["Enums"]["quote_status"] | null
           total_cost: number
           updated_at: string
-          user_id: string
+          user_id: string | null
           warehouse_location: string | null
         }
         Insert: {
@@ -35,7 +35,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["quote_status"] | null
           total_cost: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           warehouse_location?: string | null
         }
         Update: {
@@ -49,7 +49,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["quote_status"] | null
           total_cost?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           warehouse_location?: string | null
         }
         Relationships: []

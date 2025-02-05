@@ -49,35 +49,6 @@ const EmailQuoteDialog = ({
     setIsLoading(true);
 
     try {
-      // Get the current user
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast.error("You must be logged in to send quotes");
-        return;
-      }
-
-      // Save quote to database
-      const { error: dbError } = await supabase
-        .from('quotes')
-        .insert({
-          user_id: user.id,
-          dimensions: quoteData.dimensions,
-          selected_services: quoteData.selectedServices,
-          total_cost: quoteData.totalCost,
-          delivery_option: deliveryOption,
-          delivery_zip_code: deliveryZipCode,
-          warehouse_location: warehouseLocation,
-          recipient_email: email,
-        });
-
-      if (dbError) {
-        console.error("Error saving quote:", dbError);
-        toast.error("Failed to save quote");
-        return;
-      }
-
-      // Send email
       const { error: emailError } = await supabase.functions.invoke('send-quote-email', {
         body: {
           recipientEmail: email,
@@ -92,7 +63,11 @@ const EmailQuoteDialog = ({
 
       if (emailError) {
         console.error("Error sending email:", emailError);
-        toast.error("Failed to send email");
+        if (emailError.message.includes("Rate limit exceeded")) {
+          toast.error("Too many quote requests. Please try again later.");
+        } else {
+          toast.error("Failed to send email");
+        }
         return;
       }
 
