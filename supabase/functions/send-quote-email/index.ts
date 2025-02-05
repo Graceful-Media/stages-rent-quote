@@ -49,7 +49,7 @@ const handler = async (req: Request): Promise<Response> => {
     }: QuoteEmailRequest = await req.json();
 
     const emailResponse = await resend.emails.send({
-      from: "Stage Rentals <quotes@gracefulmedia.org>",
+      from: "Stage Rentals <mail@quotes.proavsource.com>",
       to: [recipientEmail],
       subject: "Your Stage Rental Quote",
       html: `
