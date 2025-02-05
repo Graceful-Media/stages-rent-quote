@@ -45,7 +45,13 @@ const Sidebar = ({
           deliveryZipCode={deliveryZipCode}
           deliveryOption={deliveryOption}
         />
-        <FormActions onResetForm={handleResetForm} quoteData={quoteData} />
+        <FormActions 
+          onResetForm={handleResetForm} 
+          quoteData={quoteData}
+          deliveryOption={deliveryOption}
+          deliveryZipCode={deliveryZipCode}
+          warehouseLocation={warehouseLocation}
+        />
       </div>
     </div>
   );

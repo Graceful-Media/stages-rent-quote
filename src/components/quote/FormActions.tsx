@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import EmailQuoteDialog from "./EmailQuoteDialog";
 
 interface FormActionsProps {
@@ -14,19 +14,26 @@ interface FormActionsProps {
     selectedServices: string[];
     totalCost: number;
   };
+  deliveryOption: "delivery" | "pickup" | null;
+  deliveryZipCode: string | null;
+  warehouseLocation: "nj" | "ny" | null;
 }
 
-const FormActions = ({ onResetForm, quoteData }: FormActionsProps) => {
+const FormActions = ({ 
+  onResetForm, 
+  quoteData,
+  deliveryOption,
+  deliveryZipCode,
+  warehouseLocation,
+}: FormActionsProps) => {
   const handlePlaceOrder = () => {
-    toast({
-      title: "Order Placed",
+    toast.success("Order Placed", {
       description: "Your order has been placed successfully.",
     });
   };
 
   const handlePrintQuote = () => {
-    toast({
-      title: "Print Quote",
+    toast.success("Print Quote", {
       description: "Your quote is being prepared for printing.",
     });
     window.print();
@@ -34,8 +41,7 @@ const FormActions = ({ onResetForm, quoteData }: FormActionsProps) => {
 
   const handleResetForm = () => {
     onResetForm();
-    toast({
-      title: "Form Reset",
+    toast.success("Form Reset", {
       description: "All fields have been reset to their default values.",
     });
   };
@@ -45,7 +51,12 @@ const FormActions = ({ onResetForm, quoteData }: FormActionsProps) => {
       <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
         Reset Form
       </Button>
-      <EmailQuoteDialog quoteData={quoteData} />
+      <EmailQuoteDialog 
+        quoteData={quoteData}
+        deliveryOption={deliveryOption}
+        deliveryZipCode={deliveryZipCode}
+        warehouseLocation={warehouseLocation}
+      />
       <Button onClick={handlePrintQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
         Print Quote
       </Button>
