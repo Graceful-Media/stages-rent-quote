@@ -9,6 +9,24 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      quote_email_rate_limits: {
+        Row: {
+          count: number
+          ip_address: string
+          last_reset: string
+        }
+        Insert: {
+          count?: number
+          ip_address: string
+          last_reset?: string
+        }
+        Update: {
+          count?: number
+          ip_address?: string
+          last_reset?: string
+        }
+        Relationships: []
+      }
       quotes: {
         Row: {
           created_at: string

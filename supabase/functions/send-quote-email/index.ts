@@ -32,10 +32,6 @@ const isValidEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
-const getRateLimitKey = (ip: string): string => {
-  return `rate_limit:quote_email:${ip}`;
-};
-
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -46,21 +42,23 @@ const handler = async (req: Request): Promise<Response> => {
     const clientIp = req.headers.get("x-forwarded-for") || "unknown";
     console.log("Request from IP:", clientIp);
 
-    // Create Redis-like key for rate limiting
-    const rateLimitKey = getRateLimitKey(clientIp);
-    
-    // Initialize Supabase client with service role key for internal operations
+    // Initialize Supabase client
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
     // Check rate limit
-    const { data: rateLimitData } = await supabaseAdmin
+    const { data: rateLimitData, error: rateLimitError } = await supabaseAdmin
       .from("quote_email_rate_limits")
       .select("count, last_reset")
       .eq("ip_address", clientIp)
       .single();
+
+    if (rateLimitError && rateLimitError.code !== "PGRST116") {
+      console.error("Error checking rate limit:", rateLimitError);
+      throw new Error("Failed to check rate limit");
+    }
 
     const now = new Date();
     let currentCount = 0;
@@ -105,13 +103,36 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Update rate limit counter
-    await supabaseAdmin
+    const { error: updateError } = await supabaseAdmin
       .from("quote_email_rate_limits")
       .upsert({
         ip_address: clientIp,
         count: currentCount + 1,
         last_reset: currentCount === 0 ? now.toISOString() : rateLimitData?.last_reset,
       });
+
+    if (updateError) {
+      console.error("Error updating rate limit:", updateError);
+      throw new Error("Failed to update rate limit");
+    }
+
+    // Store quote in database
+    const { error: quoteError } = await supabaseAdmin
+      .from('quotes')
+      .insert({
+        dimensions,
+        selected_services: selectedServices,
+        total_cost: totalCost,
+        delivery_option: deliveryOption,
+        delivery_zip_code: deliveryZipCode,
+        warehouse_location: warehouseLocation,
+        recipient_email: recipientEmail,
+      });
+
+    if (quoteError) {
+      console.error("Error saving quote:", quoteError);
+      throw new Error("Failed to save quote");
+    }
 
     // Send email
     const emailResponse = await resend.emails.send({
@@ -170,23 +191,6 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     console.log("Email sent successfully:", emailResponse);
-
-    // Store the quote in the database
-    const { error: dbError } = await supabaseAdmin
-      .from('quotes')
-      .insert({
-        dimensions,
-        selected_services: selectedServices,
-        total_cost: totalCost,
-        delivery_option: deliveryOption,
-        delivery_zip_code: deliveryZipCode,
-        warehouse_location: warehouseLocation,
-        recipient_email: recipientEmail,
-      });
-
-    if (dbError) {
-      console.error("Error saving quote:", dbError);
-    }
 
     return new Response(JSON.stringify(emailResponse), {
       status: 200,
