@@ -31,11 +31,13 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Rate limit exceeded");
     }
 
+    const html = await generateQuoteEmailHtml(quoteData);
+
     const emailResponse = await resend.emails.send({
       from: "Stage Rentals <mail@quotes.proavsource.com>",
       to: [quoteData.recipientEmail],
       subject: `Stage Rental Quote - ${quoteData.recipientName}`,
-      html: generateQuoteEmailHtml(quoteData),
+      html,
     });
 
     // Update rate limit counter
