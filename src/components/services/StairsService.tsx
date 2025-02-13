@@ -34,16 +34,18 @@ const StairsService = ({
   };
 
   const handleQuantityChange = (newQuantity: number) => {
-    if (onQuantityChange) {
-      // First remove the old service entry
+    if (onQuantityChange && isSelected) {
+      // Get the base service ID without quantity
       const baseServiceId = service.id.split('-qty-')[0];
+      
+      // First remove the existing service entry
       onToggle(`${baseServiceId}-qty-${quantity}`);
       
-      // Update the quantity
-      onQuantityChange(newQuantity);
-      
-      // Add the new service entry with updated quantity
-      onToggle(`${baseServiceId}-qty-${newQuantity}`);
+      // Then add the new service entry with the new quantity
+      setTimeout(() => {
+        onToggle(`${baseServiceId}-qty-${newQuantity}`);
+        onQuantityChange(newQuantity);
+      }, 0);
     }
   };
 
