@@ -22,10 +22,10 @@ interface DeliveryDateTimeSectionProps {
 
 const generateTimeOptions = () => {
   const times = [];
-  for (let hour = 9; hour <= 17; hour++) {
+  for (let hour = 0; hour < 24; hour++) {
     for (let minute of ['00', '30']) {
       const period = hour >= 12 ? 'PM' : 'AM';
-      const displayHour = hour > 12 ? hour - 12 : hour;
+      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
       const formattedHour = displayHour.toString().padStart(2, '0');
       const displayTime = `${formattedHour}:${minute} ${period}`;
       const value = `${hour.toString().padStart(2, '0')}:${minute}`; // Keep 24h format as value
@@ -40,7 +40,7 @@ const formatTimeDisplay = (time: string | null) => {
   const [hours, minutes] = time.split(':');
   const hour = parseInt(hours, 10);
   const period = hour >= 12 ? 'PM' : 'AM';
-  const displayHour = hour > 12 ? hour - 12 : hour;
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
   return `${displayHour.toString().padStart(2, '0')}:${minutes} ${period}`;
 };
 
