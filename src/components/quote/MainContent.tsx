@@ -1,12 +1,8 @@
-import React from "react";
-import PropertyForm from "../PropertyForm";
-import ServicesForm from "../ServicesForm";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { ChevronDown } from "lucide-react";
-import ContinueToDeliverySection from "./ContinueToDeliverySection";
-import ContinueToSetupSection from "./ContinueToSetupSection";
-import SetupSection from "./SetupSection";
-import DeliveryForm from "../DeliveryForm";
+import React, { useState, useEffect } from "react";
+import PropertyForm from "@/components/quote/PropertyForm";
+import ServicesForm from "@/components/quote/ServicesForm";
+import DeliveryForm from "@/components/DeliveryForm";
+import SetupSection from "@/components/quote/SetupSection";
 
 interface MainContentProps {
   stageDimensions: {
@@ -24,12 +20,12 @@ interface MainContentProps {
   selectedServices: string[];
   handleDimensionUpdate: (field: string, value: number) => void;
   handleToggleService: (serviceId: string) => void;
-  setIsServicesOpen: (open: boolean) => void;
-  setIsDeliveryOpen: (open: boolean) => void;
+  setIsServicesOpen: (isOpen: boolean) => void;
+  setIsDeliveryOpen: (isOpen: boolean) => void;
   setDeliveryOption: (option: "delivery" | "pickup" | null) => void;
-  setContinueToDelivery: (value: "yes" | "no") => void;
-  setContinueToSetup: (value: "yes" | "no") => void;
-  setIsSetupOpen: (open: boolean) => void;
+  setContinueToDelivery: (value: "yes" | "no" | null) => void;
+  setContinueToSetup: (value: "yes" | "no" | null) => void;
+  setIsSetupOpen: (isOpen: boolean) => void;
   setWarehouseLocation: (location: "nj" | "ny" | null) => void;
   setDeliveryZipCode: (zipCode: string | null) => void;
   warehouseLocation: "nj" | "ny" | null;
@@ -58,39 +54,34 @@ const MainContent = ({
   warehouseLocation,
   deliveryZipCode,
 }: MainContentProps) => {
+  const [highlightDelivery, setHighlightDelivery] = useState(false);
+
+  useEffect(() => {
+    if (deliveryOption) {
+      setHighlightDelivery(false);
+    }
+  }, [deliveryOption]);
+
+  const handleEmailDialogOpen = (open: boolean) => {
+    if (open && !deliveryOption) {
+      setHighlightDelivery(true);
+      setIsDeliveryOpen(true);
+    }
+  };
+
   return (
-    <div className="lg:col-span-2 space-y-8">
+    <div className="lg:col-span-2 space-y-6">
       <PropertyForm
-        {...stageDimensions}
-        onUpdate={handleDimensionUpdate}
+        stageDimensions={stageDimensions}
+        onDimensionUpdate={handleDimensionUpdate}
       />
       
-      <Collapsible open={isServicesOpen} onOpenChange={setIsServicesOpen}>
-        <div className="border rounded-lg p-4">
-          <CollapsibleTrigger className="flex items-center justify-between w-full">
-            <h2 className="text-2xl font-semibold text-quote-primary">Additional Services</h2>
-            <ChevronDown className={`h-6 w-6 transform transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} />
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <ServicesForm
-              selectedServices={selectedServices}
-              onToggleService={handleToggleService}
-              height={stageDimensions.height}
-            />
-          </CollapsibleContent>
-        </div>
-      </Collapsible>
-
-      <ContinueToDeliverySection
-        continueToDelivery={continueToDelivery}
-        onContinueToDeliveryChange={(value) => {
-          setContinueToDelivery(value);
-          if (value === "no") {
-            setDeliveryOption(null);
-            setWarehouseLocation(null);
-            setDeliveryZipCode(null);
-          }
-        }}
+      <ServicesForm
+        isOpen={isServicesOpen}
+        onOpenChange={setIsServicesOpen}
+        selectedServices={selectedServices}
+        onToggleService={handleToggleService}
+        height={stageDimensions.height}
       />
 
       {continueToDelivery === "yes" && (
@@ -98,24 +89,12 @@ const MainContent = ({
           isOpen={isDeliveryOpen}
           onOpenChange={setIsDeliveryOpen}
           deliveryOption={deliveryOption}
-          onDeliveryOptionChange={(value) => {
-            setDeliveryOption(value);
-            if (value === "delivery") {
-              setWarehouseLocation(null);
-              setDeliveryZipCode(null);
-            } else if (value === "pickup") {
-              setDeliveryZipCode(null);
-            }
-          }}
-          onWarehouseLocationChange={(location) => setWarehouseLocation(location)}
-          onDeliveryZipCodeChange={(zipCode) => setDeliveryZipCode(zipCode)}
+          onDeliveryOptionChange={setDeliveryOption}
+          onWarehouseLocationChange={setWarehouseLocation}
+          onDeliveryZipCodeChange={setDeliveryZipCode}
+          highlight={highlightDelivery}
         />
       )}
-
-      <ContinueToSetupSection
-        continueToSetup={continueToSetup}
-        onContinueToSetupChange={(value) => setContinueToSetup(value)}
-      />
 
       {continueToSetup === "yes" && (
         <SetupSection

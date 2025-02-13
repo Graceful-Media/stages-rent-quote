@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import DeliveryDetailsForm from "./delivery/DeliveryDetailsForm";
@@ -13,6 +14,7 @@ interface DeliveryFormProps {
   onDeliveryOptionChange: (value: "delivery" | "pickup") => void;
   onWarehouseLocationChange: (location: "nj" | "ny" | null) => void;
   onDeliveryZipCodeChange?: (zipCode: string) => void;
+  highlight?: boolean;
 }
 
 const DeliveryForm = ({
@@ -22,6 +24,7 @@ const DeliveryForm = ({
   onDeliveryOptionChange,
   onWarehouseLocationChange,
   onDeliveryZipCodeChange,
+  highlight = false,
 }: DeliveryFormProps) => {
   const {
     deliveryDetails,
@@ -36,17 +39,23 @@ const DeliveryForm = ({
   };
 
   return (
-    <Collapsible open={isOpen} onOpenChange={onOpenChange}>
+    <Collapsible open={isOpen || highlight} onOpenChange={onOpenChange}>
       <div className="border rounded-lg p-4">
         <CollapsibleTrigger className="flex items-center justify-between w-full">
-          <h2 className="text-2xl font-semibold text-quote-primary">Delivery / Pick Up</h2>
-          <ChevronDown className={`h-6 w-6 transform transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <h2 className={cn(
+            "text-2xl font-semibold",
+            highlight && !deliveryOption ? "text-red-500" : "text-quote-primary"
+          )}>
+            Delivery / Pick Up
+          </h2>
+          <ChevronDown className={`h-6 w-6 transform transition-transform ${isOpen || highlight ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="space-y-6 pt-4">
             <DeliveryOptionSelector
               deliveryOption={deliveryOption}
               onDeliveryOptionChange={onDeliveryOptionChange}
+              highlight={highlight}
             />
 
             {deliveryOption === "delivery" && (
