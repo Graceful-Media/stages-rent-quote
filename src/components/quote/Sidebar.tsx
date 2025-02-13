@@ -1,3 +1,4 @@
+
 import React from "react";
 import PriceSummary from "../PriceSummary";
 import FormActions from "./FormActions";
@@ -24,6 +25,7 @@ interface SidebarProps {
     selectedServices: string[];
     totalCost: number;
   };
+  setupCost: number;
 }
 
 const Sidebar = ({
@@ -34,6 +36,7 @@ const Sidebar = ({
   deliveryOption,
   handleResetForm,
   quoteData,
+  setupCost,
 }: SidebarProps) => {
   return (
     <div className="lg:col-span-1">
@@ -44,6 +47,7 @@ const Sidebar = ({
           warehouseLocation={warehouseLocation}
           deliveryZipCode={deliveryZipCode}
           deliveryOption={deliveryOption}
+          setupCost={setupCost}
         />
         <FormActions 
           onResetForm={handleResetForm} 
