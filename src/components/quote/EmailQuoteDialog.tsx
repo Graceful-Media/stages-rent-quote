@@ -53,6 +53,12 @@ const EmailQuoteDialog = ({
       return;
     }
 
+    if (!deliveryOption) {
+      toast.error("Please select a delivery or pickup option before requesting a quote");
+      setIsOpen(false);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -91,8 +97,16 @@ const EmailQuoteDialog = ({
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (open && !deliveryOption) {
+      toast.error("Please select a delivery or pickup option before requesting a quote");
+      return;
+    }
+    setIsOpen(open);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
           Email Me Quote
