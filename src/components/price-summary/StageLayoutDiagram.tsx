@@ -43,17 +43,26 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
 
     // Draw the total number of 4x8 sections first
     ctx.fillStyle = "#93c5fd";
+    const numAcross = Math.ceil(width / 4); // Number of 4' sections across
+    const numDeep = Math.ceil(depth / 8);   // Number of 8' sections deep
     let remainingDecksToDraw = sections4x8;
-    let currentX = startX;
-    let currentY = startY;
 
-    // Try to fill horizontally first
-    while (remainingDecksToDraw > 0) {
-      // Check if we can fit an 8' wide section
-      if (currentX + 8 * scale <= startX + width * scale) {
-        // Draw 4x8 section
-        ctx.fillRect(currentX, currentY, 8 * scale, 4 * scale);
-        ctx.strokeRect(currentX, currentY, 8 * scale, 4 * scale);
+    // Draw 4x8 sections in the correct orientation
+    for (let row = 0; row < numDeep && remainingDecksToDraw > 0; row++) {
+      for (let col = 0; col < numAcross && remainingDecksToDraw > 0; col++) {
+        // Draw 4x8 section (rotated so 4' side is along width)
+        ctx.fillRect(
+          startX + col * 4 * scale,
+          startY + row * 8 * scale,
+          4 * scale,
+          8 * scale
+        );
+        ctx.strokeRect(
+          startX + col * 4 * scale,
+          startY + row * 8 * scale,
+          4 * scale,
+          8 * scale
+        );
 
         // Add text for 4x8 sections
         ctx.fillStyle = "#1e3a8a";
@@ -61,28 +70,20 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
         ctx.textAlign = "center";
         ctx.fillText(
           "4' × 8'",
-          currentX + 4 * scale,
-          currentY + 2 * scale
+          startX + (col * 4 + 2) * scale,
+          startY + (row * 8 + 4) * scale
         );
         ctx.fillStyle = "#93c5fd";
 
-        currentX += 8 * scale;
         remainingDecksToDraw--;
-      } else {
-        // Move to next row
-        currentX = startX;
-        currentY += 4 * scale;
-        if (currentY >= startY + depth * scale) {
-          break;
-        }
       }
     }
 
     // Draw 4x4 sections in remaining space
     ctx.fillStyle = "#bfdbfe";
     remainingDecksToDraw = sections4x4;
-    currentX = startX;
-    currentY = startY;
+    let currentX = startX;
+    let currentY = startY;
 
     // Fill any remaining space with 4x4 sections
     while (remainingDecksToDraw > 0) {
@@ -90,13 +91,15 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
           currentY + 4 * scale <= startY + depth * scale) {
         // Check if this space is already occupied by a 4x8 section
         let isOccupied = false;
-        for (let i = 0; i < sections4x8; i++) {
-          const x8Start = startX + (i % Math.floor(width / 8)) * 8 * scale;
-          const y8Start = startY + Math.floor(i / Math.floor(width / 8)) * 4 * scale;
-          if (currentX >= x8Start && currentX < x8Start + 8 * scale &&
-              currentY >= y8Start && currentY < y8Start + 4 * scale) {
-            isOccupied = true;
-            break;
+        for (let row = 0; row < numDeep; row++) {
+          for (let col = 0; col < numAcross; col++) {
+            const x8Start = startX + col * 4 * scale;
+            const y8Start = startY + row * 8 * scale;
+            if (currentX >= x8Start && currentX < x8Start + 4 * scale &&
+                currentY >= y8Start && currentY < y8Start + 8 * scale) {
+              isOccupied = true;
+              break;
+            }
           }
         }
 
