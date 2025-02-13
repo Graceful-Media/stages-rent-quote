@@ -22,6 +22,7 @@ interface PriceSummaryProps {
   warehouseLocation?: "nj" | "ny" | null;
   deliveryZipCode?: string | null;
   deliveryOption?: "delivery" | "pickup" | null;
+  setupCost?: number;
 }
 
 const PriceSummary = ({
@@ -33,10 +34,11 @@ const PriceSummary = ({
   warehouseLocation,
   deliveryZipCode,
   deliveryOption,
+  setupCost = 0,
 }: PriceSummaryProps) => {
   const sections = calculateSections(width, depth);
   const totalLegs = calculateTotalLegs(width, depth);
-  const totals = calculateTotal(width, depth, days, selectedServices, warehouseLocation, deliveryZipCode, deliveryOption);
+  const totals = calculateTotal(width, depth, days, selectedServices, warehouseLocation, deliveryZipCode, deliveryOption, setupCost);
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
@@ -73,6 +75,7 @@ const PriceSummary = ({
             depth={depth}
             warehouseLocation={warehouseLocation}
             deliveryFee={totals.deliveryFee}
+            setupCost={setupCost}
           />
         </div>
 
