@@ -1,11 +1,18 @@
-import { SupabaseClient } from "@supabase/supabase-js";
+
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+
+type SupabaseClient = ReturnType<typeof createClient>;
 
 export const checkRateLimit = async (
-  supabaseAdmin: SupabaseClient,
   clientIp: string,
-  maxRequestsPerWindow: number,
-  rateLimitWindowMs: number
+  maxRequestsPerWindow: number = 5,
+  rateLimitWindowMs: number = 3600000 // 1 hour in milliseconds
 ) => {
+  const supabaseAdmin = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  );
+
   const { data: rateLimitData, error: rateLimitError } = await supabaseAdmin
     .from("quote_email_rate_limits")
     .select("count, last_reset")
@@ -34,11 +41,15 @@ export const checkRateLimit = async (
 };
 
 export const updateRateLimit = async (
-  supabaseAdmin: SupabaseClient,
   clientIp: string,
   currentCount: number,
   lastReset: string | undefined
 ) => {
+  const supabaseAdmin = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  );
+
   const { error: updateError } = await supabaseAdmin
     .from("quote_email_rate_limits")
     .upsert({

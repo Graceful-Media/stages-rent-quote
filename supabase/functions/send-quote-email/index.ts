@@ -25,8 +25,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Check rate limit
     const clientIp = req.headers.get("x-real-ip") || "unknown";
-    const isRateLimited = await checkRateLimit(clientIp);
-    if (isRateLimited) {
+    const { isLimited, currentCount, lastReset } = await checkRateLimit(clientIp);
+    
+    if (isLimited) {
       throw new Error("Rate limit exceeded");
     }
 
@@ -38,7 +39,7 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     // Update rate limit counter
-    await updateRateLimit(clientIp);
+    await updateRateLimit(clientIp, currentCount, lastReset);
 
     console.log("Email sent successfully:", emailResponse);
 
