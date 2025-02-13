@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from "react";
-import PropertyForm from "@/components/quote/PropertyForm";
-import ServicesForm from "@/components/quote/ServicesForm";
+import PropertyForm from "../PropertyForm";
+import ServicesForm from "../ServicesForm";
 import DeliveryForm from "@/components/DeliveryForm";
 import SetupSection from "@/components/quote/SetupSection";
 
