@@ -23,21 +23,26 @@ const StairsService = ({
   const quantityOptions = Array.from({ length: 10 }, (_, i) => i + 1);
 
   const handleToggle = () => {
-    // If it's selected and we're turning it off, remove the quantity suffix
     if (isSelected) {
+      // When unchecking, remove the service entirely
       const baseServiceId = service.id.split('-qty-')[0];
-      onToggle(baseServiceId);
+      onToggle(`${baseServiceId}-qty-${quantity}`);
     } else {
-      // If we're turning it on, add the quantity
+      // When checking, add with current quantity
       onToggle(`${service.id}-qty-${quantity}`);
     }
   };
 
   const handleQuantityChange = (newQuantity: number) => {
     if (onQuantityChange) {
-      onQuantityChange(newQuantity);
-      // Update the service ID with new quantity
+      // First remove the old service entry
       const baseServiceId = service.id.split('-qty-')[0];
+      onToggle(`${baseServiceId}-qty-${quantity}`);
+      
+      // Update the quantity
+      onQuantityChange(newQuantity);
+      
+      // Add the new service entry with updated quantity
       onToggle(`${baseServiceId}-qty-${newQuantity}`);
     }
   };
@@ -47,7 +52,7 @@ const StairsService = ({
       <Checkbox
         id={service.id}
         checked={isSelected}
-        onCheckedChange={() => handleToggle()}
+        onCheckedChange={handleToggle}
       />
       <div className="space-y-1 flex-grow">
         <Label
