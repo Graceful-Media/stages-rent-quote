@@ -1,5 +1,5 @@
 
-import { renderAsync } from '@react-email/components';
+import { renderAsync } from 'npm:@react-email/components@0.0.12';
 import { QuoteEmail } from './QuoteEmail';
 
 export const generateQuoteEmailHtml = async ({

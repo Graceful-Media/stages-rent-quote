@@ -1,4 +1,3 @@
-
 import {
   Body,
   Container,
@@ -10,8 +9,8 @@ import {
   Link,
   Hr,
   Img,
-} from '@react-email/components';
-import * as React from 'react';
+} from 'npm:@react-email/components@0.0.12';
+import * as React from 'npm:react@18.3.1';
 
 interface QuoteEmailProps {
   dimensions: {
