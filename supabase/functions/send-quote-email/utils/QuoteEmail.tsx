@@ -9,6 +9,7 @@ import {
   Text,
   Link,
   Hr,
+  Img,
 } from '@react-email/components';
 import * as React from 'react';
 
@@ -38,8 +39,20 @@ export const QuoteEmail = ({
     <Head />
     <Body style={main}>
       <Container style={container}>
+        {/* Header with Logo */}
+        <Section style={headerSection}>
+          <Img
+            src="https://www.stages.rent/storage/2022/06/Stage-Rent-Logo.png"
+            width="200"
+            height="auto"
+            alt="Stage Rentals Logo"
+            style={logo}
+          />
+        </Section>
+
         <Heading style={header}>Your Stage Rental Quote</Heading>
         
+        {/* Main Content */}
         <Section style={section}>
           <Heading as="h2" style={subheader}>Stage Specifications</Heading>
           <Text style={text}>
@@ -90,9 +103,13 @@ export const QuoteEmail = ({
 
         <Hr style={divider} />
 
+        {/* Enhanced Footer */}
         <Section style={footer}>
           <Text style={footerText}>
-            Thank you for choosing our stage rental services. If you have any questions or would like to proceed with this quote, please contact us.
+            Thank you for choosing Stage Rentals for your event needs. Our commitment to quality and service sets us apart.
+          </Text>
+          <Text style={footerText}>
+            <strong>Contact Us</strong>
           </Text>
           <Text style={footerText}>
             <strong>Phone:</strong> (646) 661-4078
@@ -102,6 +119,15 @@ export const QuoteEmail = ({
             <Link href="mailto:quotes@proavsource.com" style={link}>
               quotes@proavsource.com
             </Link>
+          </Text>
+          <Text style={footerText}>
+            <strong>Website:</strong>{' '}
+            <Link href="https://www.stages.rent" style={link}>
+              www.stages.rent
+            </Link>
+          </Text>
+          <Text style={footerSmallText}>
+            © {new Date().getFullYear()} Stage Rentals. All rights reserved.
           </Text>
         </Section>
       </Container>
@@ -118,6 +144,15 @@ const container = {
   margin: '0 auto',
   padding: '20px 0 48px',
   maxWidth: '600px',
+};
+
+const headerSection = {
+  textAlign: 'center' as const,
+  padding: '20px 0',
+};
+
+const logo = {
+  margin: '0 auto',
 };
 
 const header = {
@@ -190,12 +225,21 @@ const divider = {
 const footer = {
   textAlign: 'center' as const,
   margin: '30px 0 0',
+  backgroundColor: '#f8f8f8',
+  padding: '30px',
+  borderRadius: '8px',
 };
 
 const footerText = {
   color: '#666',
   fontSize: '14px',
   margin: '8px 0',
+};
+
+const footerSmallText = {
+  color: '#999',
+  fontSize: '12px',
+  margin: '20px 0 0',
 };
 
 const link = {
