@@ -1,3 +1,4 @@
+
 import { carpetColors } from "@/components/services/types";
 
 export const calculateSections = (width: number, depth: number) => {
@@ -53,7 +54,7 @@ export const calculateDeliveryFee = (
     if (distance <= 60) return 650;
     if (distance <= 150) return 900;
   } else {
-    if (distance <= 20) return 650;
+    if (distance <= 20) return 282;  // Updated delivery fee
     if (distance <= 60) return 850;
     if (distance <= 120) return 1200;
     if (distance <= 150) return 1500;
