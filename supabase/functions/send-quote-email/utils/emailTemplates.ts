@@ -1,6 +1,6 @@
 
 import { renderAsync } from 'npm:@react-email/components@0.0.12';
-import { QuoteEmail } from './QuoteEmail';
+import { QuoteEmail } from './QuoteEmail.tsx';
 
 export const generateQuoteEmailHtml = async ({
   dimensions,
