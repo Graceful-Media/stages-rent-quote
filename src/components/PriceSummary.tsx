@@ -1,3 +1,4 @@
+
 import React from "react";
 import DimensionsDisplay from "./price-summary/DimensionsDisplay";
 import SectionsDisplay from "./price-summary/SectionsDisplay";
@@ -52,6 +53,8 @@ const PriceSummary = ({
           sections4x8={sections.sections4x8}
           sections4x4={sections.sections4x4}
           totalLegs={totalLegs}
+          width={width}
+          depth={depth}
         />
 
         <div className="border-t pt-3">
