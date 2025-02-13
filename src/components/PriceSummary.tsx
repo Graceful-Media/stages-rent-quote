@@ -40,6 +40,11 @@ const PriceSummary = ({
   const totalLegs = calculateTotalLegs(width, depth);
   const totals = calculateTotal(width, depth, days, selectedServices, warehouseLocation, deliveryZipCode, deliveryOption, setupCost);
 
+  const hasDelivery = deliveryOption === "delivery";
+  const hasSetup = setupCost > 0;
+  const hasCarpet = selectedServices.some(service => service.includes("carpet"));
+  const hasWarehouseFee = warehouseLocation === "ny";
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
       <h3 className="text-xl font-semibold text-quote-primary mb-4">Price Summary</h3>
@@ -83,6 +88,10 @@ const PriceSummary = ({
           dailyCosts={totals.dailyCosts}
           oneTimetCosts={totals.oneTimetCosts}
           totalCost={totals.totalCost}
+          hasDelivery={hasDelivery}
+          hasSetup={hasSetup}
+          hasCarpet={hasCarpet}
+          hasWarehouseFee={hasWarehouseFee}
         />
       </div>
     </div>
