@@ -1,3 +1,4 @@
+
 import React from "react";
 import { carpetColors } from "../services/types";
 
@@ -7,6 +8,7 @@ interface OneTimeChargesProps {
   depth: number;
   warehouseLocation?: "nj" | "ny" | null;
   deliveryFee: number;
+  setupCost?: number;
 }
 
 const OneTimeCharges = ({
@@ -14,7 +16,8 @@ const OneTimeCharges = ({
   width,
   depth,
   warehouseLocation,
-  deliveryFee
+  deliveryFee,
+  setupCost = 0,
 }: OneTimeChargesProps) => {
   const calculateCarpetPrice = () => {
     if (!selectedServices.includes("carpet")) return 0;
@@ -51,6 +54,12 @@ const OneTimeCharges = ({
         <div className="flex justify-between text-sm">
           <span>Delivery (Round Trip):</span>
           <span>${deliveryFee.toLocaleString()}</span>
+        </div>
+      )}
+      {setupCost > 0 && (
+        <div className="flex justify-between text-sm">
+          <span>Set Up Cost:</span>
+          <span>${setupCost.toLocaleString()}</span>
         </div>
       )}
     </div>

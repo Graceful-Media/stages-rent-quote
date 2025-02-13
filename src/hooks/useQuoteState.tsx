@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 export const useQuoteState = () => {
@@ -15,6 +16,7 @@ export const useQuoteState = () => {
   const [continueToDelivery, setContinueToDelivery] = useState<"yes" | "no" | null>(null);
   const [continueToSetup, setContinueToSetup] = useState<"yes" | "no" | null>(null);
   const [isSetupOpen, setIsSetupOpen] = useState(false);
+  const [setupCost, setSetupCost] = useState(0);
   const [warehouseLocation, setWarehouseLocation] = useState<"nj" | "ny" | null>(null);
   const [deliveryZipCode, setDeliveryZipCode] = useState<string | null>(null);
 
@@ -41,6 +43,7 @@ export const useQuoteState = () => {
     setContinueToSetup(null);
     setWarehouseLocation(null);
     setDeliveryZipCode(null);
+    setSetupCost(0);
   };
 
   return {
@@ -52,6 +55,7 @@ export const useQuoteState = () => {
     continueToDelivery,
     continueToSetup,
     isSetupOpen,
+    setupCost,
     warehouseLocation,
     deliveryZipCode,
     handleDimensionUpdate,
@@ -63,6 +67,7 @@ export const useQuoteState = () => {
     setContinueToDelivery,
     setContinueToSetup,
     setIsSetupOpen,
+    setSetupCost,
     setWarehouseLocation,
     setDeliveryZipCode,
   };

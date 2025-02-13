@@ -118,7 +118,8 @@ export const calculateTotal = (
   selectedServices: string[],
   warehouseLocation?: "nj" | "ny" | null,
   deliveryZipCode?: string | null,
-  deliveryOption?: "delivery" | "pickup" | null
+  deliveryOption?: "delivery" | "pickup" | null,
+  setupCost: number = 0
 ) => {
   const sections = calculateSections(width, depth);
   const section4x4Price = 75;
@@ -128,7 +129,7 @@ export const calculateTotal = (
                       (sections.sections4x4 * section4x4Price);
   
   let dailyCosts = sectionsCost;
-  let oneTimetCosts = 0;
+  let oneTimetCosts = setupCost;
 
   // Calculate stairs cost first
   const stairsCost = calculateStairsPrice(selectedServices);
