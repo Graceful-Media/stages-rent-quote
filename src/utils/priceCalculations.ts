@@ -2,10 +2,51 @@ import { carpetColors } from "@/components/services/types";
 
 export const calculateSections = (width: number, depth: number) => {
   const area = width * depth;
-  const sections4x8Count = Math.floor(area / 32);
-  const remaining = area % 32;
-  const sections4x4Count = Math.ceil(remaining / 16);
   
+  // Initialize counts
+  let sections4x8Count = 0;
+  let sections4x4Count = 0;
+  
+  // Calculate the maximum number of 4x8 sections that can fit in the width
+  const max4x8InWidth = Math.floor(width / 8);
+  // Calculate the maximum number of 4x8 sections that can fit in the depth
+  const max4x8InDepth = Math.floor(depth / 8);
+  
+  // Calculate remaining width and depth after placing 4x8 sections
+  const remainingWidth = width % 8;
+  const remainingDepth = depth % 8;
+  
+  // If we can fit 4x8 sections in both dimensions
+  if (max4x8InWidth > 0 && max4x8InDepth > 0) {
+    sections4x8Count = max4x8InWidth * max4x8InDepth;
+  }
+  
+  // Calculate 4x4 sections needed for remaining areas
+  
+  // Handle remaining width (full depth)
+  if (remainingWidth > 0) {
+    const sections4x4InRemainingWidth = Math.ceil(remainingWidth / 4);
+    sections4x4Count += sections4x4InRemainingWidth * Math.ceil(depth / 4);
+  }
+  
+  // Handle remaining depth (excluding the part already counted in remaining width)
+  if (remainingDepth > 0) {
+    const fullWidthSections = Math.floor(width / 8) * 8;
+    const sections4x4InRemainingDepth = Math.ceil(remainingDepth / 4);
+    sections4x4Count += sections4x4InRemainingDepth * Math.floor(fullWidthSections / 4);
+  }
+  
+  console.log("Stage section calculation:", {
+    width,
+    depth,
+    sections4x8: sections4x8Count,
+    sections4x4: sections4x4Count,
+    max4x8InWidth,
+    max4x8InDepth,
+    remainingWidth,
+    remainingDepth
+  });
+
   return {
     sections4x8: sections4x8Count,
     sections4x4: sections4x4Count
