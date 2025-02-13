@@ -1,4 +1,3 @@
-
 import { carpetColors } from "@/components/services/types";
 
 export const calculateSections = (width: number, depth: number) => {
@@ -104,7 +103,10 @@ export const calculateSkirtPrice = (selectedServices: string[], width: number, d
 
 export const calculateStairsPrice = (selectedServices: string[]) => {
   let totalPrice = 0;
-  selectedServices.forEach(serviceId => {
+  // Get unique service IDs (prevent duplicates)
+  const uniqueServices = new Set(selectedServices);
+  
+  uniqueServices.forEach(serviceId => {
     if (serviceId.includes("-qty-")) {
       const [baseServiceId, quantity] = serviceId.split("-qty-");
       if (baseServiceId === "stairs-with-rails") {
@@ -114,6 +116,7 @@ export const calculateStairsPrice = (selectedServices: string[]) => {
       }
     }
   });
+  
   return totalPrice;
 };
 
@@ -133,8 +136,12 @@ export const calculateTotal = (
   const sectionsCost = (sections.sections4x8 * section4x8Price) + 
                       (sections.sections4x4 * section4x4Price);
   
-  let dailyCosts = 0;
+  let dailyCosts = sectionsCost;
   let oneTimetCosts = 0;
+
+  // Calculate stairs cost first
+  const stairsCost = calculateStairsPrice(selectedServices);
+  dailyCosts += stairsCost;
 
   // Handle carpet separately (one-time cost)
   if (selectedServices.includes("carpet")) {
@@ -147,12 +154,6 @@ export const calculateTotal = (
     
     oneTimetCosts += carpetPrice * (width * depth);
   }
-
-  // Add daily costs
-  dailyCosts += sectionsCost;
-
-  // Add stairs costs (daily)
-  dailyCosts += calculateStairsPrice(selectedServices);
 
   // Handle skirt separately (daily cost)
   if (selectedServices.includes("skirt")) {
@@ -178,16 +179,13 @@ export const calculateTotal = (
     oneTimetCosts,
     deliveryFee,
     totalCost: (dailyCosts * days) + oneTimetCosts,
-    stairsCost: calculateStairsPrice(selectedServices)
+    stairsCost
   });
-
-  // Calculate final total
-  const totalCost = (dailyCosts * days) + oneTimetCosts;
 
   return {
     dailyCosts,
     oneTimetCosts,
-    totalCost,
+    totalCost: (dailyCosts * days) + oneTimetCosts,
     deliveryFee
   };
 };
