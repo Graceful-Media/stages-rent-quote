@@ -41,25 +41,19 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
     ctx.lineWidth = 2;
     ctx.strokeRect(startX, startY, width * scale, depth * scale);
 
-    // Draw 4x8 sections
+    // Draw the total number of 4x8 sections first
     ctx.fillStyle = "#93c5fd";
-    const max4x8InWidth = Math.floor(width / 8);
-    const max4x8InDepth = Math.floor(depth / 8);
+    let remainingDecksToDraw = sections4x8;
+    let currentX = startX;
+    let currentY = startY;
 
-    for (let i = 0; i < max4x8InWidth; i++) {
-      for (let j = 0; j < max4x8InDepth; j++) {
-        ctx.fillRect(
-          startX + i * 8 * scale,
-          startY + j * 8 * scale,
-          8 * scale,
-          8 * scale
-        );
-        ctx.strokeRect(
-          startX + i * 8 * scale,
-          startY + j * 8 * scale,
-          8 * scale,
-          8 * scale
-        );
+    // Try to fill horizontally first
+    while (remainingDecksToDraw > 0) {
+      // Check if we can fit an 8' wide section
+      if (currentX + 8 * scale <= startX + width * scale) {
+        // Draw 4x8 section
+        ctx.fillRect(currentX, currentY, 8 * scale, 4 * scale);
+        ctx.strokeRect(currentX, currentY, 8 * scale, 4 * scale);
 
         // Add text for 4x8 sections
         ctx.fillStyle = "#1e3a8a";
@@ -67,74 +61,72 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
         ctx.textAlign = "center";
         ctx.fillText(
           "4' × 8'",
-          startX + (i * 8 + 4) * scale,
-          startY + (j * 8 + 4) * scale
+          currentX + 4 * scale,
+          currentY + 2 * scale
         );
         ctx.fillStyle = "#93c5fd";
+
+        currentX += 8 * scale;
+        remainingDecksToDraw--;
+      } else {
+        // Move to next row
+        currentX = startX;
+        currentY += 4 * scale;
+        if (currentY >= startY + depth * scale) {
+          break;
+        }
       }
     }
 
-    // Draw 4x4 sections
+    // Draw 4x4 sections in remaining space
     ctx.fillStyle = "#bfdbfe";
-    const remainingWidth = width % 8;
-    const remainingDepth = depth % 8;
+    remainingDecksToDraw = sections4x4;
+    currentX = startX;
+    currentY = startY;
 
-    // Fill remaining width
-    if (remainingWidth > 0) {
-      for (let j = 0; j < Math.ceil(depth / 4); j++) {
-        ctx.fillRect(
-          startX + max4x8InWidth * 8 * scale,
-          startY + j * 4 * scale,
-          4 * scale,
-          4 * scale
-        );
-        ctx.strokeRect(
-          startX + max4x8InWidth * 8 * scale,
-          startY + j * 4 * scale,
-          4 * scale,
-          4 * scale
-        );
+    // Fill any remaining space with 4x4 sections
+    while (remainingDecksToDraw > 0) {
+      if (currentX + 4 * scale <= startX + width * scale &&
+          currentY + 4 * scale <= startY + depth * scale) {
+        // Check if this space is already occupied by a 4x8 section
+        let isOccupied = false;
+        for (let i = 0; i < sections4x8; i++) {
+          const x8Start = startX + (i % Math.floor(width / 8)) * 8 * scale;
+          const y8Start = startY + Math.floor(i / Math.floor(width / 8)) * 4 * scale;
+          if (currentX >= x8Start && currentX < x8Start + 8 * scale &&
+              currentY >= y8Start && currentY < y8Start + 4 * scale) {
+            isOccupied = true;
+            break;
+          }
+        }
 
-        // Add text for 4x4 sections
-        ctx.fillStyle = "#1e3a8a";
-        ctx.font = "10px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(
-          "4' × 4'",
-          startX + (max4x8InWidth * 8 + 2) * scale,
-          startY + (j * 4 + 2) * scale
-        );
-        ctx.fillStyle = "#bfdbfe";
-      }
-    }
+        if (!isOccupied) {
+          // Draw 4x4 section
+          ctx.fillRect(currentX, currentY, 4 * scale, 4 * scale);
+          ctx.strokeRect(currentX, currentY, 4 * scale, 4 * scale);
 
-    // Fill remaining depth
-    if (remainingDepth > 0) {
-      for (let i = 0; i < Math.floor(width / 4); i++) {
-        if (i >= max4x8InWidth * 2) continue; // Skip if already filled by remaining width
-        ctx.fillRect(
-          startX + i * 4 * scale,
-          startY + max4x8InDepth * 8 * scale,
-          4 * scale,
-          4 * scale
-        );
-        ctx.strokeRect(
-          startX + i * 4 * scale,
-          startY + max4x8InDepth * 8 * scale,
-          4 * scale,
-          4 * scale
-        );
+          // Add text for 4x4 sections
+          ctx.fillStyle = "#1e3a8a";
+          ctx.font = "10px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            "4' × 4'",
+            currentX + 2 * scale,
+            currentY + 2 * scale
+          );
+          ctx.fillStyle = "#bfdbfe";
 
-        // Add text for 4x4 sections
-        ctx.fillStyle = "#1e3a8a";
-        ctx.font = "10px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(
-          "4' × 4'",
-          startX + (i * 4 + 2) * scale,
-          startY + (max4x8InDepth * 8 + 2) * scale
-        );
-        ctx.fillStyle = "#bfdbfe";
+          remainingDecksToDraw--;
+        }
+
+        currentX += 4 * scale;
+      } else {
+        // Move to next row
+        currentX = startX;
+        currentY += 4 * scale;
+        if (currentY >= startY + depth * scale) {
+          break;
+        }
       }
     }
 
