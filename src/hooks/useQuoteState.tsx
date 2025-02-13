@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 export const useQuoteState = () => {
@@ -17,6 +18,8 @@ export const useQuoteState = () => {
   const [isSetupOpen, setIsSetupOpen] = useState(false);
   const [warehouseLocation, setWarehouseLocation] = useState<"nj" | "ny" | null>(null);
   const [deliveryZipCode, setDeliveryZipCode] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
@@ -41,6 +44,8 @@ export const useQuoteState = () => {
     setContinueToSetup(null);
     setWarehouseLocation(null);
     setDeliveryZipCode(null);
+    setStartDate(null);
+    setEndDate(null);
   };
 
   return {
@@ -54,6 +59,8 @@ export const useQuoteState = () => {
     isSetupOpen,
     warehouseLocation,
     deliveryZipCode,
+    startDate,
+    endDate,
     handleDimensionUpdate,
     handleToggleService,
     handleResetForm,
@@ -65,5 +72,7 @@ export const useQuoteState = () => {
     setIsSetupOpen,
     setWarehouseLocation,
     setDeliveryZipCode,
+    setStartDate,
+    setEndDate,
   };
 };

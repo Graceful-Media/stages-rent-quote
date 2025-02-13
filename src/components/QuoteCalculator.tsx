@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useQuoteState } from "@/hooks/useQuoteState";
 import { calculateTotal } from "@/utils/priceCalculations";
@@ -27,6 +28,8 @@ const QuoteCalculator = () => {
     setIsSetupOpen,
     setWarehouseLocation,
     setDeliveryZipCode,
+    startDate,
+    endDate,
   } = useQuoteState();
 
   const totals = calculateTotal(
@@ -36,7 +39,9 @@ const QuoteCalculator = () => {
     selectedServices,
     warehouseLocation,
     deliveryZipCode,
-    deliveryOption
+    deliveryOption,
+    startDate,
+    endDate
   );
 
   const quoteData = {
@@ -81,6 +86,8 @@ const QuoteCalculator = () => {
           deliveryOption={deliveryOption}
           handleResetForm={handleResetForm}
           quoteData={quoteData}
+          startDate={startDate}
+          endDate={endDate}
         />
       </div>
     </div>

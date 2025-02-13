@@ -1,3 +1,4 @@
+
 import React from "react";
 import PriceSummary from "../PriceSummary";
 import FormActions from "./FormActions";
@@ -24,6 +25,8 @@ interface SidebarProps {
     selectedServices: string[];
     totalCost: number;
   };
+  startDate?: Date | null;
+  endDate?: Date | null;
 }
 
 const Sidebar = ({
@@ -34,6 +37,8 @@ const Sidebar = ({
   deliveryOption,
   handleResetForm,
   quoteData,
+  startDate,
+  endDate,
 }: SidebarProps) => {
   return (
     <div className="lg:col-span-1">
@@ -44,6 +49,8 @@ const Sidebar = ({
           warehouseLocation={warehouseLocation}
           deliveryZipCode={deliveryZipCode}
           deliveryOption={deliveryOption}
+          startDate={startDate || new Date()}
+          endDate={endDate || new Date()}
         />
         <FormActions 
           onResetForm={handleResetForm} 
