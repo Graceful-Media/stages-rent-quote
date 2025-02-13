@@ -82,12 +82,13 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
       }
     }
 
-    // Draw 4x4 sections in the last row if needed
-    if (hasPartialRow && sections4x4 > 0) {
+    // Draw 4x4 sections in the last row
+    if (hasPartialRow) {
       ctx.fillStyle = "#bfdbfe";
       const lastRowY = startY + fullRows * 8 * scale;
 
-      for (let col = 0; col < numAcross && col < sections4x4; col++) {
+      // Draw all needed 4x4 sections across the width
+      for (let col = 0; col < numAcross; col++) {
         // Draw 4x4 section
         ctx.fillRect(
           startX + col * 4 * scale,
