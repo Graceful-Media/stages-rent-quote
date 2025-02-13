@@ -1,3 +1,4 @@
+
 import React from "react";
 import PropertyForm from "../PropertyForm";
 import ServicesForm from "../ServicesForm";
@@ -34,6 +35,8 @@ interface MainContentProps {
   setDeliveryZipCode: (zipCode: string | null) => void;
   warehouseLocation: "nj" | "ny" | null;
   deliveryZipCode: string | null;
+  setupCost: number;
+  setSetupCost: (value: number) => void;
 }
 
 const MainContent = ({
@@ -57,6 +60,8 @@ const MainContent = ({
   setDeliveryZipCode,
   warehouseLocation,
   deliveryZipCode,
+  setupCost,
+  setSetupCost,
 }: MainContentProps) => {
   return (
     <div className="lg:col-span-2 space-y-8">
@@ -121,6 +126,8 @@ const MainContent = ({
         <SetupSection
           isOpen={isSetupOpen}
           onOpenChange={setIsSetupOpen}
+          setupCost={setupCost}
+          onSetupCostChange={setSetupCost}
         />
       )}
     </div>

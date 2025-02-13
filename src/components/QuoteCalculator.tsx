@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useQuoteState } from "@/hooks/useQuoteState";
 import { calculateTotal } from "@/utils/priceCalculations";
@@ -14,6 +15,7 @@ const QuoteCalculator = () => {
     continueToDelivery,
     continueToSetup,
     isSetupOpen,
+    setupCost,
     warehouseLocation,
     deliveryZipCode,
     handleDimensionUpdate,
@@ -25,6 +27,7 @@ const QuoteCalculator = () => {
     setContinueToDelivery,
     setContinueToSetup,
     setIsSetupOpen,
+    setSetupCost,
     setWarehouseLocation,
     setDeliveryZipCode,
   } = useQuoteState();
@@ -36,7 +39,8 @@ const QuoteCalculator = () => {
     selectedServices,
     warehouseLocation,
     deliveryZipCode,
-    deliveryOption
+    deliveryOption,
+    setupCost
   );
 
   const quoteData = {
@@ -72,6 +76,8 @@ const QuoteCalculator = () => {
           setDeliveryZipCode={setDeliveryZipCode}
           warehouseLocation={warehouseLocation}
           deliveryZipCode={deliveryZipCode}
+          setupCost={setupCost}
+          setSetupCost={setSetupCost}
         />
         <Sidebar
           stageDimensions={stageDimensions}
@@ -81,6 +87,7 @@ const QuoteCalculator = () => {
           deliveryOption={deliveryOption}
           handleResetForm={handleResetForm}
           quoteData={quoteData}
+          setupCost={setupCost}
         />
       </div>
     </div>
