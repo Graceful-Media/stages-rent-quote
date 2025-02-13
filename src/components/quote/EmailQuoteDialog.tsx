@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   Dialog,
@@ -35,6 +36,7 @@ const EmailQuoteDialog = ({
   warehouseLocation,
 }: EmailQuoteDialogProps) => {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,12 +48,18 @@ const EmailQuoteDialog = ({
       return;
     }
 
+    if (!name.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const { error: emailError } = await supabase.functions.invoke('send-quote-email', {
         body: {
           recipientEmail: email,
+          recipientName: name,
           dimensions: quoteData.dimensions,
           selectedServices: quoteData.selectedServices,
           totalCost: quoteData.totalCost,
@@ -74,6 +82,7 @@ const EmailQuoteDialog = ({
       toast.success("Quote has been sent to your email!");
       setIsOpen(false);
       setEmail("");
+      setName("");
     } catch (error) {
       console.error("Error in quote process:", error);
       toast.error("An error occurred while processing your quote");
@@ -94,6 +103,17 @@ const EmailQuoteDialog = ({
           <DialogTitle>Email Quote</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email address</Label>
             <Input

@@ -1,3 +1,4 @@
+
 export const generateQuoteEmailHtml = ({
   dimensions,
   selectedServices,
@@ -57,11 +58,12 @@ export const generateQuoteEmailHtml = ({
 
     <div style="text-align: center; margin-top: 30px;">
       <p style="color: #666;">
-        Thank you for choosing our stage rental services. If you have any questions or would like to proceed with this quote, please contact us.
+        Thank you for choosing our stage rental services. If you have any questions or would like to proceed with this quote, 
+        <a href="mailto:quotes@proavsource.com" style="color: #0066cc; text-decoration: none;">please contact us.</a>
       </p>
       <p style="color: #666;">
-        <strong>Phone:</strong> (555) 123-4567<br>
-        <strong>Email:</strong> support@gracefulmedia.org
+        <strong>Phone:</strong> (646) 661-4078<br>
+        <strong>Email:</strong> <a href="mailto:quotes@proavsource.com" style="color: #0066cc; text-decoration: none;">quotes@proavsource.com</a>
       </p>
     </div>
   </div>
