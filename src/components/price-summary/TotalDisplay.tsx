@@ -5,9 +5,33 @@ interface TotalDisplayProps {
   dailyCosts: number;
   oneTimetCosts: number;
   totalCost: number;
+  hasDelivery?: boolean;
+  hasSetup?: boolean;
+  hasCarpet?: boolean;
+  hasWarehouseFee?: boolean;
 }
 
-const TotalDisplay = ({ dailyCosts, oneTimetCosts, totalCost }: TotalDisplayProps) => {
+const TotalDisplay = ({ 
+  dailyCosts, 
+  oneTimetCosts, 
+  totalCost,
+  hasDelivery = false,
+  hasSetup = false,
+  hasCarpet = false,
+  hasWarehouseFee = false
+}: TotalDisplayProps) => {
+  const getOneTimeChargesDescription = () => {
+    const charges = [];
+    if (hasDelivery) charges.push("Delivery");
+    if (hasSetup) charges.push("Set Up Cost");
+    if (hasCarpet) charges.push("Carpet");
+    if (hasWarehouseFee) charges.push("BK Warehouse Prep Fee");
+
+    return charges.length > 0 ? `(${charges.join(", ")})` : null;
+  };
+
+  const oneTimeChargesDescription = getOneTimeChargesDescription();
+
   return (
     <div className="border-t pt-3">
       <div className="flex justify-between text-sm font-medium">
@@ -19,9 +43,11 @@ const TotalDisplay = ({ dailyCosts, oneTimetCosts, totalCost }: TotalDisplayProp
           <span>One-time Charges:</span>
           <span>${oneTimetCosts.toLocaleString()}</span>
         </div>
-        <div className="text-xs text-gray-500 text-right">
-          (Delivery, Set Up Cost, Carpet, BK Warehouse Prep Fee if applicable)
-        </div>
+        {oneTimeChargesDescription && (
+          <div className="text-xs text-gray-500 text-right">
+            {oneTimeChargesDescription}
+          </div>
+        )}
       </div>
       <div className="flex justify-between font-semibold text-lg mt-4">
         <span>Total Estimate:</span>
