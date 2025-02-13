@@ -1,14 +1,18 @@
 import { carpetColors } from "@/components/services/types";
 
 export const calculateSections = (width: number, depth: number) => {
-  const area = width * depth;
-  const sections4x8Count = Math.floor(area / 32);
-  const remaining = area % 32;
-  const sections4x4Count = Math.ceil(remaining / 16);
+  // Calculate full 8' rows needed
+  const numAcross = Math.ceil(width / 4); // How many 4' sections needed across width
+  const fullRows = Math.floor(depth / 8); // Number of full 8' rows
+  const hasPartialRow = depth % 8 > 0;    // Whether there's a remaining 4' row
+  
+  // Calculate sections
+  const sections4x8 = numAcross * fullRows;
+  const sections4x4 = hasPartialRow ? numAcross : 0;
   
   return {
-    sections4x8: sections4x8Count,
-    sections4x4: sections4x4Count
+    sections4x8,
+    sections4x4
   };
 };
 
