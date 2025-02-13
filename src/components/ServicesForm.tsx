@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import StairsService from "./services/StairsService";
 import CarpetService from "./services/CarpetService";
@@ -65,35 +66,11 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
   const services = [...stairServices, ...baseServices];
 
   const handleStairsQuantityChange = (serviceId: string, quantity: number) => {
+    // Update the quantities state
     setStairsQuantities(prev => ({
       ...prev,
       [serviceId]: quantity
     }));
-    
-    // Remove existing quantity from service ID
-    const baseServiceId = serviceId.split('-qty-')[0];
-    const existingService = selectedServices.find(s => s.startsWith(baseServiceId));
-    if (existingService) {
-      onToggleService(existingService);
-    }
-    
-    // Add new service ID with quantity
-    onToggleService(`${baseServiceId}-qty-${quantity}`);
-  };
-
-  const handleCarpetColorChange = (colorId: string) => {
-    setSelectedCarpetColor(colorId);
-    
-    // First, remove any existing carpet color selections
-    const existingColorServices = carpetColors.map(color => `carpet-${color.id}`);
-    existingColorServices.forEach(colorService => {
-      if (selectedServices.includes(colorService)) {
-        onToggleService(colorService);
-      }
-    });
-    
-    // Add the new color selection
-    onToggleService(`carpet-${colorId}`);
   };
 
   const handleSkirtSideToggle = (sideId: string) => {
@@ -134,6 +111,21 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
     });
   };
 
+  const handleCarpetColorChange = (colorId: string) => {
+    setSelectedCarpetColor(colorId);
+    
+    // First, remove any existing carpet color selections
+    const existingColorServices = carpetColors.map(color => `carpet-${color.id}`);
+    existingColorServices.forEach(colorService => {
+      if (selectedServices.includes(colorService)) {
+        onToggleService(colorService);
+      }
+    });
+    
+    // Add the new color selection
+    onToggleService(`carpet-${colorId}`);
+  };
+
   return (
     <div className="space-y-6 animate-fadeIn">
       <div className="space-y-4">
@@ -163,7 +155,7 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
               service={service}
               isSelected={selectedServices.some(s => s.startsWith(service.id))}
               onToggle={onToggleService}
-              quantity={quantity}
+              quantity={stairsQuantities[service.id] || quantity}
               onQuantityChange={(qty) => handleStairsQuantityChange(service.id, qty)}
             />
           );
