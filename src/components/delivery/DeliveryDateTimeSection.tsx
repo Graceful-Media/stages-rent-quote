@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
@@ -23,11 +24,24 @@ const generateTimeOptions = () => {
   const times = [];
   for (let hour = 9; hour <= 17; hour++) {
     for (let minute of ['00', '30']) {
-      const hourStr = hour.toString().padStart(2, '0');
-      times.push(`${hourStr}:${minute}`);
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour > 12 ? hour - 12 : hour;
+      const formattedHour = displayHour.toString().padStart(2, '0');
+      const displayTime = `${formattedHour}:${minute} ${period}`;
+      const value = `${hour.toString().padStart(2, '0')}:${minute}`; // Keep 24h format as value
+      times.push({ display: displayTime, value });
     }
   }
   return times;
+};
+
+const formatTimeDisplay = (time: string | null) => {
+  if (!time) return null;
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours, 10);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour > 12 ? hour - 12 : hour;
+  return `${displayHour.toString().padStart(2, '0')}:${minutes} ${period}`;
 };
 
 const DeliveryDateTimeSection = ({
@@ -77,14 +91,14 @@ const DeliveryDateTimeSection = ({
               <SelectValue placeholder="Time">
                 <div className="flex items-center">
                   <Clock className="mr-2 h-4 w-4" />
-                  {deliveryTime || "Select time"}
+                  {deliveryTime ? formatTimeDisplay(deliveryTime) : "Select time"}
                 </div>
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {timeOptions.map((time) => (
-                <SelectItem key={time} value={time}>
-                  {time}
+                <SelectItem key={time.value} value={time.value}>
+                  {time.display}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -125,14 +139,14 @@ const DeliveryDateTimeSection = ({
               <SelectValue placeholder="Time">
                 <div className="flex items-center">
                   <Clock className="mr-2 h-4 w-4" />
-                  {pickupTime || "Select time"}
+                  {pickupTime ? formatTimeDisplay(pickupTime) : "Select time"}
                 </div>
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {timeOptions.map((time) => (
-                <SelectItem key={time} value={time}>
-                  {time}
+                <SelectItem key={time.value} value={time.value}>
+                  {time.display}
                 </SelectItem>
               ))}
             </SelectContent>
