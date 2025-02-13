@@ -14,7 +14,6 @@ const corsHeaders = {
 };
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -23,7 +22,6 @@ const handler = async (req: Request): Promise<Response> => {
     const quoteData = await req.json();
     validateQuoteRequest(quoteData);
 
-    // Check rate limit
     const clientIp = req.headers.get("x-real-ip") || "unknown";
     const { isLimited, currentCount, lastReset } = await checkRateLimit(clientIp);
     
@@ -40,16 +38,12 @@ const handler = async (req: Request): Promise<Response> => {
       html,
     });
 
-    // Update rate limit counter
     await updateRateLimit(clientIp, currentCount, lastReset);
-
-    console.log("Email sent successfully:", emailResponse);
 
     return new Response(JSON.stringify(emailResponse), {
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
-    console.error("Error in send-quote-email function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {

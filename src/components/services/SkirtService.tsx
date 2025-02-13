@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -16,8 +17,6 @@ const SkirtService = ({
   selectedSides,
   onSideToggle 
 }: SkirtServiceProps) => {
-  console.log("Selected skirt sides:", selectedSides);
-
   return (
     <div className="space-y-4 p-4 rounded-lg border hover:border-quote-accent transition-colors">
       <div className="flex items-start space-x-4">

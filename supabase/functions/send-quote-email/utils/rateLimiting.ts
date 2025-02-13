@@ -20,7 +20,6 @@ export const checkRateLimit = async (
     .single();
 
   if (rateLimitError && rateLimitError.code !== "PGRST116") {
-    console.error("Error checking rate limit:", rateLimitError);
     throw new Error("Failed to check rate limit");
   }
 
@@ -59,7 +58,6 @@ export const updateRateLimit = async (
     });
 
   if (updateError) {
-    console.error("Error updating rate limit:", updateError);
     throw new Error("Failed to update rate limit");
   }
 };

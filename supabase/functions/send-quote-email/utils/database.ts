@@ -1,3 +1,4 @@
+
 import { SupabaseClient } from "@supabase/supabase-js";
 import { QuoteEmailRequest } from "./validation";
 
@@ -18,7 +19,6 @@ export const saveQuoteToDatabase = async (
     });
 
   if (quoteError) {
-    console.error("Error saving quote:", quoteError);
     throw new Error("Failed to save quote");
   }
 };
