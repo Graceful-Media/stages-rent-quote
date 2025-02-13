@@ -41,16 +41,19 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
     ctx.lineWidth = 2;
     ctx.strokeRect(startX, startY, width * scale, depth * scale);
 
-    // Draw the total number of 4x8 sections first
-    ctx.fillStyle = "#93c5fd";
+    // Calculate layout dimensions
     const numAcross = Math.ceil(width / 4); // Number of 4' sections across
-    const numDeep = Math.ceil(depth / 8);   // Number of 8' sections deep
-    let remainingDecksToDraw = sections4x8;
+    const fullRows = Math.floor(depth / 8);  // Number of full 8' rows
+    const hasPartialRow = depth % 8 > 0;     // Whether we need a 4' row at the end
 
-    // Draw 4x8 sections in the correct orientation
-    for (let row = 0; row < numDeep && remainingDecksToDraw > 0; row++) {
-      for (let col = 0; col < numAcross && remainingDecksToDraw > 0; col++) {
-        // Draw 4x8 section (rotated so 4' side is along width)
+    // Draw 4x8 sections
+    ctx.fillStyle = "#93c5fd";
+    let remaining4x8 = sections4x8;
+
+    // Draw full rows of 4x8 sections
+    for (let row = 0; row < fullRows; row++) {
+      for (let col = 0; col < numAcross && remaining4x8 > 0; col++) {
+        // Draw 4x8 section
         ctx.fillRect(
           startX + col * 4 * scale,
           startY + row * 8 * scale,
@@ -75,61 +78,40 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
         );
         ctx.fillStyle = "#93c5fd";
 
-        remainingDecksToDraw--;
+        remaining4x8--;
       }
     }
 
-    // Draw 4x4 sections in remaining space
-    ctx.fillStyle = "#bfdbfe";
-    remainingDecksToDraw = sections4x4;
-    let currentX = startX;
-    let currentY = startY;
+    // Draw 4x4 sections in the last row if needed
+    if (hasPartialRow && sections4x4 > 0) {
+      ctx.fillStyle = "#bfdbfe";
+      const lastRowY = startY + fullRows * 8 * scale;
 
-    // Fill any remaining space with 4x4 sections
-    while (remainingDecksToDraw > 0) {
-      if (currentX + 4 * scale <= startX + width * scale &&
-          currentY + 4 * scale <= startY + depth * scale) {
-        // Check if this space is already occupied by a 4x8 section
-        let isOccupied = false;
-        for (let row = 0; row < numDeep; row++) {
-          for (let col = 0; col < numAcross; col++) {
-            const x8Start = startX + col * 4 * scale;
-            const y8Start = startY + row * 8 * scale;
-            if (currentX >= x8Start && currentX < x8Start + 4 * scale &&
-                currentY >= y8Start && currentY < y8Start + 8 * scale) {
-              isOccupied = true;
-              break;
-            }
-          }
-        }
+      for (let col = 0; col < numAcross && col < sections4x4; col++) {
+        // Draw 4x4 section
+        ctx.fillRect(
+          startX + col * 4 * scale,
+          lastRowY,
+          4 * scale,
+          4 * scale
+        );
+        ctx.strokeRect(
+          startX + col * 4 * scale,
+          lastRowY,
+          4 * scale,
+          4 * scale
+        );
 
-        if (!isOccupied) {
-          // Draw 4x4 section
-          ctx.fillRect(currentX, currentY, 4 * scale, 4 * scale);
-          ctx.strokeRect(currentX, currentY, 4 * scale, 4 * scale);
-
-          // Add text for 4x4 sections
-          ctx.fillStyle = "#1e3a8a";
-          ctx.font = "10px Arial";
-          ctx.textAlign = "center";
-          ctx.fillText(
-            "4' × 4'",
-            currentX + 2 * scale,
-            currentY + 2 * scale
-          );
-          ctx.fillStyle = "#bfdbfe";
-
-          remainingDecksToDraw--;
-        }
-
-        currentX += 4 * scale;
-      } else {
-        // Move to next row
-        currentX = startX;
-        currentY += 4 * scale;
-        if (currentY >= startY + depth * scale) {
-          break;
-        }
+        // Add text for 4x4 sections
+        ctx.fillStyle = "#1e3a8a";
+        ctx.font = "10px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(
+          "4' × 4'",
+          startX + (col * 4 + 2) * scale,
+          lastRowY + 2 * scale
+        );
+        ctx.fillStyle = "#bfdbfe";
       }
     }
 
