@@ -73,13 +73,14 @@ const MainContent = ({
   return (
     <div className="lg:col-span-2 space-y-6">
       <PropertyForm
-        stageDimensions={stageDimensions}
-        onDimensionUpdate={handleDimensionUpdate}
+        width={stageDimensions.width}
+        depth={stageDimensions.depth}
+        height={stageDimensions.height}
+        days={stageDimensions.days}
+        onUpdate={handleDimensionUpdate}
       />
       
       <ServicesForm
-        isOpen={isServicesOpen}
-        onOpenChange={setIsServicesOpen}
         selectedServices={selectedServices}
         onToggleService={handleToggleService}
         height={stageDimensions.height}
