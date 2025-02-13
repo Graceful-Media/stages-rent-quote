@@ -1,3 +1,4 @@
+
 import { carpetColors } from "@/components/services/types";
 
 export const calculateSections = (width: number, depth: number) => {
@@ -101,6 +102,21 @@ export const calculateSkirtPrice = (selectedServices: string[], width: number, d
   return totalLength * 3; // $3 per linear foot
 };
 
+export const calculateStairsPrice = (selectedServices: string[]) => {
+  let totalPrice = 0;
+  selectedServices.forEach(serviceId => {
+    if (serviceId.includes("-qty-")) {
+      const [baseServiceId, quantity] = serviceId.split("-qty-");
+      if (baseServiceId === "stairs-with-rails") {
+        totalPrice += 150 * parseInt(quantity); // $150 per set of stairs with rails
+      } else if (baseServiceId === "stairs-no-rails") {
+        totalPrice += 75 * parseInt(quantity);  // $75 per set of stairs without rails
+      }
+    }
+  });
+  return totalPrice;
+};
+
 export const calculateTotal = (
   width: number,
   depth: number,
@@ -135,6 +151,9 @@ export const calculateTotal = (
   // Add daily costs
   dailyCosts += sectionsCost;
 
+  // Add stairs costs (daily)
+  dailyCosts += calculateStairsPrice(selectedServices);
+
   // Handle skirt separately (daily cost)
   if (selectedServices.includes("skirt")) {
     dailyCosts += calculateSkirtPrice(selectedServices, width, depth);
@@ -158,7 +177,8 @@ export const calculateTotal = (
     dailyCosts,
     oneTimetCosts,
     deliveryFee,
-    totalCost: (dailyCosts * days) + oneTimetCosts
+    totalCost: (dailyCosts * days) + oneTimetCosts,
+    stairsCost: calculateStairsPrice(selectedServices)
   });
 
   // Calculate final total
