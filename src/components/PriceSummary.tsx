@@ -1,4 +1,3 @@
-
 import React from "react";
 import DimensionsDisplay from "./price-summary/DimensionsDisplay";
 import SectionsDisplay from "./price-summary/SectionsDisplay";
@@ -22,6 +21,8 @@ interface PriceSummaryProps {
   warehouseLocation?: "nj" | "ny" | null;
   deliveryZipCode?: string | null;
   deliveryOption?: "delivery" | "pickup" | null;
+  startDate: Date;
+  endDate: Date;
 }
 
 const PriceSummary = ({
@@ -33,10 +34,22 @@ const PriceSummary = ({
   warehouseLocation,
   deliveryZipCode,
   deliveryOption,
+  startDate,
+  endDate,
 }: PriceSummaryProps) => {
   const sections = calculateSections(width, depth);
   const totalLegs = calculateTotalLegs(width, depth);
-  const totals = calculateTotal(width, depth, days, selectedServices, warehouseLocation, deliveryZipCode, deliveryOption);
+  const totals = calculateTotal(
+    width, 
+    depth, 
+    days, 
+    selectedServices, 
+    warehouseLocation, 
+    deliveryZipCode, 
+    deliveryOption,
+    startDate,
+    endDate
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
@@ -47,6 +60,8 @@ const PriceSummary = ({
           depth={depth} 
           height={height} 
           days={days}
+          dateRange={totals.rentalDuration?.dateRange}
+          billingDays={totals.rentalDuration?.billingDays}
         />
         
         <SectionsDisplay 

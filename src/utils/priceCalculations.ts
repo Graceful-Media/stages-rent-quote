@@ -1,5 +1,5 @@
-
 import { carpetColors } from "@/components/services/types";
+import { differenceInDays, format } from "date-fns";
 
 export const calculateSections = (width: number, depth: number) => {
   // Calculate full 8' rows needed
@@ -111,6 +111,37 @@ export const calculateStairsPrice = (selectedServices: string[]) => {
   return totalPrice;
 };
 
+export const calculateRentalDuration = (
+  startDate: Date | null,
+  endDate: Date | null
+): { days: number; billingDays: number } => {
+  if (!startDate || !endDate) {
+    return { days: 1, billingDays: 1 };
+  }
+
+  const days = differenceInDays(endDate, startDate) + 1; // Include both start and end days
+  
+  // Handle week-based calculations for longer periods
+  const completeWeeks = Math.floor(days / 7);
+  const remainingDays = days % 7;
+  
+  // Calculate billing days for complete weeks (3 billing days per week)
+  let billingDays = completeWeeks * 3;
+  
+  // Add billing days for remaining days using the standard rules
+  if (remainingDays <= 2) {
+    billingDays += 1;
+  } else if (remainingDays === 3) {
+    billingDays += 1.5;
+  } else if (remainingDays === 4) {
+    billingDays += 2;
+  } else if (remainingDays >= 5) {
+    billingDays += 3;
+  }
+
+  return { days, billingDays };
+};
+
 export const calculateTotal = (
   width: number,
   depth: number,
@@ -118,7 +149,9 @@ export const calculateTotal = (
   selectedServices: string[],
   warehouseLocation?: "nj" | "ny" | null,
   deliveryZipCode?: string | null,
-  deliveryOption?: "delivery" | "pickup" | null
+  deliveryOption?: "delivery" | "pickup" | null,
+  startDate?: Date | null,
+  endDate?: Date | null
 ) => {
   const sections = calculateSections(width, depth);
   const section4x4Price = 75;
@@ -129,6 +162,10 @@ export const calculateTotal = (
   
   let dailyCosts = sectionsCost;
   let oneTimetCosts = 0;
+
+  // Calculate rental duration based on dates if available
+  const duration = calculateRentalDuration(startDate || null, endDate || null);
+  const effectiveDays = startDate && endDate ? duration.billingDays : days;
 
   // Calculate stairs cost first
   const stairsCost = calculateStairsPrice(selectedServices);
@@ -168,8 +205,15 @@ export const calculateTotal = (
   return {
     dailyCosts,
     oneTimetCosts,
-    totalCost: (dailyCosts * days) + oneTimetCosts,
-    deliveryFee
+    totalCost: (dailyCosts * effectiveDays) + oneTimetCosts,
+    deliveryFee,
+    rentalDuration: {
+      days: duration.days,
+      billingDays: duration.billingDays,
+      dateRange: startDate && endDate ? 
+        `${format(startDate, 'MMM d')} - ${format(endDate, 'MMM d, yyyy')}` : 
+        null
+    }
   };
 };
 
