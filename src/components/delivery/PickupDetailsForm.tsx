@@ -1,13 +1,15 @@
+
 import React from "react";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { toast } from "sonner";
 
 interface PickupDetailsFormProps {
   pickupDetails: {
@@ -30,6 +32,13 @@ const PickupDetailsForm = ({
   setPickupDetails,
   isWeekday,
 }: PickupDetailsFormProps) => {
+  // Add validation check
+  React.useEffect(() => {
+    if (!pickupDetails.warehouseLocation) {
+      toast.error("Please select a warehouse location");
+    }
+  }, [pickupDetails.warehouseLocation]);
+
   return (
     <div className="space-y-6">
       <div className="bg-gray-50 p-4 rounded-lg">
@@ -49,14 +58,19 @@ const PickupDetailsForm = ({
 
       {/* Warehouse Location */}
       <div className="space-y-2">
-        <Label>Select Warehouse Location</Label>
+        <Label className="flex items-center">
+          Select Warehouse Location
+          <span className="text-red-500 ml-1">*</span>
+        </Label>
         <Select
           value={pickupDetails.warehouseLocation || ""}
           onValueChange={(value: "nj" | "ny") => 
             setPickupDetails(prev => ({ ...prev, warehouseLocation: value }))
           }
         >
-          <SelectTrigger>
+          <SelectTrigger className={cn(
+            !pickupDetails.warehouseLocation && "border-red-500"
+          )}>
             <SelectValue placeholder="Select a warehouse" />
           </SelectTrigger>
           <SelectContent>
@@ -74,13 +88,17 @@ const PickupDetailsForm = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Pick Up Date */}
         <div className="space-y-2">
-          <Label>Pick Up Date</Label>
+          <Label className="flex items-center">
+            Pick Up Date
+            <span className="text-red-500 ml-1">*</span>
+          </Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 className={cn(
                   "w-full justify-start text-left font-normal",
+                  !pickupDetails.pickupDate && "border-red-500",
                   !pickupDetails.pickupDate && "text-muted-foreground"
                 )}
               >
@@ -106,13 +124,17 @@ const PickupDetailsForm = ({
 
         {/* Return Date */}
         <div className="space-y-2">
-          <Label>Return Date</Label>
+          <Label className="flex items-center">
+            Return Date
+            <span className="text-red-500 ml-1">*</span>
+          </Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 className={cn(
                   "w-full justify-start text-left font-normal",
+                  !pickupDetails.returnDate && "border-red-500",
                   !pickupDetails.returnDate && "text-muted-foreground"
                 )}
               >

@@ -63,6 +63,14 @@ const MainContent = ({
   setupCost,
   setSetupCost,
 }: MainContentProps) => {
+  // Reset setup options when switching to pickup
+  React.useEffect(() => {
+    if (deliveryOption === "pickup") {
+      setContinueToSetup("no");
+      setSetupCost(0);
+    }
+  }, [deliveryOption, setContinueToSetup, setSetupCost]);
+
   return (
     <div className="lg:col-span-2 space-y-8">
       <PropertyForm
@@ -117,18 +125,23 @@ const MainContent = ({
         />
       )}
 
-      <ContinueToSetupSection
-        continueToSetup={continueToSetup}
-        onContinueToSetupChange={(value) => setContinueToSetup(value)}
-      />
+      {/* Only show setup section if not pickup */}
+      {continueToDelivery === "yes" && deliveryOption !== "pickup" && (
+        <>
+          <ContinueToSetupSection
+            continueToSetup={continueToSetup}
+            onContinueToSetupChange={(value) => setContinueToSetup(value)}
+          />
 
-      {continueToSetup === "yes" && (
-        <SetupSection
-          isOpen={isSetupOpen}
-          onOpenChange={setIsSetupOpen}
-          setupCost={setupCost}
-          onSetupCostChange={setSetupCost}
-        />
+          {continueToSetup === "yes" && (
+            <SetupSection
+              isOpen={isSetupOpen}
+              onOpenChange={setIsSetupOpen}
+              setupCost={setupCost}
+              onSetupCostChange={setSetupCost}
+            />
+          )}
+        </>
       )}
     </div>
   );
