@@ -1,5 +1,5 @@
 
-import { Section, Heading, Text } from 'npm:@react-email/components@0.0.12';
+import { Section, Heading, Text } from 'npm:@react-email/components@0.0.7';
 import * as React from 'npm:react@18.3.1';
 import { highlightSection, subheader, price, disclaimer, callToAction, text } from '../styles.ts';
 

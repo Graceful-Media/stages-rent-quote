@@ -1,6 +1,6 @@
-
-import { Section, Img } from 'npm:@react-email/components@0.0.12';
+import { Section, Img } from 'npm:@react-email/components@0.0.7';
 import * as React from 'npm:react@18.3.1';
+import { main } from '../styles.ts';
 
 export const Header = () => (
   <Section style={headerSection}>
