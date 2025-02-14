@@ -43,10 +43,21 @@ const QuoteCalculator = () => {
     setupCost
   );
 
+  const hasDelivery = deliveryOption === "delivery";
+  const hasSetup = setupCost > 0;
+  const hasCarpet = selectedServices.some(service => service.includes("carpet"));
+  const hasWarehouseFee = warehouseLocation === "ny";
+
   const quoteData = {
     dimensions: stageDimensions,
     selectedServices,
     totalCost: totals.totalCost,
+    dailyCosts: totals.dailyCosts,
+    oneTimetCosts: totals.oneTimetCosts,
+    hasDelivery,
+    hasSetup,
+    hasCarpet,
+    hasWarehouseFee
   };
 
   return (

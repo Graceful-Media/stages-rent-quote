@@ -24,6 +24,12 @@ interface SidebarProps {
     };
     selectedServices: string[];
     totalCost: number;
+    dailyCosts: number;
+    oneTimetCosts: number;
+    hasDelivery: boolean;
+    hasSetup: boolean;
+    hasCarpet: boolean;
+    hasWarehouseFee: boolean;
   };
   setupCost: number;
 }

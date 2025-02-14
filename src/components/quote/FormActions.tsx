@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import EmailQuoteDialog from "./EmailQuoteDialog";
@@ -13,6 +14,12 @@ interface FormActionsProps {
     };
     selectedServices: string[];
     totalCost: number;
+    dailyCosts: number;
+    oneTimetCosts: number;
+    hasDelivery: boolean;
+    hasSetup: boolean;
+    hasCarpet: boolean;
+    hasWarehouseFee: boolean;
   };
   deliveryOption: "delivery" | "pickup" | null;
   deliveryZipCode: string | null;

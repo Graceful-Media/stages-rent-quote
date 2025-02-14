@@ -45,6 +45,17 @@ const PriceSummary = ({
   const hasCarpet = selectedServices.some(service => service.includes("carpet"));
   const hasWarehouseFee = warehouseLocation === "ny";
 
+  // Add these values to be passed to the TotalDisplay component
+  const priceDetails = {
+    dailyCosts: totals.dailyCosts,
+    oneTimetCosts: totals.oneTimetCosts,
+    totalCost: totals.totalCost,
+    hasDelivery,
+    hasSetup,
+    hasCarpet,
+    hasWarehouseFee
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 animate-fadeIn">
       <h3 className="text-xl font-semibold text-quote-primary mb-4">Price Summary</h3>
@@ -84,15 +95,7 @@ const PriceSummary = ({
           />
         </div>
 
-        <TotalDisplay 
-          dailyCosts={totals.dailyCosts}
-          oneTimetCosts={totals.oneTimetCosts}
-          totalCost={totals.totalCost}
-          hasDelivery={hasDelivery}
-          hasSetup={hasSetup}
-          hasCarpet={hasCarpet}
-          hasWarehouseFee={hasWarehouseFee}
-        />
+        <TotalDisplay {...priceDetails} />
       </div>
     </div>
   );
