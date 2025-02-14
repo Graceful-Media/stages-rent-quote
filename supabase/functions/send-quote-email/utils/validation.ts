@@ -12,6 +12,10 @@ interface QuoteRequest {
   totalCost: number;
   dailyCosts: number;
   oneTimetCosts: number;
+  hasDelivery?: boolean;
+  hasSetup?: boolean;
+  hasCarpet?: boolean;
+  hasWarehouseFee?: boolean;
   deliveryOption?: string;
   deliveryZipCode?: string;
   warehouseLocation?: string;
@@ -34,26 +38,28 @@ export const validateQuoteRequest = (data: QuoteRequest) => {
     throw new Error("Selected services must be an array");
   }
 
-  // Ensure numeric values are valid numbers
-  if (typeof data.totalCost !== "number" || isNaN(data.totalCost)) {
-    throw new Error("Invalid total cost value");
-  }
+  // Convert and validate numeric values
+  data.totalCost = Number(data.totalCost) || 0;
+  data.dailyCosts = Number(data.dailyCosts) || 0;
+  data.oneTimetCosts = Number(data.oneTimetCosts) || 0;
 
-  if (typeof data.dailyCosts !== "number" || isNaN(data.dailyCosts)) {
-    throw new Error("Invalid daily costs value");
-  }
-
-  if (typeof data.oneTimetCosts !== "number" || isNaN(data.oneTimetCosts)) {
-    throw new Error("Invalid one-time costs value");
-  }
-
-  // Validate dimensions
+  // Ensure dimensions are numbers and valid
   const { width, depth, height, days } = data.dimensions;
-  if (!width || !depth || !height || !days) {
-    throw new Error("All dimension values are required");
+  if (!Number(width) || !Number(depth) || !Number(height) || !Number(days)) {
+    throw new Error("All dimension values are required and must be numbers");
   }
 
   if (width <= 0 || depth <= 0 || height <= 0 || days <= 0) {
     throw new Error("Dimension values must be greater than 0");
   }
+
+  // Convert dimensions to numbers
+  data.dimensions = {
+    width: Number(width),
+    depth: Number(depth),
+    height: Number(height),
+    days: Number(days),
+  };
+
+  return data;
 };

@@ -14,14 +14,19 @@ interface TotalQuoteProps {
 }
 
 export const TotalQuote = ({ 
-  totalCost,
-  dailyCosts,
-  oneTimetCosts,
+  totalCost = 0,
+  dailyCosts = 0,
+  oneTimetCosts = 0,
   hasDelivery = false,
   hasSetup = false,
   hasCarpet = false,
   hasWarehouseFee = false,
 }: TotalQuoteProps) => {
+  // Ensure we have valid numbers
+  const formattedDailyCosts = Number(dailyCosts) || 0;
+  const formattedOneTimeCosts = Number(oneTimetCosts) || 0;
+  const formattedTotalCost = Number(totalCost) || 0;
+
   const getOneTimeChargesDescription = () => {
     const charges = [];
     if (hasDelivery) charges.push("Delivery");
@@ -39,10 +44,10 @@ export const TotalQuote = ({
       
       <div style={{ marginBottom: '20px' }}>
         <Text style={text}>
-          <strong>Daily Total:</strong> ${dailyCosts.toLocaleString()}/day
+          <strong>Daily Total:</strong> ${formattedDailyCosts.toLocaleString()}/day
         </Text>
         <Text style={text}>
-          <strong>One-time Charges:</strong> ${oneTimetCosts.toLocaleString()}
+          <strong>One-time Charges:</strong> ${formattedOneTimeCosts.toLocaleString()}
         </Text>
         {oneTimeChargesDescription && (
           <Text style={{ ...text, color: '#666', fontSize: '12px' }}>
@@ -51,7 +56,7 @@ export const TotalQuote = ({
         )}
       </div>
 
-      <Text style={price}>${totalCost.toFixed(2)}</Text>
+      <Text style={price}>${formattedTotalCost.toLocaleString()}</Text>
       <Text style={disclaimer}>
         *Final price may vary based on event details and location
       </Text>
