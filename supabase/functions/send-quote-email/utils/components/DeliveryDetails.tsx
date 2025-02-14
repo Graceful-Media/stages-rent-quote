@@ -33,7 +33,7 @@ export const DeliveryDetails = ({
   state,
 }: DeliveryDetailsProps) => {
   const formatDate = (date: Date | null | undefined) => {
-    if (!date) return "Date TBC";
+    if (!date) return null;
     // Ensure we're working with a Date object
     const dateObj = new Date(date);
     return dateObj.toLocaleDateString('en-US', {
@@ -48,6 +48,9 @@ export const DeliveryDetails = ({
   const locationText = isPickup ? 'Pick Up Location' : 'Delivery Location';
   const firstDateText = isPickup ? 'Pick Up Date' : 'Delivery Date';
   const secondDateText = isPickup ? 'Return Date' : 'Pick Up Date';
+
+  const formattedFirstDate = formatDate(deliveryDate);
+  const formattedSecondDate = formatDate(pickupDate);
 
   return deliveryOption ? (
     <Section style={section}>
@@ -80,14 +83,19 @@ export const DeliveryDetails = ({
         </>
       )}
 
-      <Text style={text}>
-        <strong>{firstDateText}:</strong> {formatDate(deliveryDate)}
-        {deliveryTime && ` at ${deliveryTime}`}
-      </Text>
-      <Text style={text}>
-        <strong>{secondDateText}:</strong> {formatDate(pickupDate)}
-        {pickupTime && ` at ${pickupTime}`}
-      </Text>
+      {formattedFirstDate && (
+        <Text style={text}>
+          <strong>{firstDateText}:</strong> {formattedFirstDate}
+          {deliveryTime && ` at ${deliveryTime}`}
+        </Text>
+      )}
+
+      {formattedSecondDate && (
+        <Text style={text}>
+          <strong>{secondDateText}:</strong> {formattedSecondDate}
+          {pickupTime && ` at ${pickupTime}`}
+        </Text>
+      )}
 
       {isPickup && (
         <Text style={{...text, color: '#666', fontSize: '14px', marginTop: '12px'}}>
