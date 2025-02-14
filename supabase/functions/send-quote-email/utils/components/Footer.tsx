@@ -1,7 +1,7 @@
 
 import { Section, Text, Link } from 'npm:@react-email/components@0.0.12';
 import * as React from 'npm:react@18.3.1';
-import { footer, footerText, footerSmallText, link } from '../styles';
+import { footer, footerText, footerSmallText, link } from '../styles.ts';
 
 export const Footer = () => (
   <Section style={footer}>
