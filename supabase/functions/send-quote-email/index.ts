@@ -19,7 +19,17 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const quoteData = await req.json();
+    const requestData = await req.json();
+    console.log("Received quote request data:", requestData);
+
+    // Ensure the required numeric values exist and are numbers
+    const quoteData = {
+      ...requestData,
+      totalCost: Number(requestData.totalCost) || 0,
+      dailyCosts: Number(requestData.dailyCosts) || 0,
+      oneTimetCosts: Number(requestData.oneTimetCosts) || 0,
+    };
+
     validateQuoteRequest(quoteData);
 
     const clientIp = req.headers.get("x-real-ip") || "unknown";
@@ -38,12 +48,15 @@ const handler = async (req: Request): Promise<Response> => {
       html,
     });
 
+    console.log("Email sent successfully:", emailResponse);
+
     await updateRateLimit(clientIp, currentCount, lastReset);
 
     return new Response(JSON.stringify(emailResponse), {
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
+    console.error("Error in send-quote-email function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
