@@ -33,18 +33,6 @@ interface EmailQuoteDialogProps {
   deliveryOption?: "delivery" | "pickup" | null;
   deliveryZipCode?: string | null;
   warehouseLocation?: "nj" | "ny" | null;
-  deliveryDate?: Date | null;
-  deliveryTime?: string | null;
-  pickupDate?: Date | null;
-  pickupTime?: string | null;
-  stageLayoutImage?: string;
-  deliveryDetails?: {
-    venueName: string;
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    state: string;
-  };
 }
 
 const EmailQuoteDialog = ({ 
@@ -52,17 +40,32 @@ const EmailQuoteDialog = ({
   deliveryOption,
   deliveryZipCode,
   warehouseLocation,
-  deliveryDate,
-  deliveryTime,
-  pickupDate,
-  pickupTime,
-  stageLayoutImage,
-  deliveryDetails,
 }: EmailQuoteDialogProps) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const validateDimensions = () => {
+    const { width, depth, height, days } = quoteData.dimensions;
+    if (!width || width <= 0) {
+      toast.error("Please specify a valid stage width");
+      return false;
+    }
+    if (!depth || depth <= 0) {
+      toast.error("Please specify a valid stage depth");
+      return false;
+    }
+    if (!height || height <= 0) {
+      toast.error("Please specify a valid stage height");
+      return false;
+    }
+    if (!days || days <= 0) {
+      toast.error("Please specify a valid rental duration");
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +77,11 @@ const EmailQuoteDialog = ({
 
     if (!name.trim()) {
       toast.error("Please enter your name");
+      return;
+    }
+
+    if (!validateDimensions()) {
+      setIsOpen(false);
       return;
     }
 
@@ -102,12 +110,6 @@ const EmailQuoteDialog = ({
           deliveryOption,
           deliveryZipCode,
           warehouseLocation,
-          deliveryDate,
-          deliveryTime,
-          pickupDate,
-          pickupTime,
-          stageLayoutImage,
-          ...deliveryDetails,
         },
       });
 
@@ -116,6 +118,7 @@ const EmailQuoteDialog = ({
           toast.error("Too many quote requests. Please try again later.");
         } else {
           toast.error("Failed to send email");
+          console.error("Email error:", emailError);
         }
         return;
       }
@@ -125,6 +128,7 @@ const EmailQuoteDialog = ({
       setEmail("");
       setName("");
     } catch (error) {
+      console.error("Quote email error:", error);
       toast.error("An error occurred while processing your quote");
     } finally {
       setIsLoading(false);
@@ -134,6 +138,9 @@ const EmailQuoteDialog = ({
   const handleOpenChange = (open: boolean) => {
     if (open && !deliveryOption) {
       toast.error("Please select a delivery or pickup option before requesting a quote");
+      return;
+    }
+    if (open && !validateDimensions()) {
       return;
     }
     setIsOpen(open);
