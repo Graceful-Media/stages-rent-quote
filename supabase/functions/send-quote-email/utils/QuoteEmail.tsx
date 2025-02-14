@@ -1,3 +1,4 @@
+
 import {
   Body,
   Container,
@@ -24,6 +25,11 @@ interface QuoteEmailProps {
   deliveryOption?: string;
   deliveryZipCode?: string;
   warehouseLocation?: string;
+  deliveryDate?: Date | null;
+  deliveryTime?: string | null;
+  pickupDate?: Date | null;
+  pickupTime?: string | null;
+  stageLayoutImage?: string;
 }
 
 export const QuoteEmail = ({
@@ -33,12 +39,16 @@ export const QuoteEmail = ({
   deliveryOption,
   deliveryZipCode,
   warehouseLocation,
+  deliveryDate,
+  deliveryTime,
+  pickupDate,
+  pickupTime,
+  stageLayoutImage,
 }: QuoteEmailProps) => (
   <Html>
     <Head />
     <Body style={main}>
       <Container style={container}>
-        {/* Header with Logo */}
         <Section style={headerSection}>
           <Img
             src="https://www.stages.rent/storage/2022/06/Stage-Rent-Logo.png"
@@ -51,7 +61,6 @@ export const QuoteEmail = ({
 
         <Heading style={header}>Your Stage Rental Quote</Heading>
         
-        {/* Main Content */}
         <Section style={section}>
           <Heading as="h2" style={subheader}>Stage Specifications</Heading>
           <Text style={text}>
@@ -60,6 +69,17 @@ export const QuoteEmail = ({
           <Text style={text}>
             <strong>Rental Duration:</strong> {dimensions.days} {dimensions.days === 1 ? 'day' : 'days'}
           </Text>
+          {stageLayoutImage && (
+            <div style={diagramContainer}>
+              <Img
+                src={stageLayoutImage}
+                width="100%"
+                height="auto"
+                alt="Stage Layout Diagram"
+                style={diagram}
+              />
+            </div>
+          )}
         </Section>
 
         {selectedServices.length > 0 && (
@@ -89,6 +109,14 @@ export const QuoteEmail = ({
                 <strong>Warehouse Location:</strong> {warehouseLocation.toUpperCase()}
               </Text>
             )}
+            <Text style={text}>
+              <strong>Delivery Date:</strong> {deliveryDate ? new Date(deliveryDate).toLocaleDateString() : "Date TBC"}
+              {deliveryTime && ` at ${deliveryTime}`}
+            </Text>
+            <Text style={text}>
+              <strong>Pickup Date:</strong> {pickupDate ? new Date(pickupDate).toLocaleDateString() : "Date TBC"}
+              {pickupTime && ` at ${pickupTime}`}
+            </Text>
           </Section>
         )}
 
@@ -98,11 +126,13 @@ export const QuoteEmail = ({
           <Text style={disclaimer}>
             *Final price may vary based on event details and location
           </Text>
+          <Text style={callToAction}>
+            If you have any questions or would like to proceed with this quote, please reply to this email.
+          </Text>
         </Section>
 
         <Hr style={divider} />
 
-        {/* Enhanced Footer */}
         <Section style={footer}>
           <Text style={footerText}>
             Thank you for choosing Stage Rentals for your event needs. Our commitment to quality and service sets us apart.
@@ -126,7 +156,10 @@ export const QuoteEmail = ({
             </Link>
           </Text>
           <Text style={footerSmallText}>
-            © {new Date().getFullYear()} Stage Rentals. All rights reserved.
+            © {new Date().getFullYear()} Pro AV Source, LLC. All rights reserved.
+          </Text>
+          <Text style={footerSmallText}>
+            Stages.rent is a registered service owned and operated by Pro AV Source LLC.
           </Text>
         </Section>
       </Container>
@@ -216,6 +249,14 @@ const disclaimer = {
   margin: '10px 0',
 };
 
+const callToAction = {
+  fontSize: '14px',
+  color: '#333',
+  textAlign: 'center' as const,
+  margin: '15px 0 0',
+  fontWeight: 'bold',
+};
+
 const divider = {
   margin: '30px 0',
   borderTop: '1px solid #eaeaea',
@@ -244,6 +285,19 @@ const footerSmallText = {
 const link = {
   color: '#0066cc',
   textDecoration: 'none',
+};
+
+const diagramContainer = {
+  marginTop: '20px',
+  padding: '10px',
+  backgroundColor: '#ffffff',
+  borderRadius: '4px',
+};
+
+const diagram = {
+  maxWidth: '100%',
+  height: 'auto',
+  margin: '0 auto',
 };
 
 export default QuoteEmail;

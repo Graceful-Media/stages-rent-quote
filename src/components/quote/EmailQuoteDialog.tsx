@@ -27,6 +27,11 @@ interface EmailQuoteDialogProps {
   deliveryOption?: "delivery" | "pickup" | null;
   deliveryZipCode?: string | null;
   warehouseLocation?: "nj" | "ny" | null;
+  deliveryDate?: Date | null;
+  deliveryTime?: string | null;
+  pickupDate?: Date | null;
+  pickupTime?: string | null;
+  stageLayoutImage?: string;
 }
 
 const EmailQuoteDialog = ({ 
@@ -34,6 +39,11 @@ const EmailQuoteDialog = ({
   deliveryOption,
   deliveryZipCode,
   warehouseLocation,
+  deliveryDate,
+  deliveryTime,
+  pickupDate,
+  pickupTime,
+  stageLayoutImage,
 }: EmailQuoteDialogProps) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -72,11 +82,15 @@ const EmailQuoteDialog = ({
           deliveryOption,
           deliveryZipCode,
           warehouseLocation,
+          deliveryDate,
+          deliveryTime,
+          pickupDate,
+          pickupTime,
+          stageLayoutImage,
         },
       });
 
       if (emailError) {
-        console.error("Error sending email:", emailError);
         if (emailError.message.includes("Rate limit exceeded")) {
           toast.error("Too many quote requests. Please try again later.");
         } else {
@@ -90,7 +104,6 @@ const EmailQuoteDialog = ({
       setEmail("");
       setName("");
     } catch (error) {
-      console.error("Error in quote process:", error);
       toast.error("An error occurred while processing your quote");
     } finally {
       setIsLoading(false);
