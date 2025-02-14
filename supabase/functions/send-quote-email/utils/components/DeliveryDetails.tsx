@@ -11,6 +11,11 @@ interface DeliveryDetailsProps {
   deliveryTime?: string | null;
   pickupDate?: Date | null;
   pickupTime?: string | null;
+  venueName?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
 }
 
 export const DeliveryDetails = ({
@@ -21,17 +26,43 @@ export const DeliveryDetails = ({
   deliveryTime,
   pickupDate,
   pickupTime,
-}: DeliveryDetailsProps) => (
-  deliveryOption ? (
+  venueName,
+  addressLine1,
+  addressLine2,
+  city,
+  state,
+}: DeliveryDetailsProps) => {
+  const formatDate = (date: Date | null | undefined) => {
+    if (!date) return "Date TBC";
+    // Ensure we're working with a Date object
+    const dateObj = new Date(date);
+    return dateObj.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  return deliveryOption ? (
     <Section style={section}>
       <Heading as="h2" style={subheader}>Delivery Details</Heading>
       <Text style={text}>
         <strong>Delivery Option:</strong> {deliveryOption}
       </Text>
-      {deliveryZipCode && (
-        <Text style={text}>
-          <strong>Delivery Zip Code:</strong> {deliveryZipCode}
-        </Text>
+      {deliveryOption === "delivery" && (
+        <>
+          {venueName && (
+            <Text style={text}>
+              <strong>Venue:</strong> {venueName}
+            </Text>
+          )}
+          <Text style={text}>
+            <strong>Delivery Address:</strong><br />
+            {addressLine1}<br />
+            {addressLine2 && <>{addressLine2}<br /></>}
+            {city}, {state} {deliveryZipCode}
+          </Text>
+        </>
       )}
       {warehouseLocation && (
         <Text style={text}>
@@ -39,13 +70,13 @@ export const DeliveryDetails = ({
         </Text>
       )}
       <Text style={text}>
-        <strong>Delivery Date:</strong> {deliveryDate ? new Date(deliveryDate).toLocaleDateString() : "Date TBC"}
+        <strong>Delivery Date:</strong> {formatDate(deliveryDate)}
         {deliveryTime && ` at ${deliveryTime}`}
       </Text>
       <Text style={text}>
-        <strong>Pickup Date:</strong> {pickupDate ? new Date(pickupDate).toLocaleDateString() : "Date TBC"}
+        <strong>Pickup Date:</strong> {formatDate(pickupDate)}
         {pickupTime && ` at ${pickupTime}`}
       </Text>
     </Section>
-  ) : null
-);
+  ) : null;
+};

@@ -23,6 +23,12 @@ interface EmailQuoteDialogProps {
     };
     selectedServices: string[];
     totalCost: number;
+    dailyCosts: number;
+    oneTimetCosts: number;
+    hasDelivery: boolean;
+    hasSetup: boolean;
+    hasCarpet: boolean;
+    hasWarehouseFee: boolean;
   };
   deliveryOption?: "delivery" | "pickup" | null;
   deliveryZipCode?: string | null;
@@ -32,6 +38,13 @@ interface EmailQuoteDialogProps {
   pickupDate?: Date | null;
   pickupTime?: string | null;
   stageLayoutImage?: string;
+  deliveryDetails?: {
+    venueName: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    state: string;
+  };
 }
 
 const EmailQuoteDialog = ({ 
@@ -44,6 +57,7 @@ const EmailQuoteDialog = ({
   pickupDate,
   pickupTime,
   stageLayoutImage,
+  deliveryDetails,
 }: EmailQuoteDialogProps) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -79,6 +93,12 @@ const EmailQuoteDialog = ({
           dimensions: quoteData.dimensions,
           selectedServices: quoteData.selectedServices,
           totalCost: quoteData.totalCost,
+          dailyCosts: quoteData.dailyCosts,
+          oneTimetCosts: quoteData.oneTimetCosts,
+          hasDelivery: quoteData.hasDelivery,
+          hasSetup: quoteData.hasSetup,
+          hasCarpet: quoteData.hasCarpet,
+          hasWarehouseFee: quoteData.hasWarehouseFee,
           deliveryOption,
           deliveryZipCode,
           warehouseLocation,
@@ -87,6 +107,7 @@ const EmailQuoteDialog = ({
           pickupDate,
           pickupTime,
           stageLayoutImage,
+          ...deliveryDetails,
         },
       });
 
