@@ -66,7 +66,6 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
   const services = [...stairServices, ...baseServices];
 
   const handleStairsQuantityChange = (serviceId: string, quantity: number) => {
-    // Update the quantities state
     setStairsQuantities(prev => ({
       ...prev,
       [serviceId]: quantity
@@ -111,6 +110,23 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
     });
   };
 
+  const handleCarpetToggle = (serviceId: string) => {
+    if (serviceId === "carpet") {
+      // If turning on carpet, add both carpet and default color
+      if (!selectedServices.includes("carpet")) {
+        onToggleService("carpet");
+        onToggleService(`carpet-${selectedCarpetColor}`);
+      } else {
+        // If turning off carpet, remove both carpet and color
+        onToggleService("carpet");
+        const colorService = selectedServices.find(s => s.startsWith("carpet-"));
+        if (colorService) {
+          onToggleService(colorService);
+        }
+      }
+    }
+  };
+
   const handleCarpetColorChange = (colorId: string) => {
     setSelectedCarpetColor(colorId);
     
@@ -138,7 +154,7 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
 
         <CarpetService
           isSelected={selectedServices.includes("carpet")}
-          onToggle={onToggleService}
+          onToggle={handleCarpetToggle}
           onColorChange={handleCarpetColorChange}
           selectedColor={selectedCarpetColor}
         />
@@ -185,3 +201,4 @@ const ServicesForm = ({ selectedServices, onToggleService, height }: ServicesFor
 
 export default ServicesForm;
 export { baseServices, getStairServices, carpetColors };
+
