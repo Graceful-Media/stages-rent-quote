@@ -35,14 +35,14 @@ const DailyCharges = ({
       };
     }
 
-    // Handle carpet with color and square footage
-    if (serviceId.startsWith("carpet-")) {
-      const colorId = serviceId.replace("carpet-", "");
+    // Handle base carpet service
+    if (serviceId === "carpet") {
+      const colorService = selectedServices.find(s => s.startsWith("carpet-"));
+      if (!colorService) return null;
+
+      const colorId = colorService.replace("carpet-", "");
       const color = carpetColors.find(c => c.id === colorId);
       if (!color) return null;
-      
-      const carpetService = allServices.find(s => s.id === "carpet");
-      if (!carpetService) return null;
 
       const squareFootage = width * depth;
       
