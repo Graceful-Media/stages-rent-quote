@@ -15,6 +15,8 @@ interface DailyChargesProps {
 const DailyCharges = ({ 
   selectedServices, 
   height,
+  width,
+  depth,
   calculateSkirtPrice,
   calculateRailsPrice
 }: DailyChargesProps) => {
@@ -33,7 +35,7 @@ const DailyCharges = ({
       };
     }
 
-    // Handle carpet with color
+    // Handle carpet with color and square footage
     if (serviceId.startsWith("carpet-")) {
       const colorId = serviceId.replace("carpet-", "");
       const color = carpetColors.find(c => c.id === colorId);
@@ -42,8 +44,10 @@ const DailyCharges = ({
       const carpetService = allServices.find(s => s.id === "carpet");
       if (!carpetService) return null;
 
+      const squareFootage = width * depth;
+      
       return {
-        name: `Carpet (${color.name})`,
+        name: `Carpet - ${color.name}, ${squareFootage} sq.ft`,
         price: color.price
       };
     }
@@ -115,3 +119,4 @@ const DailyCharges = ({
 };
 
 export default DailyCharges;
+
