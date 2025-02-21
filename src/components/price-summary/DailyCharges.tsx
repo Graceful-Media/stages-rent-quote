@@ -12,6 +12,9 @@ interface DailyChargesProps {
   calculateRailsPrice: () => number;
 }
 
+const PRICE_4X8 = 150; // Price per 4'x8' deck
+const PRICE_4X4 = 75;  // Price per 4'x4' deck
+
 const DailyCharges = ({ 
   selectedServices, 
   height,
@@ -21,6 +24,12 @@ const DailyCharges = ({
   calculateRailsPrice
 }: DailyChargesProps) => {
   const allServices = [...getStairServices(height), ...baseServices];
+
+  // Calculate stage deck costs
+  const sections4x8 = Math.floor(width / 8) * Math.floor(depth / 4);
+  const remainingWidth = width % 8;
+  const sections4x4 = (remainingWidth >= 4) ? Math.floor(depth / 4) : 0;
+  const totalDeckCost = (sections4x8 * PRICE_4X8) + (sections4x4 * PRICE_4X4);
 
   const getServiceLabel = (serviceId: string): { name: string; price: number } | null => {
     // Handle stairs with quantity
@@ -95,6 +104,10 @@ const DailyCharges = ({
   return (
     <div className="space-y-2">
       <div className="font-medium text-sm text-gray-600">Daily Charges:</div>
+      <div className="flex justify-between text-sm">
+        <span>Stage Decks</span>
+        <span>${totalDeckCost.toLocaleString()}/day</span>
+      </div>
       {selectedServices.map((serviceId) => {
         // Skip carpet color selections as they're handled with the main carpet service
         if (serviceId.startsWith("carpet-")) return null;
@@ -119,4 +132,3 @@ const DailyCharges = ({
 };
 
 export default DailyCharges;
-
