@@ -1,3 +1,4 @@
+
 export interface Service {
   id: string;
   name: string;
@@ -64,3 +65,46 @@ export const baseServices: Service[] = [
     basePrice: 3, // Price per linear foot
   }
 ];
+
+export const getStairServices = (height: number): Service[] => {
+  if (height <= 8) {
+    return [];
+  }
+
+  if (height <= 24) {
+    return [
+      {
+        id: "stairs-no-rails",
+        name: "Stairs (No Railings)",
+        description: "Add stairs without safety railings to your stage setup",
+        basePrice: 75,
+      },
+      {
+        id: "stairs-with-rails",
+        name: "Stairs (w/Railings)",
+        description: "Add stairs with safety railings to your stage setup",
+        basePrice: 150,
+      },
+    ];
+  }
+
+  if (height <= 40) {
+    return [
+      {
+        id: "stairs-with-rails",
+        name: "Stairs (w/Railings)",
+        description: "Add stairs with safety railings to your stage setup",
+        basePrice: 175,
+      },
+    ];
+  }
+
+  return [
+    {
+      id: "stairs-with-rails",
+      name: "Stairs (w/Railings)",
+      description: "Add stairs with safety railings to your stage setup",
+      basePrice: 200,
+    },
+  ];
+};
