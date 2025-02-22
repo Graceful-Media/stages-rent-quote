@@ -2,6 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import EmailQuoteDialog from "./EmailQuoteDialog";
+import PrintQuote from "./PrintQuote";
+import { createPortal } from "react-dom";
+import { useState } from "react";
 
 interface FormActionsProps {
   onResetForm: () => void;
@@ -33,6 +36,8 @@ const FormActions = ({
   deliveryZipCode,
   warehouseLocation,
 }: FormActionsProps) => {
+  const [isPrinting, setIsPrinting] = useState(false);
+
   const handlePlaceOrder = () => {
     toast.success("Order Placed", {
       description: "Your order has been placed successfully.",
@@ -40,10 +45,15 @@ const FormActions = ({
   };
 
   const handlePrintQuote = () => {
+    setIsPrinting(true);
     toast.success("Print Quote", {
       description: "Your quote is being prepared for printing.",
     });
-    window.print();
+    
+    setTimeout(() => {
+      window.print();
+      setIsPrinting(false);
+    }, 100);
   };
 
   const handleResetForm = () => {
@@ -54,23 +64,34 @@ const FormActions = ({
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-        Reset Form
-      </Button>
-      <EmailQuoteDialog 
-        quoteData={quoteData}
-        deliveryOption={deliveryOption}
-        deliveryZipCode={deliveryZipCode}
-        warehouseLocation={warehouseLocation}
-      />
-      <Button onClick={handlePrintQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-        Print Quote
-      </Button>
-      <Button onClick={handlePlaceOrder} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
-        Place Order
-      </Button>
-    </div>
+    <>
+      <div className="grid grid-cols-2 gap-4 no-print">
+        <Button onClick={handleResetForm} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+          Reset Form
+        </Button>
+        <EmailQuoteDialog 
+          quoteData={quoteData}
+          deliveryOption={deliveryOption}
+          deliveryZipCode={deliveryZipCode}
+          warehouseLocation={warehouseLocation}
+        />
+        <Button onClick={handlePrintQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+          Print Quote
+        </Button>
+        <Button onClick={handlePlaceOrder} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
+          Place Order
+        </Button>
+      </div>
+      {isPrinting && createPortal(
+        <PrintQuote
+          quoteData={quoteData}
+          deliveryOption={deliveryOption}
+          deliveryZipCode={deliveryZipCode}
+          warehouseLocation={warehouseLocation}
+        />,
+        document.body
+      )}
+    </>
   );
 };
 
