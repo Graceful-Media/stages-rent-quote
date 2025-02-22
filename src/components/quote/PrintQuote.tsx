@@ -1,6 +1,6 @@
 
 import React from "react";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import StageLayoutDiagram from "../price-summary/StageLayoutDiagram";
 
 interface PrintQuoteProps {
@@ -26,7 +26,9 @@ interface PrintQuoteProps {
 }
 
 const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocation }: PrintQuoteProps) => {
-  const quoteDate = format(new Date(), "MMMM d, yyyy");
+  const currentDate = new Date();
+  const quoteDate = format(currentDate, "MMMM d, yyyy");
+  const expirationDate = format(addDays(currentDate, 3), "MMMM d, yyyy");
   const quoteRef = `QT-${Date.now().toString().slice(-6)}`;
 
   return (
@@ -35,9 +37,34 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-quote-primary mb-2">Stage Rental Quote</h1>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 space-y-1">
             <p>Quote Reference: {quoteRef}</p>
             <p>Date: {quoteDate}</p>
+            <p className="font-semibold">Quote Expires: {expirationDate}</p>
+          </div>
+        </div>
+
+        {/* Legal Disclaimer */}
+        <div className="mb-8 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <div className="mb-4">
+            <p className="font-bold mb-3">IMPORTANT DISCLAIMER:</p>
+            <p className="mb-4">
+              This quote DOES NOT reserve or hold any equipment or services. All orders are processed on a first-come, 
+              first-served basis upon receipt of completed paperwork and payment. We cannot guarantee the availability 
+              of equipment, crew, or delivery slots without a signed contract and a 50% non-refundable deposit at the 
+              time of confirmation. For events less than 30 days away, full payment is required.
+            </p>
+            <p className="mb-4">
+              Please review your quote carefully, including equipment, dates, and times, to ensure accuracy. 
+              Immediate confirmation is recommended to secure your reservation.
+            </p>
+            <p className="mb-2">
+              If your requirements are less than 48hrs away, please contact our offices:
+            </p>
+            <p className="font-medium">
+              Phone: (646) 661-4078 (M-F 10am - 5pm EST)<br />
+              Email: quotes@proavsource.com
+            </p>
           </div>
         </div>
 
