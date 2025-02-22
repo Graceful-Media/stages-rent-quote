@@ -2,6 +2,7 @@
 import React from "react";
 import { format, addDays } from "date-fns";
 import StageLayoutDiagram from "../price-summary/StageLayoutDiagram";
+import { carpetColors, getStairServices, baseServices } from "../services/types";
 
 interface PrintQuoteProps {
   quoteData: {
@@ -30,6 +31,50 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
   const quoteDate = format(currentDate, "MMMM d, yyyy");
   const expirationDate = format(addDays(currentDate, 3), "MMMM d, yyyy");
   const quoteRef = `QT-${Date.now().toString().slice(-6)}`;
+
+  const getServiceLabel = (serviceId: string): { name: string; price: number } | null => {
+    const allServices = [...getStairServices(quoteData.dimensions.height), ...baseServices];
+
+    // Handle stairs with quantity
+    if (serviceId.includes("-qty-")) {
+      const [baseServiceId, quantity] = serviceId.split("-qty-");
+      const service = allServices.find((s) => s.id === baseServiceId);
+      if (!service) return null;
+      
+      return {
+        name: `${service.name} (Qty: ${quantity})`,
+        price: service.basePrice * parseInt(quantity)
+      };
+    }
+
+    // Handle carpet
+    if (serviceId === "carpet") {
+      const colorService = quoteData.selectedServices.find(s => s.startsWith("carpet-"));
+      if (!colorService) return null;
+
+      const colorId = colorService.replace("carpet-", "");
+      const color = carpetColors.find(c => c.id === colorId);
+      if (!color) return null;
+
+      return {
+        name: `Carpet - ${color.name}`,
+        price: color.price * (quoteData.dimensions.width * quoteData.dimensions.depth)
+      };
+    }
+
+    // Handle standard services
+    const service = allServices.find((s) => s.id === serviceId);
+    if (!service) return null;
+
+    return {
+      name: service.name,
+      price: service.basePrice
+    };
+  };
+
+  // Calculate sections for the layout diagram
+  const sections4x8 = Math.floor(quoteData.dimensions.width / 8) * Math.floor(quoteData.dimensions.depth / 4);
+  const sections4x4 = (quoteData.dimensions.width % 8 >= 4) ? Math.floor(quoteData.dimensions.depth / 4) : 0;
 
   return (
     <div className="print-only">
@@ -72,16 +117,18 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4">Stage Specifications</h2>
           <div className="grid grid-cols-2 gap-4">
-            <div>
+            <div className="space-y-2">
               <p>Size: {quoteData.dimensions.width}' × {quoteData.dimensions.depth}' × {quoteData.dimensions.height}"</p>
               <p>Rental Duration: {quoteData.dimensions.days} {quoteData.dimensions.days === 1 ? "day" : "days"}</p>
+              <p>4'x8' Staging Decks: {sections4x8}</p>
+              <p>4'x4' Staging Decks: {sections4x4}</p>
             </div>
             <div>
               <StageLayoutDiagram
                 width={quoteData.dimensions.width}
                 depth={quoteData.dimensions.depth}
-                sections4x8={Math.floor(quoteData.dimensions.width / 8) * Math.floor(quoteData.dimensions.depth / 4)}
-                sections4x4={(quoteData.dimensions.width % 8 >= 4) ? Math.floor(quoteData.dimensions.depth / 4) : 0}
+                sections4x8={sections4x8}
+                sections4x4={sections4x4}
               />
             </div>
           </div>
@@ -91,17 +138,30 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4">Pricing Breakdown</h2>
           <div className="space-y-4">
+            {/* Daily Charges */}
             <div>
               <h3 className="font-medium mb-2">Daily Charges: ${quoteData.dailyCosts.toLocaleString()}/day</h3>
-              <div className="pl-4">
-                {/* Daily charges details would be listed here */}
+              <div className="pl-4 space-y-1">
+                {quoteData.selectedServices.map((serviceId) => {
+                  if (serviceId.startsWith("carpet-")) return null;
+                  const serviceDetails = getServiceLabel(serviceId);
+                  if (!serviceDetails) return null;
+
+                  return (
+                    <div key={serviceId} className="flex justify-between">
+                      <span>{serviceDetails.name}</span>
+                      <span>${serviceDetails.price.toLocaleString()}/day</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
             
+            {/* One-time Charges */}
             {quoteData.oneTimetCosts > 0 && (
               <div>
                 <h3 className="font-medium mb-2">One-time Charges: ${quoteData.oneTimetCosts.toLocaleString()}</h3>
-                <div className="pl-4">
+                <div className="pl-4 space-y-1">
                   {quoteData.hasDelivery && <p>• Delivery Service</p>}
                   {quoteData.hasSetup && <p>• Setup and Teardown</p>}
                   {quoteData.hasCarpet && <p>• Carpet Installation</p>}
@@ -137,17 +197,20 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
 
         {/* Footer */}
         <div className="text-sm text-gray-600 mt-12">
-          <p className="mb-2">Terms & Conditions:</p>
+          <p className="font-medium mb-2">Terms & Conditions:</p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>Quote valid for 30 days from the date issued</li>
+            <li>Quote valid for 3 days from the date listed</li>
             <li>50% deposit required to secure booking</li>
-            <li>Final payment due 3 days before event date</li>
+            <li>Final payment due 30 days before event date. If your event date is less than 30 days away, full payment is required at booking.</li>
+            <li>Certificate of Insurance may be required, naming Pro AV Source, LLC as additional insured.</li>
             <li>Cancellation fees may apply</li>
           </ul>
           <div className="mt-4">
-            <p>Contact Information:</p>
-            <p>Phone: (555) 123-4567</p>
-            <p>Email: info@stagerental.com</p>
+            <p className="font-medium mb-2">Contact Information:</p>
+            <p>Pro AV Source</p>
+            <p>www.Stages.rent</p>
+            <p>(646) 733-8576 - Mon - Sat - 10am - 5pm EST</p>
+            <p>quotes@proavsource.com</p>
           </div>
         </div>
       </div>
