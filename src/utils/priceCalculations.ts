@@ -1,9 +1,12 @@
-
 import { carpetColors } from "@/components/services/types";
 
 interface SectionCounts {
   sections4x8: number;
   sections4x4: number;
+  sections2x8: number;
+  sections8x2: number;
+  sections2x6: number;
+  sections6x2: number;
   sections2x4: number;
   sections4x2: number;
   sections2x2: number;
@@ -16,19 +19,32 @@ export const calculateSections = (width: number, depth: number): SectionCounts =
   
   // Calculate depth sections
   const fullRows8ft = Math.floor(depth / 8);       // Full 8' rows
-  const remaining4ftDepth = Math.floor((depth % 8) / 4);  // 4' row if needed
-  const remaining2ftDepth = ((depth % 8) % 4) >= 2 ? 1 : 0;  // 2' row if needed
-  
-  // Calculate sections
+  const fullRows6ft = Math.floor((depth % 8) / 6); // Full 6' rows from remaining
+  const remaining4ftDepth = Math.floor((depth % 8 % 6) / 4);  // 4' row if needed
+  const remaining2ftDepth = ((depth % 8 % 6 % 4) >= 2) ? 1 : 0;  // 2' row if needed
+
+  // Calculate 4' wide sections
   const sections4x8 = numFull4ftAcross * fullRows8ft;
   const sections4x4 = numFull4ftAcross * remaining4ftDepth;
-  const sections2x4 = remaining2ftWidth * (fullRows8ft + remaining4ftDepth);
   const sections4x2 = numFull4ftAcross * remaining2ftDepth;
+
+  // Calculate 2' wide sections
+  const sections2x8 = remaining2ftWidth * fullRows8ft;
+  const sections2x6 = remaining2ftWidth * fullRows6ft;
+  const sections2x4 = remaining2ftWidth * remaining4ftDepth;
   const sections2x2 = remaining2ftWidth * remaining2ftDepth;
+
+  // Calculate rotated sections (8x2, 6x2)
+  const sections8x2 = 0; // These will be calculated when needed
+  const sections6x2 = 0; // These will be calculated when needed
   
   return {
     sections4x8,
     sections4x4,
+    sections2x8,
+    sections8x2,
+    sections2x6,
+    sections6x2,
     sections2x4,
     sections4x2,
     sections2x2
@@ -142,12 +158,18 @@ export const calculateTotal = (
   const sections = calculateSections(width, depth);
   const section4x8Price = 150;
   const section4x4Price = 75;
-  const section2x4Price = 55;  // Updated price for 2x4 sections
-  const section4x2Price = 55;  // Price for 4x2 sections (same as 2x4)
-  const section2x2Price = 50;  // Updated price for 2x2 sections
+  const section2x8Price = 85;  // New price for 2x8 sections
+  const section2x6Price = 85;  // New price for 2x6 sections
+  const section2x4Price = 55;
+  const section4x2Price = 55;
+  const section2x2Price = 50;
   
   const sectionsCost = (sections.sections4x8 * section4x8Price) + 
                       (sections.sections4x4 * section4x4Price) +
+                      (sections.sections2x8 * section2x8Price) +
+                      (sections.sections8x2 * section2x8Price) +
+                      (sections.sections2x6 * section2x6Price) +
+                      (sections.sections6x2 * section2x6Price) +
                       (sections.sections2x4 * section2x4Price) +
                       (sections.sections4x2 * section4x2Price) +
                       (sections.sections2x2 * section2x2Price);
@@ -201,6 +223,8 @@ export const calculateTotal = (
 export const calculateTotalLegs = (width: number, depth: number) => {
   const sections = calculateSections(width, depth);
   return (sections.sections4x8 + sections.sections4x4 + 
+          sections.sections2x8 + sections.sections8x2 + 
+          sections.sections2x6 + sections.sections6x2 + 
           sections.sections2x4 + sections.sections4x2 + 
           sections.sections2x2) * 4;
 };

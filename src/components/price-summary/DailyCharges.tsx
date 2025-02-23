@@ -10,6 +10,10 @@ interface ServiceDetails {
 interface DailyChargesProps {
   sections4x8: number;
   sections4x4: number;
+  sections2x8: number;
+  sections8x2: number;
+  sections2x6: number;
+  sections6x2: number;
   sections2x4: number;
   sections4x2: number;
   sections2x2: number;
@@ -20,7 +24,11 @@ interface DailyChargesProps {
 
 const DailyCharges = ({ 
   sections4x8, 
-  sections4x4, 
+  sections4x4,
+  sections2x8,
+  sections8x2,
+  sections2x6,
+  sections6x2,
   sections2x4,
   sections4x2,
   sections2x2,
@@ -43,6 +51,18 @@ const DailyCharges = ({
             <div className="flex justify-between">
               <span>Stage Decks (4'x4')</span>
               <span>${sections4x4 * 75}/day</span>
+            </div>
+          )}
+          {sections2x8 > 0 && (
+            <div className="flex justify-between">
+              <span>Stage Decks (2'x8')</span>
+              <span>${sections2x8 * 85}/day</span>
+            </div>
+          )}
+          {sections2x6 > 0 && (
+            <div className="flex justify-between">
+              <span>Stage Decks (2'x6')</span>
+              <span>${sections2x6 * 85}/day</span>
             </div>
           )}
           {sections2x4 > 0 && (

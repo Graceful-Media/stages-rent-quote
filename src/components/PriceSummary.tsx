@@ -1,4 +1,3 @@
-
 import React from "react";
 import DimensionsDisplay from "./price-summary/DimensionsDisplay";
 import SectionsDisplay from "./price-summary/SectionsDisplay";
@@ -45,16 +44,13 @@ const PriceSummary = ({
   const hasCarpet = selectedServices.some(service => service.includes("carpet"));
   const hasWarehouseFee = warehouseLocation === "ny";
 
-  // Mock function for getServiceLabel - implement actual service label logic here
   const getServiceLabel = (serviceId: string) => {
-    // This is a simplified version - implement full service label logic as needed
     return {
       name: serviceId,
-      price: 0 // This should be calculated based on the service type
+      price: 0
     };
   };
 
-  // Add these values to be passed to the TotalDisplay component
   const priceDetails = {
     dailyCosts: totals.dailyCosts,
     oneTimetCosts: totals.oneTimetCosts,
@@ -79,6 +75,10 @@ const PriceSummary = ({
         <SectionsDisplay 
           sections4x8={sections.sections4x8}
           sections4x4={sections.sections4x4}
+          sections2x8={sections.sections2x8}
+          sections8x2={sections.sections8x2}
+          sections2x6={sections.sections2x6}
+          sections6x2={sections.sections6x2}
           sections2x4={sections.sections2x4}
           sections4x2={sections.sections4x2}
           sections2x2={sections.sections2x2}
@@ -91,6 +91,10 @@ const PriceSummary = ({
           <DailyCharges 
             sections4x8={sections.sections4x8}
             sections4x4={sections.sections4x4}
+            sections2x8={sections.sections2x8}
+            sections8x2={sections.sections8x2}
+            sections2x6={sections.sections2x6}
+            sections6x2={sections.sections6x2}
             sections2x4={sections.sections2x4}
             sections4x2={sections.sections4x2}
             sections2x2={sections.sections2x2}
