@@ -1,4 +1,3 @@
-
 import { FC, useState, useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -10,6 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 import EmailTemplatePreview from "./EmailTemplatePreview";
 import TemplateVersions from "./TemplateVersions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface EmailTemplateEditorProps {
   templateId?: string;
@@ -33,6 +40,9 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("edit");
   const [nextVersionNumber, setNextVersionNumber] = useState(1);
+  const [testEmail, setTestEmail] = useState("");
+  const [isSendingTest, setIsSendingTest] = useState(false);
+  const [isTestDialogOpen, setIsTestDialogOpen] = useState(false);
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -141,6 +151,38 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
     editor?.commands.setContent(content);
   };
 
+  const handleSendTest = async () => {
+    if (!editor || !testEmail) {
+      toast.error("Please enter a test email address");
+      return;
+    }
+
+    setIsSendingTest(true);
+    try {
+      const content = editor.getHTML();
+      
+      const { error } = await supabase.functions.invoke('send-test-email', {
+        body: {
+          name,
+          subject,
+          content,
+          testEmail,
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success("Test email sent successfully");
+      setIsTestDialogOpen(false);
+      setTestEmail("");
+    } catch (error) {
+      console.error("Error sending test email:", error);
+      toast.error("Failed to send test email");
+    } finally {
+      setIsSendingTest(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -197,6 +239,36 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
             onVersionSelect={handleVersionSelect}
           />
         )}
+        <Dialog open={isTestDialogOpen} onOpenChange={setIsTestDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline">Send Test Email</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Send Test Email</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="testEmail">Test Email Address</Label>
+                <Input
+                  id="testEmail"
+                  type="email"
+                  placeholder="Enter test email address"
+                  value={testEmail}
+                  onChange={(e) => setTestEmail(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                onClick={handleSendTest}
+                disabled={isSendingTest}
+              >
+                {isSendingTest ? "Sending..." : "Send Test"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         <Button variant="outline" onClick={() => editor?.commands.clearContent()}>
           Clear Content
         </Button>
