@@ -5,18 +5,15 @@ import {
   Head,
   Heading,
   Html,
+  Section,
+  Text,
   Hr,
 } from 'npm:@react-email/components@0.0.7';
 import * as React from 'npm:react@18.3.1';
-import { Header } from './components/Header.tsx';
-import { StageSpecifications } from './components/StageSpecifications.tsx';
-import { SelectedServices } from './components/SelectedServices.tsx';
-import { DeliveryDetails } from './components/DeliveryDetails.tsx';
-import { TotalQuote } from './components/TotalQuote.tsx';
-import { Footer } from './components/Footer.tsx';
-import { main, container, header, divider } from './styles.ts';
+import { QuoteDetails } from './components/QuoteDetails.tsx';
 
 interface QuoteEmailProps {
+  recipientName: string;
   dimensions: {
     width: number;
     depth: number;
@@ -25,52 +22,123 @@ interface QuoteEmailProps {
   };
   selectedServices: string[];
   totalCost: number;
-  deliveryOption?: string;
-  deliveryZipCode?: string;
-  warehouseLocation?: string;
-  deliveryDate?: Date | null;
-  deliveryTime?: string | null;
-  pickupDate?: Date | null;
-  pickupTime?: string | null;
-  stageLayoutImage?: string;
+  dailyCosts: number;
+  oneTimetCosts: number;
+  hasDelivery: boolean;
+  hasSetup: boolean;
+  hasCarpet: boolean;
+  hasWarehouseFee: boolean;
 }
 
 export const QuoteEmail = ({
+  recipientName,
   dimensions,
   selectedServices,
   totalCost,
-  deliveryOption,
-  deliveryZipCode,
-  warehouseLocation,
-  deliveryDate,
-  deliveryTime,
-  pickupDate,
-  pickupTime,
-  stageLayoutImage,
+  dailyCosts,
+  oneTimetCosts,
+  hasDelivery,
+  hasSetup,
+  hasCarpet,
+  hasWarehouseFee,
 }: QuoteEmailProps) => (
   <Html>
     <Head />
     <Body style={main}>
       <Container style={container}>
-        <Header />
-        <Heading style={header}>Your Stage Rental Quote</Heading>
-        <StageSpecifications dimensions={dimensions} stageLayoutImage={stageLayoutImage} />
-        <SelectedServices services={selectedServices} />
-        <DeliveryDetails
-          deliveryOption={deliveryOption}
-          deliveryZipCode={deliveryZipCode}
-          warehouseLocation={warehouseLocation}
-          deliveryDate={deliveryDate}
-          deliveryTime={deliveryTime}
-          pickupDate={pickupDate}
-          pickupTime={pickupTime}
+        <Section style={logoSection}>
+          <Heading style={header}>Stage Rental Quote</Heading>
+        </Section>
+
+        <Section style={introSection}>
+          <Text style={greeting}>Dear {recipientName},</Text>
+          <Text style={introText}>
+            Thank you for requesting a quote for your stage rental. Here are the details of your custom quote:
+          </Text>
+        </Section>
+
+        <QuoteDetails
+          dimensions={dimensions}
+          selectedServices={selectedServices}
+          totalCost={totalCost}
+          dailyCosts={dailyCosts}
+          oneTimetCosts={oneTimetCosts}
+          hasDelivery={hasDelivery}
+          hasSetup={hasSetup}
+          hasCarpet={hasCarpet}
+          hasWarehouseFee={hasWarehouseFee}
         />
-        <TotalQuote totalCost={totalCost} />
+
         <Hr style={divider} />
-        <Footer />
+
+        <Section style={footerSection}>
+          <Text style={footerText}>
+            This quote is valid for 7 days. To proceed with your rental, please contact our team or reply to this email.
+          </Text>
+          <Text style={footerText}>
+            Contact us: (646) 661-4078 - Mon - Fri 9am - 5pm EST
+          </Text>
+        </Section>
       </Container>
     </Body>
   </Html>
 );
+
+const main = {
+  backgroundColor: '#ffffff',
+  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
+};
+
+const container = {
+  margin: '0 auto',
+  padding: '20px 0 48px',
+  maxWidth: '580px',
+};
+
+const logoSection = {
+  padding: '20px 0',
+  textAlign: 'center' as const,
+};
+
+const header = {
+  color: '#333',
+  fontSize: '32px',
+  lineHeight: '1.3',
+  fontWeight: '700',
+  margin: '0',
+};
+
+const introSection = {
+  padding: '20px 0',
+};
+
+const greeting = {
+  fontSize: '16px',
+  lineHeight: '1.4',
+  margin: '0 0 10px 0',
+};
+
+const introText = {
+  fontSize: '16px',
+  lineHeight: '1.4',
+  margin: '0 0 24px 0',
+};
+
+const divider = {
+  borderTop: '1px solid #eaeaea',
+  margin: '20px 0',
+};
+
+const footerSection = {
+  padding: '20px 0',
+  textAlign: 'center' as const,
+};
+
+const footerText = {
+  fontSize: '14px',
+  color: '#666',
+  lineHeight: '1.5',
+  margin: '8px 0',
+};
 
 export default QuoteEmail;
