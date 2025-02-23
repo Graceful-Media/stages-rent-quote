@@ -1,3 +1,4 @@
+
 import React from "react";
 import { format, addDays } from "date-fns";
 import { carpetColors, baseServices, getStairServices, skirtSides, railSides } from "../services/types";
@@ -128,6 +129,19 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
   return (
     <div className="print-only p-8 max-w-4xl mx-auto">
       <div className="space-y-6">
+        {/* Legal Disclaimer */}
+        <div className="mb-8 text-sm space-y-4">
+          <p className="font-bold">
+            This quote DOES NOT reserve or hold any equipment or services. All orders are processed on a first-come, first-served basis upon receipt of completed paperwork and payment. We cannot guarantee the availability of equipment, crew, or delivery slots without a signed contract and a 50% non-refundable deposit at the time of confirmation. For events less than 30 days away, full payment is required.
+          </p>
+          <p>
+            Please review your quote carefully, including equipment, dates, and times, to ensure accuracy. Immediate confirmation is recommended to secure your reservation.
+          </p>
+          <p>
+            If your requirements are less than 48hrs away, please contact our offices @ (646) 661-4078 M-F 10am - 5pm EST. Or email us - quotes@proavsource.com
+          </p>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Stage Rental Quote</h1>
@@ -153,7 +167,7 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
           <div className="space-y-2 pl-4">
             <div className="flex justify-between">
               <span>Stage Decks</span>
-              <span>${deckCost}/day</span>
+              <span>${(sections4x8 * 150) + (sections4x4 * 75)}/day</span>
             </div>
             {quoteData.selectedServices.map((serviceId) => {
               if (serviceId.startsWith("carpet-") || 
@@ -219,7 +233,7 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
             <ul className="list-disc pl-5 space-y-1">
               <li>Quote valid for 3 days from the date listed</li>
               <li>50% deposit required to secure booking</li>
-              <li>Final payment due 30 days before event date. If your event date is less than 30 days away, full payment is required at booking.</li>
+              <li>Final payment due 30 days before event date. If your event date is less than 30 days away, full payment is required.</li>
               <li>Certificate of Insurance may be required, naming Pro AV Source, LLC as additional insured.</li>
               <li>Cancellation fees may apply</li>
             </ul>
