@@ -9,7 +9,6 @@ import StageSpecifications from "./sections/StageSpecifications";
 import DailyCharges from "./sections/DailyCharges";
 import OneTimeCharges from "./sections/OneTimeCharges";
 import QuoteFooter from "./sections/QuoteFooter";
-import DeliveryDetails from "./sections/DeliveryDetails";
 
 interface PrintQuoteProps {
   quoteData: {
@@ -29,35 +28,11 @@ interface PrintQuoteProps {
     hasWarehouseFee: boolean;
   };
   deliveryOption: "delivery" | "pickup" | null;
-  deliveryDetails?: {
-    deliveryDate: Date | null;
-    deliveryTime: string | null;
-    pickupDate: Date | null;
-    pickupTime: string | null;
-    venueName: string;
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    comments: string;
-  };
-  pickupDetails?: {
-    warehouseLocation: "nj" | "ny" | null;
-    pickupDate: Date | null;
-    returnDate: Date | null;
-    comments: string;
-  };
+  deliveryZipCode: string | null;
   warehouseLocation: "nj" | "ny" | null;
 }
 
-const PrintQuote = ({ 
-  quoteData, 
-  deliveryOption, 
-  deliveryDetails,
-  pickupDetails,
-  warehouseLocation 
-}: PrintQuoteProps) => {
+const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocation }: PrintQuoteProps) => {
   const currentDate = new Date();
   const quoteDate = format(currentDate, "MMMM d, yyyy");
   const expirationDate = format(addDays(currentDate, 3), "MMMM d, yyyy");
@@ -188,12 +163,6 @@ const PrintQuote = ({
           hasDelivery={quoteData.hasDelivery}
           width={quoteData.dimensions.width}
           depth={quoteData.dimensions.depth}
-        />
-
-        <DeliveryDetails 
-          deliveryOption={deliveryOption}
-          deliveryDetails={deliveryDetails}
-          pickupDetails={pickupDetails}
         />
 
         <div className="mt-8">

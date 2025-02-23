@@ -12,6 +12,7 @@ interface SidebarProps {
   };
   selectedServices: string[];
   warehouseLocation: "nj" | "ny" | null;
+  deliveryZipCode: string | null;
   deliveryOption: "delivery" | "pickup" | null;
   handleResetForm: () => void;
   quoteData: {
@@ -31,37 +32,17 @@ interface SidebarProps {
     hasWarehouseFee: boolean;
   };
   setupCost: number;
-  deliveryDetails?: {
-    deliveryDate: Date | null;
-    deliveryTime: string | null;
-    pickupDate: Date | null;
-    pickupTime: string | null;
-    venueName: string;
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    comments: string;
-  };
-  pickupDetails?: {
-    warehouseLocation: "nj" | "ny" | null;
-    pickupDate: Date | null;
-    returnDate: Date | null;
-    comments: string;
-  };
 }
 
 const Sidebar = ({
   stageDimensions,
   selectedServices,
   warehouseLocation,
+  deliveryZipCode,
   deliveryOption,
   handleResetForm,
   quoteData,
   setupCost,
-  deliveryDetails,
-  pickupDetails,
 }: SidebarProps) => {
   return (
     <div className="lg:col-span-1">
@@ -70,6 +51,7 @@ const Sidebar = ({
           {...stageDimensions}
           selectedServices={selectedServices}
           warehouseLocation={warehouseLocation}
+          deliveryZipCode={deliveryZipCode}
           deliveryOption={deliveryOption}
           setupCost={setupCost}
         />
@@ -77,8 +59,7 @@ const Sidebar = ({
           onResetForm={handleResetForm} 
           quoteData={quoteData}
           deliveryOption={deliveryOption}
-          deliveryDetails={deliveryDetails}
-          pickupDetails={pickupDetails}
+          deliveryZipCode={deliveryZipCode}
           warehouseLocation={warehouseLocation}
         />
       </div>

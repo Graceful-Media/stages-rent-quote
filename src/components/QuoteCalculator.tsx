@@ -18,8 +18,6 @@ const QuoteCalculator = () => {
     setupCost,
     warehouseLocation,
     deliveryZipCode,
-    deliveryDetails,
-    pickupDetails,
     handleDimensionUpdate,
     handleToggleService,
     handleResetForm,
@@ -96,12 +94,11 @@ const QuoteCalculator = () => {
           stageDimensions={stageDimensions}
           selectedServices={selectedServices}
           warehouseLocation={warehouseLocation}
+          deliveryZipCode={deliveryZipCode}
           deliveryOption={deliveryOption}
           handleResetForm={handleResetForm}
           quoteData={quoteData}
           setupCost={setupCost}
-          deliveryDetails={deliveryDetails}
-          pickupDetails={pickupDetails}
         />
       </div>
     </div>

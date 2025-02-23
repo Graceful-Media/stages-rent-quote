@@ -1,27 +1,6 @@
 
 import { useState } from "react";
 
-interface DeliveryDetails {
-  deliveryDate: Date | null;
-  deliveryTime: string | null;
-  pickupDate: Date | null;
-  pickupTime: string | null;
-  venueName: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  comments: string;
-}
-
-interface PickupDetails {
-  warehouseLocation: "nj" | "ny" | null;
-  pickupDate: Date | null;
-  returnDate: Date | null;
-  comments: string;
-}
-
 export const useQuoteState = () => {
   const [stageDimensions, setStageDimensions] = useState({
     width: 0,
@@ -40,27 +19,6 @@ export const useQuoteState = () => {
   const [setupCost, setSetupCost] = useState(0);
   const [warehouseLocation, setWarehouseLocation] = useState<"nj" | "ny" | null>(null);
   const [deliveryZipCode, setDeliveryZipCode] = useState<string | null>(null);
-
-  const [deliveryDetails, setDeliveryDetails] = useState<DeliveryDetails>({
-    deliveryDate: null,
-    deliveryTime: null,
-    pickupDate: null,
-    pickupTime: null,
-    venueName: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    comments: "",
-  });
-
-  const [pickupDetails, setPickupDetails] = useState<PickupDetails>({
-    warehouseLocation: null,
-    pickupDate: null,
-    returnDate: null,
-    comments: "",
-  });
 
   const handleDimensionUpdate = (field: string, value: number) => {
     setStageDimensions((prev) => ({
@@ -86,25 +44,6 @@ export const useQuoteState = () => {
     setWarehouseLocation(null);
     setDeliveryZipCode(null);
     setSetupCost(0);
-    setDeliveryDetails({
-      deliveryDate: null,
-      deliveryTime: null,
-      pickupDate: null,
-      pickupTime: null,
-      venueName: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      comments: "",
-    });
-    setPickupDetails({
-      warehouseLocation: null,
-      pickupDate: null,
-      returnDate: null,
-      comments: "",
-    });
   };
 
   return {
@@ -119,8 +58,6 @@ export const useQuoteState = () => {
     setupCost,
     warehouseLocation,
     deliveryZipCode,
-    deliveryDetails,
-    pickupDetails,
     handleDimensionUpdate,
     handleToggleService,
     handleResetForm,
@@ -133,7 +70,5 @@ export const useQuoteState = () => {
     setSetupCost,
     setWarehouseLocation,
     setDeliveryZipCode,
-    setDeliveryDetails,
-    setPickupDetails,
   };
 };
