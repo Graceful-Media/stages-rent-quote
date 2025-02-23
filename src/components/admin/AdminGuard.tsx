@@ -29,11 +29,8 @@ const AdminGuard: FC<AdminGuardProps> = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated || !isAdmin) {
-    return null;
-  }
-
-  return <>{children}</>;
+  // Only render children if user is both authenticated and admin
+  return isAuthenticated && isAdmin ? <>{children}</> : null;
 };
 
 export default AdminGuard;

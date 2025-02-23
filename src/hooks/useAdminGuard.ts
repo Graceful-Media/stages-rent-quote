@@ -9,11 +9,15 @@ export const useAdminGuard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
     const checkAdminStatus = async () => {
       try {
         const {
           data: { session },
         } = await supabase.auth.getSession();
+
+        if (!mounted) return;
 
         if (!session) {
           setIsAuthenticated(false);
@@ -31,6 +35,8 @@ export const useAdminGuard = () => {
           .eq("role", "admin")
           .maybeSingle();
 
+        if (!mounted) return;
+
         if (error) {
           throw error;
         }
@@ -38,10 +44,15 @@ export const useAdminGuard = () => {
         setIsAdmin(!!roles);
       } catch (error) {
         console.error("Error checking admin status:", error);
-        setIsAuthenticated(false);
-        setIsAdmin(false);
+        if (mounted) {
+          setIsAuthenticated(false);
+          setIsAdmin(false);
+          toast.error("Error checking admin status");
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -50,7 +61,9 @@ export const useAdminGuard = () => {
 
     // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN') {
+      if (!mounted) return;
+      
+      if (event === 'SIGNED_IN' && session) {
         await checkAdminStatus();
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
@@ -60,6 +73,7 @@ export const useAdminGuard = () => {
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
