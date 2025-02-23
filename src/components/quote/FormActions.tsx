@@ -26,7 +26,25 @@ interface FormActionsProps {
     hasWarehouseFee: boolean;
   };
   deliveryOption: "delivery" | "pickup" | null;
-  deliveryZipCode: string | null;
+  deliveryDetails?: {
+    deliveryDate: Date | null;
+    deliveryTime: string | null;
+    pickupDate: Date | null;
+    pickupTime: string | null;
+    venueName: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    comments: string;
+  };
+  pickupDetails?: {
+    warehouseLocation: "nj" | "ny" | null;
+    pickupDate: Date | null;
+    returnDate: Date | null;
+    comments: string;
+  };
   warehouseLocation: "nj" | "ny" | null;
 }
 
@@ -34,7 +52,8 @@ const FormActions = ({
   onResetForm, 
   quoteData,
   deliveryOption,
-  deliveryZipCode,
+  deliveryDetails,
+  pickupDetails,
   warehouseLocation,
 }: FormActionsProps) => {
   const [isPrinting, setIsPrinting] = useState(false);
@@ -73,7 +92,8 @@ const FormActions = ({
         <EmailQuoteDialog 
           quoteData={quoteData}
           deliveryOption={deliveryOption}
-          deliveryZipCode={deliveryZipCode}
+          deliveryDetails={deliveryDetails}
+          pickupDetails={pickupDetails}
           warehouseLocation={warehouseLocation}
         />
         <Button onClick={handlePrintQuote} variant="outline" className="border-quote-primary text-quote-primary hover:bg-quote-primary/10">
@@ -101,7 +121,8 @@ const FormActions = ({
         <PrintQuote
           quoteData={quoteData}
           deliveryOption={deliveryOption}
-          deliveryZipCode={deliveryZipCode}
+          deliveryDetails={deliveryDetails}
+          pickupDetails={pickupDetails}
           warehouseLocation={warehouseLocation}
         />,
         document.body

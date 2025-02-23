@@ -48,13 +48,15 @@ interface PrintQuoteProps {
     returnDate: Date | null;
     comments: string;
   };
+  warehouseLocation: "nj" | "ny" | null;
 }
 
 const PrintQuote = ({ 
   quoteData, 
   deliveryOption, 
   deliveryDetails,
-  pickupDetails 
+  pickupDetails,
+  warehouseLocation 
 }: PrintQuoteProps) => {
   const currentDate = new Date();
   const quoteDate = format(currentDate, "MMMM d, yyyy");
