@@ -10,7 +10,6 @@ import DailyCharges from "./sections/DailyCharges";
 import OneTimeCharges from "./sections/OneTimeCharges";
 import QuoteFooter from "./sections/QuoteFooter";
 import DeliveryDetails from "./sections/DeliveryDetails";
-import { useDeliveryFormState } from "@/hooks/useDeliveryFormState";
 
 interface PrintQuoteProps {
   quoteData: {
@@ -30,17 +29,37 @@ interface PrintQuoteProps {
     hasWarehouseFee: boolean;
   };
   deliveryOption: "delivery" | "pickup" | null;
-  deliveryZipCode: string | null;
-  warehouseLocation: "nj" | "ny" | null;
+  deliveryDetails?: {
+    deliveryDate: Date | null;
+    deliveryTime: string | null;
+    pickupDate: Date | null;
+    pickupTime: string | null;
+    venueName: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    comments: string;
+  };
+  pickupDetails?: {
+    warehouseLocation: "nj" | "ny" | null;
+    pickupDate: Date | null;
+    returnDate: Date | null;
+    comments: string;
+  };
 }
 
-const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocation }: PrintQuoteProps) => {
+const PrintQuote = ({ 
+  quoteData, 
+  deliveryOption, 
+  deliveryDetails,
+  pickupDetails 
+}: PrintQuoteProps) => {
   const currentDate = new Date();
   const quoteDate = format(currentDate, "MMMM d, yyyy");
   const expirationDate = format(addDays(currentDate, 3), "MMMM d, yyyy");
   const quoteRef = `QT-${Date.now().toString().slice(-6)}`;
-
-  const { deliveryDetails, pickupDetails } = useDeliveryFormState(deliveryOption, () => {});
 
   const getServiceLabel = (serviceId: string): { name: string; price: number } | null => {
     const allServices = [...getStairServices(quoteData.dimensions.height), ...baseServices];

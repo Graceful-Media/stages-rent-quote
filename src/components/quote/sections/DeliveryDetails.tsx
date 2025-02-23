@@ -28,44 +28,45 @@ interface DeliveryDetailsProps {
 const DeliveryDetails = ({ deliveryOption, deliveryDetails, pickupDetails }: DeliveryDetailsProps) => {
   if (!deliveryOption) return null;
 
+  const formatTime = (timeString: string | null) => {
+    if (!timeString) return null;
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   return (
     <div className="mb-6">
-      <h3 className="font-medium mb-3">Delivery / Pick Up Details:</h3>
-      <div className="space-y-4 pl-4">
-        <p className="font-medium">
-          Option Selected: {deliveryOption === "delivery" ? "Delivery Service" : "Customer Pick Up"}
+      <h3 className="font-semibold text-lg mb-4">Delivery / Pick Up Details:</h3>
+      <div className="space-y-4">
+        <p>
+          <span className="font-medium">Option Selected:</span> {deliveryOption === "delivery" ? "Delivery Service" : "Customer Pick Up"}
         </p>
 
         {deliveryOption === "delivery" && deliveryDetails && (
-          <div className="space-y-3">
-            <div>
-              <p className="font-medium">Delivery Information:</p>
-              <div className="pl-4 space-y-1">
-                {deliveryDetails.deliveryDate && deliveryDetails.deliveryTime && (
-                  <p>Delivery: {format(deliveryDetails.deliveryDate, "MMMM d, yyyy")} at {
-                    new Date(`2000-01-01T${deliveryDetails.deliveryTime}`).toLocaleTimeString([], {
-                      hour: 'numeric',
-                      minute: '2-digit',
-                      hour12: true
-                    })
-                  }</p>
-                )}
-                {deliveryDetails.pickupDate && deliveryDetails.pickupTime && (
-                  <p>Pick Up: {format(deliveryDetails.pickupDate, "MMMM d, yyyy")} at {
-                    new Date(`2000-01-01T${deliveryDetails.pickupTime}`).toLocaleTimeString([], {
-                      hour: 'numeric',
-                      minute: '2-digit',
-                      hour12: true
-                    })
-                  }</p>
-                )}
-              </div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <p className="font-medium">Delivery Schedule:</p>
+              {deliveryDetails.deliveryDate && (
+                <p className="ml-4">
+                  Delivery: {format(deliveryDetails.deliveryDate, "MMMM d, yyyy")}
+                  {deliveryDetails.deliveryTime && ` at ${formatTime(deliveryDetails.deliveryTime)}`}
+                </p>
+              )}
+              {deliveryDetails.pickupDate && (
+                <p className="ml-4">
+                  Pick Up: {format(deliveryDetails.pickupDate, "MMMM d, yyyy")}
+                  {deliveryDetails.pickupTime && ` at ${formatTime(deliveryDetails.pickupTime)}`}
+                </p>
+              )}
             </div>
 
-            <div>
+            <div className="space-y-2">
               <p className="font-medium">Delivery Location:</p>
-              <div className="pl-4 space-y-1">
-                {deliveryDetails.venueName && <p>Venue: {deliveryDetails.venueName}</p>}
+              <div className="ml-4">
+                {deliveryDetails.venueName && <p>{deliveryDetails.venueName}</p>}
                 <p>{deliveryDetails.addressLine1}</p>
                 {deliveryDetails.addressLine2 && <p>{deliveryDetails.addressLine2}</p>}
                 <p>{deliveryDetails.city}, {deliveryDetails.state} {deliveryDetails.zipCode}</p>
@@ -73,39 +74,45 @@ const DeliveryDetails = ({ deliveryOption, deliveryDetails, pickupDetails }: Del
             </div>
 
             {deliveryDetails.comments && (
-              <div>
+              <div className="space-y-2">
                 <p className="font-medium">Additional Notes:</p>
-                <p className="pl-4">{deliveryDetails.comments}</p>
+                <p className="ml-4">{deliveryDetails.comments}</p>
               </div>
             )}
           </div>
         )}
 
         {deliveryOption === "pickup" && pickupDetails && (
-          <div className="space-y-3">
-            <div>
+          <div className="space-y-4">
+            <div className="space-y-2">
               <p className="font-medium">Warehouse Location:</p>
-              <p className="pl-4">
+              <p className="ml-4">
                 {pickupDetails.warehouseLocation === "nj" ? "NJ, North Bergen" : "NY, Brooklyn"}
+                <br />
+                <span className="text-sm text-gray-600">
+                  {pickupDetails.warehouseLocation === "nj" 
+                    ? "No Fees - Limited Hours - Mon-Fri 10am-5pm"
+                    : "$50 Warehouse Prep Fee - Mon-Fri 10am-5pm"}
+                </span>
               </p>
             </div>
 
-            <div>
+            <div className="space-y-2">
               <p className="font-medium">Pick Up Schedule:</p>
-              <div className="pl-4 space-y-1">
+              <div className="ml-4">
                 {pickupDetails.pickupDate && (
-                  <p>Pick Up Date: {format(pickupDetails.pickupDate, "MMMM d, yyyy")}</p>
+                  <p>Pick Up: {format(pickupDetails.pickupDate, "MMMM d, yyyy")}</p>
                 )}
                 {pickupDetails.returnDate && (
-                  <p>Return Date: {format(pickupDetails.returnDate, "MMMM d, yyyy")}</p>
+                  <p>Return: {format(pickupDetails.returnDate, "MMMM d, yyyy")}</p>
                 )}
               </div>
             </div>
 
             {pickupDetails.comments && (
-              <div>
+              <div className="space-y-2">
                 <p className="font-medium">Additional Notes:</p>
-                <p className="pl-4">{pickupDetails.comments}</p>
+                <p className="ml-4">{pickupDetails.comments}</p>
               </div>
             )}
           </div>
