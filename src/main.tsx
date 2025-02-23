@@ -10,6 +10,8 @@ import "./index.css";
 import NotFound from "./pages/NotFound";
 import TemplatesPage from "./pages/admin/Templates";
 import Index from "./pages/Index";
+import Auth from "./pages/auth/Auth";
+import AdminGuard from "./components/admin/AdminGuard";
 
 const router = createBrowserRouter([
   {
@@ -22,8 +24,16 @@ const router = createBrowserRouter([
         element: <Index />,
       },
       {
+        path: "auth",
+        element: <Auth />,
+      },
+      {
         path: "admin/templates",
-        element: <TemplatesPage />,
+        element: (
+          <AdminGuard>
+            <TemplatesPage />
+          </AdminGuard>
+        ),
       },
     ],
   },

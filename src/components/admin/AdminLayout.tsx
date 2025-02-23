@@ -3,6 +3,7 @@ import { FC, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -10,6 +11,15 @@ interface AdminLayoutProps {
 
 const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/auth");
+    } catch (error) {
+      toast.error("Error signing out");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -35,6 +45,11 @@ const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
                   Email Templates
                 </Button>
               </div>
+            </div>
+            <div className="flex items-center">
+              <Button variant="ghost" onClick={handleSignOut}>
+                Sign Out
+              </Button>
             </div>
           </div>
         </div>
