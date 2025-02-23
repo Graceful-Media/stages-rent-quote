@@ -12,11 +12,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { Json } from "@/integrations/supabase/types";
 
 interface TemplateVersion {
   id: string;
   version_number: number;
-  content: string;
+  content: Json;
   created_at: string;
   is_active: boolean;
 }
@@ -68,7 +69,8 @@ const TemplateVersions: FC<TemplateVersionsProps> = ({ templateId, onVersionSele
       // Update local state
       const selectedVersion = versions.find(v => v.id === versionId);
       if (selectedVersion) {
-        onVersionSelect(selectedVersion.content);
+        // Cast Json content to string when passing to parent
+        onVersionSelect(String(selectedVersion.content));
       }
 
       toast.success("Version activated successfully");
@@ -124,7 +126,7 @@ const TemplateVersions: FC<TemplateVersionsProps> = ({ templateId, onVersionSele
                     )}
                   </div>
                   <div className="mt-2 p-2 bg-gray-50 rounded text-sm">
-                    <div dangerouslySetInnerHTML={{ __html: version.content }} />
+                    <div dangerouslySetInnerHTML={{ __html: String(version.content) }} />
                   </div>
                 </div>
               ))}
