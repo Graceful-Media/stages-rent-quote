@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -19,14 +20,15 @@ interface PropertyFormProps {
 
 const PropertyForm = ({ width, depth, height, days, onUpdate }: PropertyFormProps) => {
   const validateDimension = (value: number, dimension: string) => {
-    if (value && value % 4 !== 0) {
-      toast.error(`${dimension} must be divisible by 4 feet`);
+    if (value && value % 2 !== 0) {  // Changed to check if divisible by 2
+      toast.error(`${dimension} must be divisible by 2 feet`);
       return false;
     }
     return true;
   };
 
-  const dimensionOptions = Array.from({ length: 10 }, (_, i) => (i + 1) * 4);
+  // Updated to generate options in increments of 2 feet
+  const dimensionOptions = Array.from({ length: 20 }, (_, i) => (i + 1) * 2);
   const dayOptions = Array.from({ length: 59 }, (_, i) => (i + 2) * 0.5).filter(day => day <= 30);
 
   const heightOptions = [
