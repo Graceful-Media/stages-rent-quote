@@ -14,6 +14,17 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
+  const checkAdminRole = async (userId: string) => {
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    return !!roles;
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -27,12 +38,20 @@ const Auth = () => {
         if (error) throw error;
         toast.success("Check your email to confirm your account");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: { user }, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
-        navigate("/");
+        
+        if (user) {
+          const isAdmin = await checkAdminRole(user.id);
+          if (isAdmin) {
+            navigate("/admin/templates");
+          } else {
+            navigate("/");
+          }
+        }
       }
     } catch (error: any) {
       toast.error(error.message);
