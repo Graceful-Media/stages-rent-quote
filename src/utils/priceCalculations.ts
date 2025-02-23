@@ -20,11 +20,11 @@ export const calculateSections = (width: number, depth: number) => {
 export const calculateDeliveryFee = (
   width: number, 
   depth: number, 
-  deliveryZipCode: string | null,
+  deliveryDetails: any,
   deliveryOption: "delivery" | "pickup" | null
 ) => {
   // Only calculate delivery fee if both conditions are met
-  if (!deliveryZipCode || deliveryOption !== "delivery") {
+  if (!deliveryDetails?.zipCode || deliveryOption !== "delivery") {
     return 0;
   }
 
@@ -117,7 +117,7 @@ export const calculateTotal = (
   days: number,
   selectedServices: string[],
   warehouseLocation?: "nj" | "ny" | null,
-  deliveryZipCode?: string | null,
+  deliveryDetails?: any,
   deliveryOption?: "delivery" | "pickup" | null,
   setupCost: number = 0
 ) => {
@@ -163,7 +163,7 @@ export const calculateTotal = (
   }
 
   // Add delivery fee only if both conditions are met
-  const deliveryFee = calculateDeliveryFee(width, depth, deliveryZipCode || null, deliveryOption || null);
+  const deliveryFee = calculateDeliveryFee(width, depth, deliveryDetails, deliveryOption || null);
   oneTimetCosts += deliveryFee;
 
   return {
