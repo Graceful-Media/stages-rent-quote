@@ -1,3 +1,4 @@
+
 import React from "react";
 import { format, addDays } from "date-fns";
 import { carpetColors, baseServices, getStairServices, skirtSides, railSides } from "../services/types";
@@ -133,14 +134,14 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
   return (
     <div className="print-only p-8 max-w-4xl mx-auto">
       <div className="space-y-6">
-        <LegalDisclaimer />
-        
         <QuoteHeader 
           quoteRef={quoteRef}
           quoteDate={quoteDate}
           expirationDate={expirationDate}
         />
 
+        <LegalDisclaimer />
+        
         <StageSpecifications 
           width={quoteData.dimensions.width}
           depth={quoteData.dimensions.depth}
