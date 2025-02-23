@@ -1,3 +1,4 @@
+
 import { carpetColors } from "@/components/services/types";
 
 interface SectionCounts {
@@ -141,9 +142,9 @@ export const calculateTotal = (
   const sections = calculateSections(width, depth);
   const section4x8Price = 150;
   const section4x4Price = 75;
-  const section2x4Price = 40;  // New price for 2x4 sections
-  const section4x2Price = 40;  // New price for 4x2 sections
-  const section2x2Price = 25;  // New price for 2x2 sections
+  const section2x4Price = 55;  // Updated price for 2x4 sections
+  const section4x2Price = 55;  // Price for 4x2 sections (same as 2x4)
+  const section2x2Price = 50;  // Updated price for 2x2 sections
   
   const sectionsCost = (sections.sections4x8 * section4x8Price) + 
                       (sections.sections4x4 * section4x4Price) +
