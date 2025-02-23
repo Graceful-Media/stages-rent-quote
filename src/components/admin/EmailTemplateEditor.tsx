@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import EmailTemplatePreview from "./EmailTemplatePreview";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface EmailTemplateEditorProps {
   templateId?: string;
@@ -28,13 +30,14 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
   const [subject, setSubject] = useState(initialData?.subject || "");
   const [description, setDescription] = useState(initialData?.description || "");
   const [isSaving, setIsSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState("edit");
 
   const editor = useEditor({
     extensions: [StarterKit],
     content: initialData?.content || "",
     editorProps: {
       attributes: {
-        class: "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none",
+        class: "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[400px]",
       },
     },
   });
@@ -67,7 +70,7 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
           .insert({
             template_id: templateId,
             content,
-            version_number: 1, // This should be incremented based on existing versions
+            version_number: 1,
             is_active: true,
           });
 
@@ -141,10 +144,22 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
         />
       </div>
 
-      <div className="border rounded-lg p-4">
-        <Label>Email Content</Label>
-        <EditorContent editor={editor} className="min-h-[400px] mt-2" />
-      </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="edit">Edit</TabsTrigger>
+          <TabsTrigger value="preview">Preview</TabsTrigger>
+        </TabsList>
+        <TabsContent value="edit" className="border rounded-lg p-4">
+          <EditorContent editor={editor} />
+        </TabsContent>
+        <TabsContent value="preview">
+          <EmailTemplatePreview
+            name={name}
+            subject={subject}
+            content={editor?.getHTML() || ""}
+          />
+        </TabsContent>
+      </Tabs>
 
       <div className="flex justify-end space-x-4">
         <Button variant="outline" onClick={() => editor?.commands.clearContent()}>
