@@ -1,5 +1,5 @@
 
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import EmailTemplatePreview from "./EmailTemplatePreview";
+import TemplateVersions from "./TemplateVersions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface EmailTemplateEditorProps {
@@ -31,6 +32,7 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
   const [description, setDescription] = useState(initialData?.description || "");
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("edit");
+  const [nextVersionNumber, setNextVersionNumber] = useState(1);
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -41,6 +43,25 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
       },
     },
   });
+
+  useEffect(() => {
+    const fetchNextVersionNumber = async () => {
+      if (!templateId) return;
+      
+      const { data, error } = await supabase
+        .from("template_versions")
+        .select("version_number")
+        .eq("template_id", templateId)
+        .order("version_number", { ascending: false })
+        .limit(1);
+
+      if (!error && data && data.length > 0) {
+        setNextVersionNumber(data[0].version_number + 1);
+      }
+    };
+
+    fetchNextVersionNumber();
+  }, [templateId]);
 
   const handleSave = async () => {
     if (!editor || !name || !subject) {
@@ -65,16 +86,20 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
 
         if (templateError) throw templateError;
 
+        // Create new version
         const { error: versionError } = await supabase
           .from("template_versions")
           .insert({
             template_id: templateId,
             content,
-            version_number: 1,
+            version_number: nextVersionNumber,
             is_active: true,
           });
 
         if (versionError) throw versionError;
+
+        // Update version number for next save
+        setNextVersionNumber(nextVersionNumber + 1);
       } else {
         // Create new template
         const { data: template, error: templateError } = await supabase
@@ -110,6 +135,10 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleVersionSelect = (content: string) => {
+    editor?.commands.setContent(content);
   };
 
   return (
@@ -162,6 +191,12 @@ const EmailTemplateEditor: FC<EmailTemplateEditorProps> = ({
       </Tabs>
 
       <div className="flex justify-end space-x-4">
+        {templateId && (
+          <TemplateVersions
+            templateId={templateId}
+            onVersionSelect={handleVersionSelect}
+          />
+        )}
         <Button variant="outline" onClick={() => editor?.commands.clearContent()}>
           Clear Content
         </Button>
