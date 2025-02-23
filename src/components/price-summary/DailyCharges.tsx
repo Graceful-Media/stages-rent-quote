@@ -1,132 +1,89 @@
 
 import React from "react";
-import { baseServices, getStairServices } from "../ServicesForm";
-import { skirtSides, railSides, carpetColors } from "../services/types";
+import { Service } from "../services/types";
 
-interface DailyChargesProps {
-  selectedServices: string[];
-  height: number;
-  width: number;
-  depth: number;
-  calculateSkirtPrice: () => number;
-  calculateRailsPrice: () => number;
+interface ServiceDetails {
+  name: string;
+  price: number;
 }
 
-const PRICE_4X8 = 150; // Price per 4'x8' deck
-const PRICE_4X4 = 75;  // Price per 4'x4' deck
+interface DailyChargesProps {
+  sections4x8: number;
+  sections4x4: number;
+  sections2x4: number;
+  sections4x2: number;
+  sections2x2: number;
+  selectedServices: string[];
+  getServiceLabel: (serviceId: string) => ServiceDetails | null;
+  dailyCosts: number;
+}
 
 const DailyCharges = ({ 
+  sections4x8, 
+  sections4x4, 
+  sections2x4,
+  sections4x2,
+  sections2x2,
   selectedServices, 
-  height,
-  width,
-  depth,
-  calculateSkirtPrice,
-  calculateRailsPrice
+  getServiceLabel, 
+  dailyCosts 
 }: DailyChargesProps) => {
-  const allServices = [...getStairServices(height), ...baseServices];
-
-  // Calculate stage deck costs
-  const sections4x8 = Math.floor(width / 8) * Math.floor(depth / 4);
-  const remainingWidth = width % 8;
-  const sections4x4 = (remainingWidth >= 4) ? Math.floor(depth / 4) : 0;
-  const totalDeckCost = (sections4x8 * PRICE_4X8) + (sections4x4 * PRICE_4X4);
-
-  const getServiceLabel = (serviceId: string): { name: string; price: number } | null => {
-    // Handle stairs with quantity
-    if (serviceId.includes("-qty-")) {
-      const [baseServiceId, quantity] = serviceId.split("-qty-");
-      const service = allServices.find((s) => s.id === baseServiceId);
-      if (!service) return null;
-      
-      return {
-        name: `${service.name} (Qty: ${quantity})`,
-        price: service.basePrice * parseInt(quantity)
-      };
-    }
-
-    // Handle base carpet service
-    if (serviceId === "carpet") {
-      const colorService = selectedServices.find(s => s.startsWith("carpet-"));
-      if (!colorService) return null;
-
-      const colorId = colorService.replace("carpet-", "");
-      const color = carpetColors.find(c => c.id === colorId);
-      if (!color) return null;
-
-      const squareFootage = width * depth;
-      
-      return {
-        name: `Carpet - ${color.name}, ${squareFootage} sq.ft`,
-        price: color.price
-      };
-    }
-
-    // Handle skirt with sides
-    if (serviceId === "skirt" && selectedServices.some(s => s.startsWith("skirt-side-"))) {
-      const selectedSkirtSides = selectedServices
-        .filter(s => s.startsWith("skirt-side-"))
-        .map(s => {
-          const sideId = s.replace("skirt-side-", "");
-          return skirtSides.find(side => side.id === sideId)?.name || sideId;
-        });
-
-      return {
-        name: `Stage Skirt (${selectedSkirtSides.join(", ")})`,
-        price: calculateSkirtPrice()
-      };
-    }
-
-    // Handle rails with sides
-    if (serviceId === "rails" && selectedServices.some(s => s.startsWith("rail-side-"))) {
-      const selectedRailSides = selectedServices
-        .filter(s => s.startsWith("rail-side-"))
-        .map(s => {
-          const sideId = s.replace("rail-side-", "");
-          return railSides.find(side => side.id === sideId)?.name || sideId;
-        });
-
-      return {
-        name: `Safety Rails (${selectedRailSides.join(", ")})`,
-        price: calculateRailsPrice()
-      };
-    }
-
-    // Handle standard services
-    const service = allServices.find((s) => s.id === serviceId);
-    if (!service) return null;
-
-    return {
-      name: service.name,
-      price: service.basePrice
-    };
-  };
-
   return (
-    <div className="space-y-2">
-      <div className="font-medium text-sm text-gray-600">Daily Charges:</div>
-      <div className="flex justify-between text-sm">
-        <span>Stage Decks</span>
-        <span>${totalDeckCost.toLocaleString()}/day</span>
+    <div className="mb-6">
+      <h3 className="font-medium mb-3">Daily Charges:</h3>
+      <div className="space-y-2 pl-4">
+        <div className="space-y-1">
+          {sections4x8 > 0 && (
+            <div className="flex justify-between">
+              <span>Stage Decks (4'x8')</span>
+              <span>${sections4x8 * 150}/day</span>
+            </div>
+          )}
+          {sections4x4 > 0 && (
+            <div className="flex justify-between">
+              <span>Stage Decks (4'x4')</span>
+              <span>${sections4x4 * 75}/day</span>
+            </div>
+          )}
+          {sections2x4 > 0 && (
+            <div className="flex justify-between">
+              <span>Stage Decks (2'x4')</span>
+              <span>${sections2x4 * 55}/day</span>
+            </div>
+          )}
+          {sections4x2 > 0 && (
+            <div className="flex justify-between">
+              <span>Stage Decks (4'x2')</span>
+              <span>${sections4x2 * 55}/day</span>
+            </div>
+          )}
+          {sections2x2 > 0 && (
+            <div className="flex justify-between">
+              <span>Stage Decks (2'x2')</span>
+              <span>${sections2x2 * 50}/day</span>
+            </div>
+          )}
+        </div>
+        {selectedServices.map((serviceId) => {
+          if (serviceId.startsWith("carpet-") || 
+              serviceId.startsWith("skirt-side-") || 
+              serviceId.startsWith("rail-side-")) return null;
+
+          const serviceDetails = getServiceLabel(serviceId);
+          if (!serviceDetails) return null;
+
+          return (
+            <div key={serviceId} className="flex justify-between">
+              <span>{serviceDetails.name}</span>
+              <span>${serviceDetails.price}/day</span>
+            </div>
+          );
+        })}
+        <div className="flex justify-between font-medium pt-2 border-t">
+          <span>Daily Total:</span>
+          <span>${dailyCosts}/day</span>
+        </div>
       </div>
-      {selectedServices.map((serviceId) => {
-        // Skip carpet color selections as they're handled with the main carpet service
-        if (serviceId.startsWith("carpet-")) return null;
-        // Skip individual skirt/rail sides as they're handled with their main services
-        if (serviceId.startsWith("skirt-side-") || serviceId.startsWith("rail-side-")) return null;
-        // Skip the base skirt/rails services if they have sides selected
-        if ((serviceId === "skirt" && !selectedServices.some(s => s.startsWith("skirt-side-"))) ||
-            (serviceId === "rails" && !selectedServices.some(s => s.startsWith("rail-side-")))) return null;
-
-        const serviceDetails = getServiceLabel(serviceId);
-        if (!serviceDetails) return null;
-
-        return (
-          <div key={serviceId} className="flex justify-between text-sm">
-            <span>{serviceDetails.name}</span>
-            <span>${serviceDetails.price.toLocaleString()}/day</span>
-          </div>
-        );
-      })}
     </div>
   );
 };
