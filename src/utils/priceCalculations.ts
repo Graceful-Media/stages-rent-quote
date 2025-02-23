@@ -19,24 +19,22 @@ export const calculateSections = (width: number, depth: number): SectionCounts =
   
   // Calculate depth sections
   const fullRows8ft = Math.floor(depth / 8);       // Full 8' rows
-  const fullRows6ft = Math.floor((depth % 8) / 6); // Full 6' rows from remaining
-  const remaining4ftDepth = Math.floor((depth % 8 % 6) / 4);  // 4' row if needed
-  const remaining2ftDepth = ((depth % 8 % 6 % 4) >= 2) ? 1 : 0;  // 2' row if needed
+  const remaining4ftDepth = Math.floor((depth % 8) / 4);  // 4' row if needed
+  const remaining2ftDepth = ((depth % 8) % 4) >= 2 ? 1 : 0;  // 2' row if needed
 
-  // Calculate 4' wide sections
+  // Calculate sections based on the diagram logic
   const sections4x8 = numFull4ftAcross * fullRows8ft;
   const sections4x4 = numFull4ftAcross * remaining4ftDepth;
   const sections4x2 = numFull4ftAcross * remaining2ftDepth;
-
-  // Calculate 2' wide sections
+  
   const sections2x8 = remaining2ftWidth * fullRows8ft;
-  const sections2x6 = remaining2ftWidth * fullRows6ft;
   const sections2x4 = remaining2ftWidth * remaining4ftDepth;
   const sections2x2 = remaining2ftWidth * remaining2ftDepth;
 
-  // Calculate rotated sections (8x2, 6x2)
-  const sections8x2 = 0; // These will be calculated when needed
-  const sections6x2 = 0; // These will be calculated when needed
+  // These sections are not used in the current layout
+  const sections8x2 = 0;
+  const sections6x2 = 0;
+  const sections2x6 = 0;
   
   return {
     sections4x8,
@@ -156,20 +154,18 @@ export const calculateTotal = (
   setupCost: number = 0
 ) => {
   const sections = calculateSections(width, depth);
-  const section4x8Price = 150;
-  const section4x4Price = 75;
-  const section2x8Price = 85;  // New price for 2x8 sections
-  const section2x6Price = 85;  // New price for 2x6 sections
-  const section2x4Price = 55;
-  const section4x2Price = 55;
-  const section2x2Price = 50;
+  
+  // Section prices
+  const section4x8Price = 150;  // $150 per 4x8 section
+  const section4x4Price = 75;   // $75 per 4x4 section
+  const section2x8Price = 85;   // $85 per 2x8 section
+  const section2x4Price = 55;   // $55 per 2x4 section
+  const section4x2Price = 55;   // $55 per 4x2 section
+  const section2x2Price = 50;   // $50 per 2x2 section
   
   const sectionsCost = (sections.sections4x8 * section4x8Price) + 
                       (sections.sections4x4 * section4x4Price) +
                       (sections.sections2x8 * section2x8Price) +
-                      (sections.sections8x2 * section2x8Price) +
-                      (sections.sections2x6 * section2x6Price) +
-                      (sections.sections6x2 * section2x6Price) +
                       (sections.sections2x4 * section2x4Price) +
                       (sections.sections4x2 * section4x2Price) +
                       (sections.sections2x2 * section2x2Price);
