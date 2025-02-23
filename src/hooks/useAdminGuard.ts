@@ -5,9 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const useAdminGuard = () => {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -17,9 +17,12 @@ export const useAdminGuard = () => {
         } = await supabase.auth.getSession();
 
         if (!session) {
-          navigate("/auth");
+          setIsAuthenticated(false);
+          setIsAdmin(false);
           return;
         }
+
+        setIsAuthenticated(true);
 
         const { data: roles } = await supabase
           .from("user_roles")
@@ -30,21 +33,22 @@ export const useAdminGuard = () => {
 
         if (!roles) {
           toast.error("Unauthorized access");
-          navigate("/");
+          setIsAdmin(false);
           return;
         }
 
         setIsAdmin(true);
       } catch (error) {
         console.error("Error checking admin status:", error);
-        navigate("/");
+        setIsAuthenticated(false);
+        setIsAdmin(false);
       } finally {
         setIsLoading(false);
       }
     };
 
     checkAdminStatus();
-  }, [navigate]);
+  }, []);
 
-  return { isLoading, isAdmin };
+  return { isLoading, isAdmin, isAuthenticated };
 };

@@ -1,5 +1,6 @@
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAdminGuard } from "@/hooks/useAdminGuard";
 
 interface AdminGuardProps {
@@ -7,7 +8,18 @@ interface AdminGuardProps {
 }
 
 const AdminGuard: FC<AdminGuardProps> = ({ children }) => {
-  const { isLoading, isAdmin } = useAdminGuard();
+  const navigate = useNavigate();
+  const { isLoading, isAdmin, isAuthenticated } = useAdminGuard();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        navigate("/auth");
+      } else if (!isAdmin) {
+        navigate("/");
+      }
+    }
+  }, [isLoading, isAdmin, isAuthenticated, navigate]);
 
   if (isLoading) {
     return (
@@ -17,7 +29,7 @@ const AdminGuard: FC<AdminGuardProps> = ({ children }) => {
     );
   }
 
-  if (!isAdmin) {
+  if (!isAuthenticated || !isAdmin) {
     return null;
   }
 
