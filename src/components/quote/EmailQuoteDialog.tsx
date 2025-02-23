@@ -30,15 +30,34 @@ interface EmailQuoteDialogProps {
     hasCarpet: boolean;
     hasWarehouseFee: boolean;
   };
-  deliveryOption?: "delivery" | "pickup" | null;
-  deliveryZipCode?: string | null;
-  warehouseLocation?: "nj" | "ny" | null;
+  deliveryOption: "delivery" | "pickup" | null;
+  deliveryDetails?: {
+    deliveryDate: Date | null;
+    deliveryTime: string | null;
+    pickupDate: Date | null;
+    pickupTime: string | null;
+    venueName: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    comments: string;
+  };
+  pickupDetails?: {
+    warehouseLocation: "nj" | "ny" | null;
+    pickupDate: Date | null;
+    returnDate: Date | null;
+    comments: string;
+  };
+  warehouseLocation: "nj" | "ny" | null;
 }
 
 const EmailQuoteDialog = ({ 
   quoteData,
   deliveryOption,
-  deliveryZipCode,
+  deliveryDetails,
+  pickupDetails,
   warehouseLocation,
 }: EmailQuoteDialogProps) => {
   const [email, setEmail] = useState("");
@@ -108,7 +127,8 @@ const EmailQuoteDialog = ({
           hasCarpet: quoteData.hasCarpet,
           hasWarehouseFee: quoteData.hasWarehouseFee,
           deliveryOption,
-          deliveryZipCode,
+          deliveryDetails,
+          pickupDetails,
           warehouseLocation,
         },
       });
