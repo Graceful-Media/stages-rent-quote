@@ -45,6 +45,15 @@ const PriceSummary = ({
   const hasCarpet = selectedServices.some(service => service.includes("carpet"));
   const hasWarehouseFee = warehouseLocation === "ny";
 
+  // Mock function for getServiceLabel - implement actual service label logic here
+  const getServiceLabel = (serviceId: string) => {
+    // This is a simplified version - implement full service label logic as needed
+    return {
+      name: serviceId,
+      price: 0 // This should be calculated based on the service type
+    };
+  };
+
   // Add these values to be passed to the TotalDisplay component
   const priceDetails = {
     dailyCosts: totals.dailyCosts,
@@ -80,12 +89,14 @@ const PriceSummary = ({
 
         <div className="border-t pt-3">
           <DailyCharges 
+            sections4x8={sections.sections4x8}
+            sections4x4={sections.sections4x4}
+            sections2x4={sections.sections2x4}
+            sections4x2={sections.sections4x2}
+            sections2x2={sections.sections2x2}
             selectedServices={selectedServices}
-            height={height}
-            width={width}
-            depth={depth}
-            calculateSkirtPrice={() => calculateSkirtPrice(selectedServices, width, depth)}
-            calculateRailsPrice={() => calculateRailsPrice(selectedServices, width, depth)}
+            getServiceLabel={getServiceLabel}
+            dailyCosts={totals.dailyCosts}
           />
           
           <OneTimeCharges 
