@@ -9,6 +9,8 @@ import StageSpecifications from "./sections/StageSpecifications";
 import DailyCharges from "./sections/DailyCharges";
 import OneTimeCharges from "./sections/OneTimeCharges";
 import QuoteFooter from "./sections/QuoteFooter";
+import DeliveryDetails from "./sections/DeliveryDetails";
+import { useDeliveryFormState } from "@/hooks/useDeliveryFormState";
 
 interface PrintQuoteProps {
   quoteData: {
@@ -37,6 +39,8 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
   const quoteDate = format(currentDate, "MMMM d, yyyy");
   const expirationDate = format(addDays(currentDate, 3), "MMMM d, yyyy");
   const quoteRef = `QT-${Date.now().toString().slice(-6)}`;
+
+  const { deliveryDetails, pickupDetails } = useDeliveryFormState(deliveryOption, () => {});
 
   const getServiceLabel = (serviceId: string): { name: string; price: number } | null => {
     const allServices = [...getStairServices(quoteData.dimensions.height), ...baseServices];
@@ -163,6 +167,12 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
           hasDelivery={quoteData.hasDelivery}
           width={quoteData.dimensions.width}
           depth={quoteData.dimensions.depth}
+        />
+
+        <DeliveryDetails 
+          deliveryOption={deliveryOption}
+          deliveryDetails={deliveryDetails}
+          pickupDetails={pickupDetails}
         />
 
         <div className="mt-8">
