@@ -70,6 +70,9 @@ const PriceSummary = ({
         <SectionsDisplay 
           sections4x8={sections.sections4x8}
           sections4x4={sections.sections4x4}
+          sections2x4={sections.sections2x4}
+          sections4x2={sections.sections4x2}
+          sections2x2={sections.sections2x2}
           totalLegs={totalLegs}
           width={width}
           depth={depth}
