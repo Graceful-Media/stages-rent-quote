@@ -6,9 +6,20 @@ interface StageLayoutDiagramProps {
   depth: number;
   sections4x8: number;
   sections4x4: number;
+  sections2x4: number;
+  sections4x2: number;
+  sections2x2: number;
 }
 
-const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLayoutDiagramProps) => {
+const StageLayoutDiagram = ({ 
+  width, 
+  depth, 
+  sections4x8, 
+  sections4x4,
+  sections2x4,
+  sections4x2,
+  sections2x2 
+}: StageLayoutDiagramProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -41,79 +52,124 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
     ctx.lineWidth = 2;
     ctx.strokeRect(startX, startY, width * scale, depth * scale);
 
-    // Calculate layout dimensions
-    const numAcross = Math.ceil(width / 4); // Number of 4' sections across
-    const fullRows = Math.floor(depth / 8);  // Number of full 8' rows
-    const hasPartialRow = depth % 8 > 0;     // Whether we need a 4' row at the end
+    // Colors for different section types
+    const colors = {
+      section4x8: "#93c5fd",
+      section4x4: "#bfdbfe",
+      section2x4: "#dbeafe",
+      section4x2: "#dbeafe",
+      section2x2: "#eff6ff"
+    };
+
+    // Helper function to draw a section
+    const drawSection = (x: number, y: number, w: number, h: number, color: string, text: string) => {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w * scale, h * scale);
+      ctx.strokeRect(x, y, w * scale, h * scale);
+
+      // Add text
+      ctx.fillStyle = "#1e3a8a";
+      const fontSize = Math.min(12, Math.max(8, Math.min(w, h) * 3));
+      ctx.font = `${fontSize}px Arial`;
+      ctx.textAlign = "center";
+      ctx.fillText(
+        text,
+        x + (w * scale / 2),
+        y + (h * scale / 2)
+      );
+    };
+
+    // Calculate layout
+    const numFull4ftAcross = Math.floor(width / 4);
+    const remaining2ftWidth = (width % 4) >= 2 ? 1 : 0;
+    const fullRows8ft = Math.floor(depth / 8);
+    const remaining4ftDepth = Math.floor((depth % 8) / 4);
+    const remaining2ftDepth = ((depth % 8) % 4) >= 2 ? 1 : 0;
 
     // Draw 4x8 sections
-    ctx.fillStyle = "#93c5fd";
     let remaining4x8 = sections4x8;
-
-    // Draw full rows of 4x8 sections
-    for (let row = 0; row < fullRows; row++) {
-      for (let col = 0; col < numAcross && remaining4x8 > 0; col++) {
-        // Draw 4x8 section
-        ctx.fillRect(
+    for (let row = 0; row < fullRows8ft; row++) {
+      for (let col = 0; col < numFull4ftAcross && remaining4x8 > 0; col++) {
+        drawSection(
           startX + col * 4 * scale,
           startY + row * 8 * scale,
-          4 * scale,
-          8 * scale
+          4,
+          8,
+          colors.section4x8,
+          "4' × 8'"
         );
-        ctx.strokeRect(
-          startX + col * 4 * scale,
-          startY + row * 8 * scale,
-          4 * scale,
-          8 * scale
-        );
-
-        // Add text for 4x8 sections
-        ctx.fillStyle = "#1e3a8a";
-        ctx.font = "12px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(
-          "4' × 8'",
-          startX + (col * 4 + 2) * scale,
-          startY + (row * 8 + 4) * scale
-        );
-        ctx.fillStyle = "#93c5fd";
-
         remaining4x8--;
       }
     }
 
-    // Draw 4x4 sections in the last row
-    if (hasPartialRow) {
-      ctx.fillStyle = "#bfdbfe";
-      const lastRowY = startY + fullRows * 8 * scale;
-
-      // Draw all needed 4x4 sections across the width
-      for (let col = 0; col < numAcross; col++) {
-        // Draw 4x4 section
-        ctx.fillRect(
-          startX + col * 4 * scale,
-          lastRowY,
-          4 * scale,
-          4 * scale
+    // Draw 2x8 sections if needed
+    if (remaining2ftWidth) {
+      for (let row = 0; row < fullRows8ft; row++) {
+        drawSection(
+          startX + numFull4ftAcross * 4 * scale,
+          startY + row * 8 * scale,
+          2,
+          8,
+          colors.section2x4,
+          "2' × 8'"
         );
-        ctx.strokeRect(
-          startX + col * 4 * scale,
-          lastRowY,
-          4 * scale,
-          4 * scale
-        );
-
-        // Add text for 4x4 sections
-        ctx.fillStyle = "#1e3a8a";
-        ctx.font = "10px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(
-          "4' × 4'",
-          startX + (col * 4 + 2) * scale,
-          lastRowY + 2 * scale
-        );
-        ctx.fillStyle = "#bfdbfe";
       }
+    }
+
+    // Draw 4x4 sections
+    if (remaining4ftDepth) {
+      const y = startY + fullRows8ft * 8 * scale;
+      for (let col = 0; col < numFull4ftAcross; col++) {
+        drawSection(
+          startX + col * 4 * scale,
+          y,
+          4,
+          4,
+          colors.section4x4,
+          "4' × 4'"
+        );
+      }
+    }
+
+    // Draw 2x4 sections
+    if (remaining2ftWidth && remaining4ftDepth) {
+      const y = startY + fullRows8ft * 8 * scale;
+      drawSection(
+        startX + numFull4ftAcross * 4 * scale,
+        y,
+        2,
+        4,
+        colors.section2x4,
+        "2' × 4'"
+      );
+    }
+
+    // Draw 4x2 sections
+    if (remaining2ftDepth) {
+      const y = startY + (fullRows8ft * 8 + (remaining4ftDepth * 4)) * scale;
+      for (let col = 0; col < numFull4ftAcross; col++) {
+        drawSection(
+          startX + col * 4 * scale,
+          y,
+          4,
+          2,
+          colors.section4x2,
+          "4' × 2'"
+        );
+      }
+    }
+
+    // Draw 2x2 sections
+    if (remaining2ftWidth && remaining2ftDepth) {
+      const y = startY + (fullRows8ft * 8 + (remaining4ftDepth * 4)) * scale;
+      drawSection(
+        startX + numFull4ftAcross * 4 * scale,
+        y,
+        2,
+        2,
+        colors.section2x2,
+        "2' × 2'"
+      );
     }
 
     // Add dimensions text
@@ -125,7 +181,7 @@ const StageLayoutDiagram = ({ width, depth, sections4x8, sections4x4 }: StageLay
       canvas.width / 2,
       startY - 10
     );
-  }, [width, depth, sections4x8, sections4x4]);
+  }, [width, depth, sections4x8, sections4x4, sections2x4, sections4x2, sections2x2]);
 
   return (
     <div className="mt-4">
