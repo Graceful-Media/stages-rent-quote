@@ -9,16 +9,23 @@ import App from "./App";
 import "./index.css";
 import NotFound from "./pages/NotFound";
 import TemplatesPage from "./pages/admin/Templates";
+import Index from "./pages/Index";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     errorElement: <NotFound />,
-  },
-  {
-    path: "/admin/templates",
-    element: <TemplatesPage />,
+    children: [
+      {
+        index: true,
+        element: <Index />,
+      },
+      {
+        path: "admin/templates",
+        element: <TemplatesPage />,
+      },
+    ],
   },
 ]);
 
