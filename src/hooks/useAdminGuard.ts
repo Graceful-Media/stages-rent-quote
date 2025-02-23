@@ -1,6 +1,5 @@
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -19,25 +18,24 @@ export const useAdminGuard = () => {
         if (!session) {
           setIsAuthenticated(false);
           setIsAdmin(false);
+          setIsLoading(false);
           return;
         }
 
         setIsAuthenticated(true);
 
-        const { data: roles } = await supabase
+        const { data: roles, error } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", session.user.id)
           .eq("role", "admin")
           .maybeSingle();
 
-        if (!roles) {
-          toast.error("Unauthorized access");
-          setIsAdmin(false);
-          return;
+        if (error) {
+          throw error;
         }
 
-        setIsAdmin(true);
+        setIsAdmin(!!roles);
       } catch (error) {
         console.error("Error checking admin status:", error);
         setIsAuthenticated(false);
@@ -47,7 +45,23 @@ export const useAdminGuard = () => {
       }
     };
 
+    // Initial check
     checkAdminStatus();
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN') {
+        await checkAdminStatus();
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+        setIsLoading(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   return { isLoading, isAdmin, isAuthenticated };
