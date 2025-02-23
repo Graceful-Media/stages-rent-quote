@@ -1,7 +1,7 @@
-
 import React from "react";
 import { format, addDays } from "date-fns";
-import { carpetColors, baseServices, getStairServices } from "../services/types";
+import { carpetColors, baseServices, getStairServices, skirtSides, railSides } from "../services/types";
+import { calculateSkirtPrice, calculateRailsPrice } from "@/utils/priceCalculations";
 
 interface PrintQuoteProps {
   quoteData: {
@@ -62,6 +62,54 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
       };
     }
 
+    // Handle skirt with sides
+    if (serviceId === "skirt") {
+      const selectedSkirtSides = quoteData.selectedServices
+        .filter(s => s.startsWith("skirt-side-"))
+        .map(s => {
+          const sideId = s.replace("skirt-side-", "");
+          return skirtSides.find(side => side.id === sideId)?.name || sideId;
+        });
+
+      if (selectedSkirtSides.length === 0) return null;
+
+      // Calculate total linear feet
+      let totalLength = 0;
+      selectedSkirtSides.forEach(side => {
+        if (side.toLowerCase().includes('front') || side.toLowerCase().includes('rear')) {
+          totalLength += quoteData.dimensions.width;
+        } else if (side.toLowerCase().includes('left') || side.toLowerCase().includes('right')) {
+          totalLength += quoteData.dimensions.depth;
+        }
+      });
+
+      const totalPrice = calculateSkirtPrice(quoteData.selectedServices, quoteData.dimensions.width, quoteData.dimensions.depth);
+      
+      return {
+        name: `Stage Skirt (${selectedSkirtSides.join(", ")}) - ${totalLength} linear ft`,
+        price: totalPrice
+      };
+    }
+
+    // Handle rails with sides
+    if (serviceId === "rails") {
+      const selectedRailSides = quoteData.selectedServices
+        .filter(s => s.startsWith("rail-side-"))
+        .map(s => {
+          const sideId = s.replace("rail-side-", "");
+          return railSides.find(side => side.id === sideId)?.name || sideId;
+        });
+
+      if (selectedRailSides.length === 0) return null;
+
+      const totalPrice = calculateRailsPrice(quoteData.selectedServices, quoteData.dimensions.width, quoteData.dimensions.depth);
+
+      return {
+        name: `Safety Rails (${selectedRailSides.join(", ")})`,
+        price: totalPrice
+      };
+    }
+
     // Handle standard services
     const service = allServices.find((s) => s.id === serviceId);
     if (!service) return null;
@@ -108,7 +156,10 @@ const PrintQuote = ({ quoteData, deliveryOption, deliveryZipCode, warehouseLocat
               <span>${deckCost}/day</span>
             </div>
             {quoteData.selectedServices.map((serviceId) => {
-              if (serviceId.startsWith("carpet-")) return null;
+              if (serviceId.startsWith("carpet-") || 
+                  serviceId.startsWith("skirt-side-") || 
+                  serviceId.startsWith("rail-side-")) return null;
+
               const serviceDetails = getServiceLabel(serviceId);
               if (!serviceDetails) return null;
 
