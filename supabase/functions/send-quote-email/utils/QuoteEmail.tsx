@@ -73,7 +73,7 @@ export const QuoteEmail = ({
 
         <Section style={footerSection}>
           <Text style={footerText}>
-            This quote is valid for 7 days. To proceed with your rental, please contact our team or reply to this email.
+            This quote is valid for 3 days. To proceed with your rental, please contact our team or reply to this email.
           </Text>
           <Text style={footerText}>
             Contact us: (646) 661-4078 - Mon - Fri 9am - 5pm EST
