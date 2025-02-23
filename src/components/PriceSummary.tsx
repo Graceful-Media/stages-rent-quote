@@ -10,7 +10,7 @@ import {
   calculateTotal,
   calculateSkirtPrice,
   calculateRailsPrice 
-} from "@/utils/priceCalculations";
+} from "@/utils/pricing";
 
 interface PriceSummaryProps {
   width: number;

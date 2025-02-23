@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useQuoteState } from "@/hooks/useQuoteState";
-import { calculateTotal } from "@/utils/priceCalculations";
+import { calculateTotal } from "@/utils/pricing";  // Updated import path
 import MainContent from "./quote/MainContent";
 import Sidebar from "./quote/Sidebar";
 

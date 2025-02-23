@@ -2,7 +2,7 @@
 import React from "react";
 import { format, addDays } from "date-fns";
 import { carpetColors, baseServices, getStairServices, skirtSides, railSides } from "../services/types";
-import { calculateSkirtPrice, calculateRailsPrice } from "@/utils/priceCalculations";
+import { calculateSkirtPrice, calculateRailsPrice } from "@/utils/pricing";  // Updated import path
 import LegalDisclaimer from "./sections/LegalDisclaimer";
 import QuoteHeader from "./sections/QuoteHeader";
 import StageSpecifications from "./sections/StageSpecifications";
