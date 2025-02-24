@@ -13,9 +13,10 @@ export const useAdminGuard = () => {
 
     const checkAdminStatus = async () => {
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        // First check if we have an active session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) throw sessionError;
 
         if (!mounted) return;
 
@@ -26,22 +27,23 @@ export const useAdminGuard = () => {
           return;
         }
 
+        // Set authenticated immediately to prevent unnecessary redirects
         setIsAuthenticated(true);
 
-        const { data: roles, error } = await supabase
+        // Check admin role
+        const { data: adminRole, error: roleError } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", session.user.id)
           .eq("role", "admin")
           .maybeSingle();
 
+        if (roleError) throw roleError;
+
         if (!mounted) return;
 
-        if (error) {
-          throw error;
-        }
-
-        setIsAdmin(!!roles);
+        // Update admin status based on role check
+        setIsAdmin(!!adminRole);
       } catch (error) {
         console.error("Error checking admin status:", error);
         if (mounted) {
@@ -56,22 +58,23 @@ export const useAdminGuard = () => {
       }
     };
 
-    // Initial check
+    // Perform initial check
     checkAdminStatus();
 
-    // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted) return;
-      
-      if (event === 'SIGNED_IN' && session) {
-        await checkAdminStatus();
-      } else if (event === 'SIGNED_OUT') {
+
+      if (event === "SIGNED_OUT") {
         setIsAuthenticated(false);
         setIsAdmin(false);
         setIsLoading(false);
+      } else if (event === "SIGNED_IN" && session) {
+        checkAdminStatus();
       }
     });
 
+    // Cleanup function
     return () => {
       mounted = false;
       subscription.unsubscribe();

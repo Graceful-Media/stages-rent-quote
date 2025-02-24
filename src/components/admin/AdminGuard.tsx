@@ -12,6 +12,7 @@ const AdminGuard: FC<AdminGuardProps> = ({ children }) => {
   const { isLoading, isAdmin, isAuthenticated } = useAdminGuard();
 
   useEffect(() => {
+    // Only redirect if we're not loading and either not authenticated or not admin
     if (!isLoading) {
       if (!isAuthenticated) {
         navigate("/auth");
@@ -21,6 +22,7 @@ const AdminGuard: FC<AdminGuardProps> = ({ children }) => {
     }
   }, [isLoading, isAdmin, isAuthenticated, navigate]);
 
+  // Show loading state
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -30,7 +32,7 @@ const AdminGuard: FC<AdminGuardProps> = ({ children }) => {
   }
 
   // Only render children if user is both authenticated and admin
-  return isAuthenticated && isAdmin ? <>{children}</> : null;
+  return (isAuthenticated && isAdmin) ? <>{children}</> : null;
 };
 
 export default AdminGuard;
