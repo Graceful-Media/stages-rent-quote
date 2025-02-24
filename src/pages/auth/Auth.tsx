@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,30 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        // If user is authenticated, check if they're an admin
+        const { data: adminRole } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .eq("role", "admin")
+          .maybeSingle();
+
+        if (adminRole) {
+          navigate("/admin/templates");
+        } else {
+          navigate("/");
+        }
+      }
+    };
+    
+    checkSession();
+  }, [navigate]);
 
   const checkAdminRole = async (userId: string) => {
     const { data: roles } = await supabase
@@ -46,10 +70,11 @@ const Auth = () => {
         
         if (user) {
           const isAdmin = await checkAdminRole(user.id);
+          // Immediately redirect based on role
           if (isAdmin) {
-            navigate("/admin/templates");
+            navigate("/admin/templates", { replace: true });
           } else {
-            navigate("/");
+            navigate("/", { replace: true });
           }
         }
       }
