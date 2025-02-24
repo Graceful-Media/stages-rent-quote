@@ -13,7 +13,6 @@ export const useAdminGuard = () => {
 
     const checkAdminStatus = async () => {
       try {
-        // First check if we have an active session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) throw sessionError;
@@ -27,41 +26,36 @@ export const useAdminGuard = () => {
           return;
         }
 
-        // Set authenticated immediately to prevent unnecessary redirects
         setIsAuthenticated(true);
 
-        // Check admin role
+        // Simplified admin role check that works with our new RLS policy
         const { data: adminRole, error: roleError } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", session.user.id)
           .eq("role", "admin")
-          .maybeSingle();
+          .single();
 
-        if (roleError) throw roleError;
+        if (roleError && roleError.code !== 'PGRST116') { // Ignore "no rows returned" error
+          throw roleError;
+        }
 
         if (!mounted) return;
 
-        // Update admin status based on role check
         setIsAdmin(!!adminRole);
-      } catch (error) {
+        setIsLoading(false);
+      } catch (error: any) {
         console.error("Error checking admin status:", error);
         if (mounted) {
           setIsAuthenticated(false);
           setIsAdmin(false);
-          toast.error("Error checking admin status");
-        }
-      } finally {
-        if (mounted) {
           setIsLoading(false);
         }
       }
     };
 
-    // Perform initial check
     checkAdminStatus();
 
-    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted) return;
 
@@ -74,7 +68,6 @@ export const useAdminGuard = () => {
       }
     });
 
-    // Cleanup function
     return () => {
       mounted = false;
       subscription.unsubscribe();
