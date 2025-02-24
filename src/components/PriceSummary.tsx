@@ -1,3 +1,4 @@
+
 import React from "react";
 import DimensionsDisplay from "./price-summary/DimensionsDisplay";
 import SectionsDisplay from "./price-summary/SectionsDisplay";
@@ -9,7 +10,8 @@ import {
   calculateTotalLegs, 
   calculateTotal,
   calculateSkirtPrice,
-  calculateRailsPrice 
+  calculateRailsPrice,
+  calculateStairsPrice
 } from "@/utils/pricing";
 
 interface PriceSummaryProps {
@@ -45,6 +47,41 @@ const PriceSummary = ({
   const hasWarehouseFee = warehouseLocation === "ny";
 
   const getServiceLabel = (serviceId: string) => {
+    // Calculate service prices based on service type
+    if (serviceId === "skirt") {
+      return {
+        name: "Stage Skirt",
+        price: calculateSkirtPrice(selectedServices, width, depth)
+      };
+    }
+    
+    if (serviceId === "rails") {
+      return {
+        name: "Safety Rails",
+        price: calculateRailsPrice(selectedServices, width, depth)
+      };
+    }
+
+    if (serviceId === "stairs-no-rails") {
+      const quantity = selectedServices
+        .find(s => s.startsWith("stairs-no-rails-qty-"))
+        ?.split("-qty-")[1] || "1";
+      return {
+        name: "Stairs (No Railings)",
+        price: 75 * parseInt(quantity)
+      };
+    }
+
+    if (serviceId === "stairs-with-rails") {
+      const quantity = selectedServices
+        .find(s => s.startsWith("stairs-with-rails-qty-"))
+        ?.split("-qty-")[1] || "1";
+      return {
+        name: "Stairs (w/Railings)",
+        price: 150 * parseInt(quantity)
+      };
+    }
+
     return {
       name: serviceId,
       price: 0

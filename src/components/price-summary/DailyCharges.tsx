@@ -36,6 +36,22 @@ const DailyCharges = ({
   getServiceLabel, 
   dailyCosts 
 }: DailyChargesProps) => {
+  // Helper function to get base service ID
+  const getBaseServiceId = (serviceId: string): string => {
+    if (serviceId.startsWith("stairs-")) {
+      return serviceId.split("-qty-")[0];
+    }
+    if (serviceId.startsWith("skirt-side-")) return "skirt";
+    if (serviceId.startsWith("rail-side-")) return "rails";
+    if (serviceId.startsWith("carpet-")) return "carpet";
+    return serviceId;
+  };
+
+  // Get unique base service IDs
+  const uniqueServices = Array.from(new Set(
+    selectedServices.map(getBaseServiceId)
+  )).filter(id => id !== "carpet"); // Exclude carpet as it's a one-time charge
+
   return (
     <div className="mb-6">
       <h3 className="font-medium mb-3">Daily Charges:</h3>
@@ -84,13 +100,9 @@ const DailyCharges = ({
             </div>
           )}
         </div>
-        {selectedServices.map((serviceId) => {
-          if (serviceId.startsWith("carpet-") || 
-              serviceId.startsWith("skirt-side-") || 
-              serviceId.startsWith("rail-side-")) return null;
-
+        {uniqueServices.map((serviceId) => {
           const serviceDetails = getServiceLabel(serviceId);
-          if (!serviceDetails) return null;
+          if (!serviceDetails || serviceDetails.price === 0) return null;
 
           return (
             <div key={serviceId} className="flex justify-between">
