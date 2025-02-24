@@ -9,42 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      email_templates: {
-        Row: {
-          created_at: string | null
-          created_by: string | null
-          description: string | null
-          id: string
-          is_deleted: boolean | null
-          name: string
-          status: Database["public"]["Enums"]["template_status"] | null
-          subject: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          is_deleted?: boolean | null
-          name: string
-          status?: Database["public"]["Enums"]["template_status"] | null
-          subject: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          is_deleted?: boolean | null
-          name?: string
-          status?: Database["public"]["Enums"]["template_status"] | null
-          subject?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       quote_email_rate_limits: {
         Row: {
           count: number
@@ -108,117 +72,15 @@ export type Database = {
         }
         Relationships: []
       }
-      template_audit_logs: {
-        Row: {
-          action: string
-          created_at: string | null
-          created_by: string | null
-          details: Json | null
-          id: string
-          template_id: string | null
-        }
-        Insert: {
-          action: string
-          created_at?: string | null
-          created_by?: string | null
-          details?: Json | null
-          id?: string
-          template_id?: string | null
-        }
-        Update: {
-          action?: string
-          created_at?: string | null
-          created_by?: string | null
-          details?: Json | null
-          id?: string
-          template_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "template_audit_logs_template_id_fkey"
-            columns: ["template_id"]
-            isOneToOne: false
-            referencedRelation: "email_templates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      template_versions: {
-        Row: {
-          content: Json
-          created_at: string | null
-          created_by: string | null
-          id: string
-          is_active: boolean | null
-          template_id: string | null
-          version_number: number
-        }
-        Insert: {
-          content: Json
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          template_id?: string | null
-          version_number: number
-        }
-        Update: {
-          content?: Json
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          template_id?: string | null
-          version_number?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "template_versions_template_id_fkey"
-            columns: ["template_id"]
-            isOneToOne: false
-            referencedRelation: "email_templates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_roles: {
-        Row: {
-          created_at: string | null
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          user_id: string
-          required_role: Database["public"]["Enums"]["app_role"]
-        }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
-      app_role: "admin" | "user"
       quote_status: "pending" | "sent" | "accepted" | "rejected"
-      template_status: "draft" | "published"
     }
     CompositeTypes: {
       [_ in never]: never
